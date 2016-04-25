@@ -1,0 +1,17 @@
+{
+  "name": "builder-entrypoint",
+  "version": "0.0.0",
+  "description": "Web builder entrypoint",
+  "main": "build.js",
+  "scripts": {
+    "start": "node ./build.js",
+    "debug": "node ./build.js debug",
+    "builder-watcher": "nodemon -e js,css,less,html -L --ignore public build.js debug",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Geographica",
+  "license": "ISC",
+  "dependencies": {
+    "sting-builder": "1.0.3"
+  }
+}

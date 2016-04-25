@@ -1,0 +1,75 @@
+@import "src/css/lib/Pepa/reset.less";
+@import "src/css/lib/Pepa/base.less";
+
+@font : 'Source Sans Pro', sans-serif;
+
+.fontweight(@fweight){
+	font-weight: @fweight;
+  font-family: @font;
+}
+
+.font(){
+  .fontweight(400);
+}
+
+.font(@style) when(@style=italic){
+  .font();
+  font-style: italic;
+}
+
+.font(@style) when(@style=extralight){
+  .fontweight(200);
+}
+
+.font(@style) when(@style=extralightitalic){
+  .font(extralight);
+  font-style: italic;
+}
+
+.font(@style) when(@style=light){
+  .fontweight(300);
+}
+
+.font(@style) when(@style=lightitalic){
+  .fontweight(light);
+  font-style: italic;
+}
+
+.font(@style) when(@style=semibold){
+  .fontweight(600);
+}
+
+.font(@style) when(@style=semibolditalic){
+  .fontweight(semibold);
+  font-style: italic;
+}
+
+.font(@style) when(@style=bold){
+  .fontweight(700);
+}
+
+.font(@style) when(@style=bolditalic){
+  .fontweight(bold);
+  font-style: italic;
+}
+
+.font(@style) when(@style=ultrabold){
+  .fontweight(900);
+}
+
+.font(@style) when(@style=ultrabolditalic){
+  .fontweight(ultrabold);
+  font-style: italic;
+}
+
+body{
+	.font();
+}
+
+.loading{
+	
+	&:before{
+		content: 'Cargando...';
+		display:block;
+	}
+}
