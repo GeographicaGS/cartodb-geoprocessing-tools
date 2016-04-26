@@ -6,13 +6,18 @@ App.Router = Backbone.Router.extend({
 
   routes: {
       '' : 'home',
+      'map/:id': 'map',
       'notfound' : 'notfound',
       'error' : 'error',
       '*other'    : 'defaultRoute'
   },
-  
+
   home: function(){
     App.showView(new App.View.Home());
+  },
+
+  map: function(id){
+    App.showView(new App.View.Map({'id': id}));
   },
 
   defaultRoute: function(){
