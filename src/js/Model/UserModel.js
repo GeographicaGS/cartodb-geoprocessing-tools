@@ -60,10 +60,4 @@ App.Model.UserLocalStorage = App.Model.User.extend({
     Backbone.Model.prototype.set.apply(this, [attributes,options]); 
   }
 
-  // unset: function(attribute,options){
-  //   Backbone.Model.prototype.unset.apply(this, [attribute,options]);
-  //   if (options && options.localStorage===true)
-  //     this._saveToLocalStorage();
-  // }
-
 });

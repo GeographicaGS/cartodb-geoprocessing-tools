@@ -174,6 +174,3 @@ App.ini = function(){
   this.router = new App.Router();
   Backbone.history.start({pushState: true});
 }
-
-
-
