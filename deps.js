@@ -23,6 +23,7 @@ deps.JS = [
   
   // Views
   srcJS + 'View/AccountView.js',
+  srcJS + 'View/MapListView.js',
   srcJS + 'View/ErrorView.js',
   
   // Router

@@ -6,14 +6,14 @@ App.Router = Backbone.Router.extend({
 
   routes: {
       '' : 'home',
-      '(/:account)/map_list' : 'map_list',
+      '(:account)/map_list' : 'map_list',
       'notfound' : 'notfound',
       'error' : 'error',
       '*other'    : 'defaultRoute'
   },
 
   home: function(){
-    var m = new App.Model.User(),
+    var m = new App.Model.UserLocalStorage(),
         account = m.get('account');
 
     if (account){
@@ -29,7 +29,9 @@ App.Router = Backbone.Router.extend({
   },
 
   map_list: function(account){
-
+    App.showView(new App.View.MapList({
+      'model' : new App.Model.User({'account' : account})
+    }));
   },
 
   defaultRoute: function(){
