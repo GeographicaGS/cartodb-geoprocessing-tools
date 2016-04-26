@@ -17,9 +17,12 @@ deps.JS = [
 
   // Namespace
   srcJS + 'Namespace.js',
+
+  // Models
+  srcJS + 'Model/UserModel.js',
   
   // Views
-  srcJS + 'View/HomeView.js',
+  srcJS + 'View/AccountView.js',
   srcJS + 'View/ErrorView.js',
   
   // Router
