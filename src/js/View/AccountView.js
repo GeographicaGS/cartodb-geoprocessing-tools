@@ -4,7 +4,8 @@ App.View.Account = Backbone.View.extend({
   _template: _.template( $('#account_template').html() ),
   
   initialize: function(options) {
-    this.listenTo(this.model,'change:account',this._onChangeAccount)
+    this.model.set('account','');
+    this.listenTo(this.model,'change:account',this._onChangeAccount);
   },
 
   events: {
@@ -42,9 +43,7 @@ App.View.Account = Backbone.View.extend({
   },
 
   render: function(){
-    
     this.$el.html(this._template());
-
     return this;
   },
 
