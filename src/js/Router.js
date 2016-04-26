@@ -1,19 +1,38 @@
 'use strict';
 
-var app = app || {};
+var App = App || {};
 
 App.Router = Backbone.Router.extend({
 
   routes: {
       '' : 'home',
       'map/:id': 'map',
+      '(:account)/map_list' : 'map_list',
       'notfound' : 'notfound',
       'error' : 'error',
       '*other'    : 'defaultRoute'
   },
 
   home: function(){
-    App.showView(new App.View.Home());
+    var m = new App.Model.UserLocalStorage(),
+        account = m.get('account');
+
+    if (account){
+      // go to map list view
+      this.navigate(account + '/map_list',{'trigger': true})
+    }
+    else{
+      App.showView(new App.View.Account({
+        'model':  m
+      }));
+    }
+
+  },
+
+  map_list: function(account){
+    App.showView(new App.View.MapList({
+      'model' : new App.Model.User({'account' : account})
+    }));
   },
 
   map: function(id){
