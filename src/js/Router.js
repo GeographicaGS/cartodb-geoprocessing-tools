@@ -37,9 +37,11 @@ App.Router = Backbone.Router.extend({
 
   map: function(account,viz){
     var viz = '2b13c956-e7c1-11e2-806b-5404a6a683d5';
-    App.showView(new App.View.Map({
+    var v = new App.View.Map({
       'model' : new Backbone.Model({'viz': viz})
-    }));
+    });
+
+    App.showView(v,{'renderMode': 'after'});
   },
 
   defaultRoute: function(){
