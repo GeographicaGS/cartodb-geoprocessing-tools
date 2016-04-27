@@ -1,0 +1,182 @@
+.map{
+  flex: 1 1 100%;
+  height: calc(~'100% - ' @mapToolbarHeight);
+
+  .cartodb-zoom{
+    position: absolute;
+    left: -2px;
+    top: 62px;
+    z-index: 2;
+    width: auto;
+    border: none;
+    box-shadow: 0 0 0 4px rgba(100,100,100,.2);
+    border-radius: 2px;
+
+    .zoom_in, .zoom_out {
+      background-position: center;
+      background-repeat: no-repeat;
+      width: 30px;
+      height: 30px;
+      outline: none;
+      border: 1px solid @blue_lighter;
+
+      &:hover {
+        border-color: @blue_medium;
+      }
+    }
+
+    .zoom_in {
+      background-image: url('/img/SGV_icon_zoommore.svg');
+      border-radius: 2px 2px 0 0;
+      border-bottom-width: 0;
+    }
+
+    .zoom_out {
+      background-image: url('/img/SGV_icon_zoomless.svg');
+      border-radius: 0 0 2px 2px;
+    }
+  }
+  .cartodb-tiles-loader{
+    position: fixed !important;
+    top: 300px;
+    left: -2px;
+
+    .loader {
+      width: 32px;
+      height: 32px;
+      border: 1px solid @blue_lighter;
+      box-shadow: 0 0 0 4px rgba(100,100,100,.2);
+      border-radius: 2px;
+    }
+  }
+  div.cartodb-legend-stack {
+    border: 1px solid @blue_lighter;
+    box-shadow: 0 0 0 4px rgba(100,100,100,.2);
+    border-radius: 2px;
+
+    div.cartodb-legend ul li {
+      .font();
+      color: @grey60;
+      font-size: 0.85em;
+    }
+  }
+}
+
+#legend_container{
+  position: fixed;
+  bottom: 70px;
+  right: 20px;
+
+
+  background-color: @white;
+  border: 1px solid @blue_lighter;
+  box-shadow: 0 0 0 4px rgba(100,100,100,.2);
+  border-radius: 2px;
+
+  overflow: hidden; //safari - prevent content leaking out of  #legend_container on expand animation
+  min-height: 30px; // safari - prevent unwanted height tranformation in expand animation
+
+  .stacked{
+    max-height: 150px;
+    min-height: 70px;
+    margin-bottom: 30px;
+    // padding-bottom: 100px; is this needed? doesn´t render uniformely on all browsers
+    overflow-y: auto;
+
+    .cartodb-legend-stack{
+      position: relative;
+      bottom: initial;
+      right: initial;
+      right:0; //ie fix - override initial value
+      bottom:0; //ie fix - override initial value
+      box-shadow: none;
+      border-radius: 0;
+      border: none;
+      border-bottom: 1px solid @blue_lighter;
+
+      &:last-child{
+        border-bottom: none;
+      }
+
+      &.moving{
+        background-color: rgba(229,0,125,0.05);
+      }
+
+      &:not(.moving){
+        background: transparent !important;
+        transition: all 1s;
+      }
+
+      .cartodb-legend ul li{
+        height: auto;
+        .font();
+        color: @grey60;
+        font-size: 0.85em;
+      }
+    }
+  }
+
+  .ctrl_legend{
+    position: absolute;
+    z-index: 200;//safari - hide content showing underneath on #legend_container expand animation
+    bottom: 0;
+    left: 0;
+    height: 30px;
+    background-color: #ffffff;
+    width: 100%;
+    border-top: 1px solid @blue_lighter;
+    overflow: hidden;
+    cursor: pointer;
+
+    span{
+      color:@blue_dark;
+      font-size: 13px;
+      float: right;
+      margin-right: 11px;
+      margin-top: 4px;
+    }
+    label{
+      color:@grey60;
+      font-size: 13px;
+      float: left;
+      line-height: 30px;
+
+      &:before{
+        content:'';
+        background: url('/img/SGV_icon-legend.svg') no-repeat left top;
+        background-size: 18px 18px;
+        float: left;
+        height: 18px;
+        width: 18px;
+        margin: 5px 10px 0 10px;
+      }
+
+    }
+  }
+
+
+  .transitionLegend(){
+    transition-property: all;
+    transition-duration: .4s;
+    transition-timing-function: ease-out;
+  }
+
+  &.collapsed{
+    width: 100px;
+    height: 30px;
+    .transitionLegend();
+    .box-expanded{
+      display: none;
+    }
+  }
+
+  &.expanded{
+    transform: translate3d(0, 0, 0);
+    .transitionLegend();
+    width: 400px;
+    height:initial;
+    .box-collapsed{
+      display: none;
+    }
+  }
+}

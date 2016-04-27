@@ -3,7 +3,7 @@ var deps = {};
 var src = 'src/',
   srcJS = src + 'js/';
 
-//deps.envFile = 'config.yml';  
+//deps.envFile = 'config.yml';
 deps.templateFolder = [srcJS + 'template'];
 // deps.config = srcJS + 'Config.js';
 
@@ -26,7 +26,13 @@ deps.JS = [
   srcJS + 'View/MapListView.js',
   srcJS + 'View/MapView.js',
   srcJS + 'View/ErrorView.js',
-  
+  srcJS + 'View/UserControlView.js',
+  srcJS + 'View/HeaderView.js',
+  srcJS + 'View/FooterView.js',
+  srcJS + 'View/LayerControlView.js',
+  srcJS + 'View/MapToolbarView.js',
+  srcJS + 'View/MapView.js',
+
   // Router
   srcJS + 'Router.js',
 
