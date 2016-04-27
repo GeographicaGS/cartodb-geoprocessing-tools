@@ -8,6 +8,7 @@ App.Router = Backbone.Router.extend({
       '' : 'home',
       'map/:id': 'map',
       '(:account)/map_list' : 'map_list',
+      '(:account)/map/(:viz)' : 'map',
       'notfound' : 'notfound',
       'error' : 'error',
       '*other'    : 'defaultRoute'
@@ -35,8 +36,13 @@ App.Router = Backbone.Router.extend({
     }));
   },
 
-  map: function(id){
-    App.showView(new App.View.Map({'id': id}));
+  map: function(account,viz){
+    var viz = '2b13c956-e7c1-11e2-806b-5404a6a683d5';
+    var v = new App.View.Map({
+      'model' : new Backbone.Model({'viz': viz})
+    });
+
+    App.showView(v,{'renderMode': 'after'});
   },
 
   defaultRoute: function(){

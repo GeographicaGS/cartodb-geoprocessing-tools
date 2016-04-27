@@ -1,5 +1,18 @@
 var App = App || {};
 
-App.Config = {
-  'SQL_API_URL' : 'https://{username}.cartodb.com/api/v2/sql'
+App.Config.Data = {
+  'SQL_API_URL' : 'https://{{username}}.cartodb.com/api/v2/sql',
+  'VIZ_API_URL' : 'http://{{username}}.cartodb.com/api/v2/viz'
+}
+
+App.Config.Parser = function(key,bindings){
+  return Mustache.render(App.Config.Data[key],bindings);
+}
+
+App.Config.viz_api_url = function(username){
+  return App.Config.Parser('VIZ_API_URL',{'username': username});
+}
+
+App.Config.sql_api_url = function(username){
+  return App.Config.Parser('SQL_API_URL',{'username': username});
 }

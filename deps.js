@@ -13,10 +13,10 @@ deps.JS = [
   srcJS + 'lib/backbone-1.1.2.js',
 
   // Namespace
-  srcJS + 'Config.js',
+  srcJS + 'Namespace.js',
 
   // Namespace
-  srcJS + 'Namespace.js',
+  srcJS + 'Config.js',
 
   // Models
   srcJS + 'Model/UserModel.js',
@@ -24,6 +24,7 @@ deps.JS = [
   // Views
   srcJS + 'View/AccountView.js',
   srcJS + 'View/MapListView.js',
+  srcJS + 'View/MapView.js',
   srcJS + 'View/ErrorView.js',
   srcJS + 'View/UserControlView.js',
   srcJS + 'View/HeaderView.js',

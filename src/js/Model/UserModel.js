@@ -1,7 +1,6 @@
 App.Model.User = Backbone.Model.extend({
   
   checkAccount: function(account,cb){
-    
     var sql = new cartodb.SQL({ 'user': account});
     sql.execute("SELECT now()")
       .done(function(data) {
@@ -11,7 +10,6 @@ App.Model.User = Backbone.Model.extend({
         cb(false);
       });
   }
-
 });
 
 App.Model.UserLocalStorage = App.Model.User.extend({
@@ -40,27 +38,26 @@ App.Model.UserLocalStorage = App.Model.User.extend({
       console.error('Not supported localStorage');
   },
 
-  _saveToLocalStorage: function(){
+  save: function(){
     if(typeof(Storage) !== "undefined") 
       localStorage.setItem('user',JSON.stringify(this.toJSON()));
     else
       console.error('Not supported localStorage');
   },
 
-  setAccount: function(account){
+  set: function(attributes,options){
 
-    var _this = this;
+    var account = typeof attributes === 'object' ? attributes.account : attributes == 'account' ? options : null;
     
-    this.checkAccount(account,function(st){
-      if (st){
-        _this.set('account',account);
-        
-      }
-      else{
-        _this.unset('account');
-      } 
-      _this._saveToLocalStorage();
-    });
+    if (account){
+      var _this = this;
+      this.checkAccount(account,function(st){
+        _this.set('account_status',st);
+        _this.trigger('change:account:status',st);
+      });
+    }
+
+    Backbone.Model.prototype.set.apply(this, [attributes,options]); 
   }
 
 });

@@ -72,14 +72,21 @@ App.detectCurrentLanguage = function(){
 };
 
 
-App.showView = function(view) {
+App.showView = function(view,opts) {
 
   var oldView = this.currentView;
   this.currentView = view;
 
-  view.render();
+  opts = _.defaults(opts || {},{'renderMode': 'before'});
 
-  this.$main.html(view.el);
+  if (opts.renderMode=='before'){
+    view.render();  
+    this.$main.html(view.el);
+  }
+  else if (opts.renderMode=='after'){
+    this.$main.html(view.el);
+    view.render(); 
+  }
 
   if (oldView)
     oldView.close();
@@ -174,6 +181,3 @@ App.ini = function(){
   this.router = new App.Router();
   Backbone.history.start({pushState: true});
 }
-
-
-
