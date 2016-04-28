@@ -79,6 +79,10 @@ header {
 	box-shadow:inset 0 -2px 0 0 rgba(0,0,0,.2);
 	color: @white;
 
+	&:empty {
+		display: none;
+	}
+
 	.back-btn {
 		margin: 0 10px 0 20px;
 	}
@@ -141,7 +145,187 @@ header {
 
 main {
 	flex: 1 1 auto;
+	display: flex;
 	align-items: stretch;
+
+	#login {
+		flex: 0 1 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		background-color: @blue_dark;
+
+		.logos {
+			display: flex;
+			width: 100%;
+			padding: 20px;
+			position: absolute;
+
+			a {
+				flex: 1 1 50%;
+
+				&:last-child {
+					text-align: right;
+				}
+			}
+		}
+
+		.form {
+			flex: 1 1 100%;
+			width: 360px;
+			display: flex;
+			align-items: center;
+
+			form {
+				padding: 18px;
+				background-color: @blue_main;
+				color: @grey30;
+				border-radius: 3px;
+				box-shadow: 0 0 4px 0 rgba(0,0,0,.1);
+
+				.title {
+					text-align: center;
+					color: @white;
+					margin-bottom: 20px;
+
+					&:after {
+						content: "";
+						display: inline-block;
+						width: 33%;
+						height: 1px;
+						margin-top: 20px;
+						background-color: @blue_lighter;
+					}
+
+					img {
+						margin-bottom: 20px;
+					}
+
+					h1 {
+						.font(ultrabold);
+						font-size: 2.15em;
+						line-height: 1.075em;
+
+						span {
+							display: block;
+							.font(light);
+						}
+					}
+				}
+
+				p {
+					font-size: 1.3em;
+					margin-bottom: 18px;
+
+					&.error {
+						visibility: hidden;
+						opacity: .000001;
+						height: 0;
+						margin: 10px 0 0;
+						color: @orange;
+						font-size: 14px;
+						font-style: italic;
+						transition: visibility 0s linear 0.5s, opacity .5s ease-in-out, height .5s ease-in-out;
+
+						&.show {
+							visibility: visible;
+							opacity: 1;
+							height: 1.5em;
+							transition-delay: 0s;
+						}
+					}
+				}
+
+				.placeholder {
+					color: @grey30;
+					font-style: italic;
+					opacity: .25;
+				}
+
+				::-webkit-input-placeholder {
+					.placeholder
+				}
+
+				::-moz-placeholder {
+					.placeholder
+				}
+
+				:-ms-input-placeholder {
+					.placeholder
+				}
+
+				:-ms-input-placeholder {
+				 	.placeholder
+				}
+
+				[placeholder]:-ms-input-placeholder {
+					.placeholder
+				}
+
+				input[type=text] {
+					width: 100%;
+					padding: .5em;
+					color: @white;
+					background-color: @blue_dark;
+					border: 1px solid rgba(0,0,0,.1);
+					border-radius: 2px;
+					font-family: inherit;
+
+					&:focus {
+						background-color: @yellow;
+						color: @blue_dark;
+						border: 1px solid @blue_dark;
+						outline: none;
+					}
+
+					&.error {
+						border: 1px solid @orange;
+					}
+				}
+
+				.submit {
+					margin-top: 20px;
+					position: relative;
+					overflow: hidden;
+
+					&:after {
+						content: "Loading";
+						opacity: 0;
+						position: absolute;
+						top: 50%;
+						left: 50%;
+						background-color: @green;
+						visibility: hidden;
+						opacity: .000001;
+						transform: translate(-50%, -50%) scale(10);
+						transition: visibility 0s linear 0.25s, opacity .25s ease-in-out, transform .25s ease-in-out;
+					}
+
+					input[type=submit] {
+						width: 100%;
+						padding: 1em;
+						color: @white;
+						background-color: @green;
+						border-radius: 2px;
+						font-family: inherit;
+					}
+
+					&.loading {
+						&:after {
+							content: "Loading";
+							position: absolute;
+							top: 50%;
+							left: 50%;
+							transform: translate(-50%, -50%) scale(1);
+							visibility: visible;;
+							opacity: 1;
+							transition-delay: 0s;
+						}
+					}
+				}
+			}
+		}
+	}
 
 	.toolbar {
 		display: flex;
@@ -247,29 +431,38 @@ main {
 }
 
 footer {
-	height: 34px;
-	width: 100%;
-	padding: 10px;
-	display: flex;
-	border-top: 1px solid @grey20;
-	font-size: 1em;
-	line-height: 1em;
-	color: @grey60;
 
-	p:first-child {
-		flex: 1 1 auto;
+	& > div {
+		height: 34px;
+		width: 100%;
+		padding: 10px;
+		display: flex;
+		border-top: 1px solid @grey20;
+		font-size: 1em;
+		line-height: 1em;
+		color: @grey60;
+
+		p:first-child {
+			flex: 1 1 auto;
+		}
+
+		a {
+			color: @blue_light;
+		}
+
+		&.login {
+			background-color: @blue_dark;
+			border: none;
+			color: @grey30;
+
+			a {
+				color: @white;
+			}
+		}
 	}
 
-	a {
-		color: @blue_light;
-	}
-}
-
-.loading{
-
-	&:before{
-		content: 'Cargando...';
-		display:block;
+	&:empty {
+		display: none;
 	}
 }
 
