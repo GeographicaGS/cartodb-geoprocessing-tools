@@ -12,8 +12,9 @@ App.View.Footer = Backbone.View.extend({
     this.stopListening();
   },
 
-  render: function(){
-    this.$el.html(this._template());
+  render: function(options){
+    var options = options || {};
+    this.$el.html(this._template(options));
 
     return this;
   }
