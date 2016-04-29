@@ -20,7 +20,10 @@ deps.JS = [
 
   // Models
   srcJS + 'Model/UserModel.js',
-  
+
+  // Collections
+  srcJS + 'Collection/MapCollection.js',
+
   // Views
   srcJS + 'View/AccountView.js',
   srcJS + 'View/MapListView.js',
