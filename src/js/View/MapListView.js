@@ -3,9 +3,10 @@
 App.View.MapList = Backbone.View.extend({
   _template: _.template( $('#maplist_template').html() ),
   _template_item: _.template( $('#maplist_item_template').html() ),
+  id: 'maplist',
 
   initialize: function(options) {
-    this.header = new App.View.Header({section: 'maplist', title: this.model.get('account')});
+    this.header = new App.View.Header({section: 'maplist', title: this.model.get('account'), username: this.model.get('account')});
     this.footer = new App.View.Footer();
 
     _.bindAll(this,'_onAccountChecked');

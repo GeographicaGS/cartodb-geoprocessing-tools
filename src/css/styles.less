@@ -92,6 +92,16 @@ header {
 		margin: 0 10px;
 		.font(light);
 		font-size: 1.7em;
+
+		&.center {
+			text-align: center;
+			font-size: 2.15em;
+
+			span {
+				font-weight: 900;
+				font-style: italic;
+			}
+		}
 	}
 
 	.logos {
@@ -148,314 +158,6 @@ main {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-
-	#login {
-		flex: 0 1 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		background-color: @blue_dark;
-
-		.logos {
-			display: flex;
-			width: 100%;
-			padding: 20px;
-			position: absolute;
-			left: 0;
-			top: 0;
-
-			a {
-				flex: 1 1 50%;
-
-				&:last-child {
-					text-align: right;
-				}
-			}
-		}
-
-		.form {
-			flex: 1 1 100%;
-			width: 360px;
-			display: flex;
-			align-items: center;
-
-			form {
-				padding: 18px;
-				background-color: @blue_main;
-				color: @grey30;
-				border-radius: 3px;
-				box-shadow: 0 0 4px 0 rgba(0,0,0,.1);
-
-				.title {
-					text-align: center;
-					color: @white;
-					margin-bottom: 20px;
-
-					&:after {
-						content: "";
-						display: inline-block;
-						width: 33%;
-						height: 1px;
-						margin-top: 20px;
-						background-color: @blue_lighter;
-					}
-
-					img {
-						margin-bottom: 20px;
-					}
-
-					h1 {
-						.font(ultrabold);
-						font-size: 2.15em;
-						line-height: 1.075em;
-
-						span {
-							display: block;
-							.font(light);
-						}
-					}
-				}
-
-				p {
-					font-size: 1.3em;
-					margin-bottom: 18px;
-				}
-
-				.placeholder {
-					color: @grey30;
-					font-style: italic;
-					opacity: .25;
-				}
-
-				::-webkit-input-placeholder {
-					.placeholder
-				}
-
-				::-moz-placeholder {
-					.placeholder
-				}
-
-				:-ms-input-placeholder {
-					.placeholder
-				}
-
-				:-ms-input-placeholder {
-				 	.placeholder
-				}
-
-				[placeholder]:-ms-input-placeholder {
-					.placeholder
-				}
-
-				input[type=text] {
-					width: 100%;
-					padding: .5em;
-					color: @white;
-					background-color: @blue_dark;
-					border: 1px solid rgba(0,0,0,.1);
-					border-radius: 2px;
-					font-family: inherit;
-
-					&:focus {
-						background-color: @yellow;
-						color: @blue_dark;
-						border: 1px solid @blue_dark;
-						outline: none;
-					}
-
-					&.error {
-						border: 1px solid @orange;
-					}
-				}
-
-				.submit {
-					height: 33px;
-					margin-top: 20px;
-					position: relative;
-					overflow: hidden;
-
-					input[type=submit] {
-						width: 100%;
-						padding: 0.57em;
-						color: @white;
-						background-color: @green;
-						border-radius: 2px;
-						font-family: inherit;
-						font-weight: 600;
-						opacity: .5;
-						transition: opacity .25s ease-in-out, color .25s ease-in-out, background-color .25s ease-in-out;
-					}
-
-					.loadingbar {
-						opacity: 0.00001;
-						position: absolute;
-						top: 50%;
-						left: 50%;
-						visibility: hidden;
-						opacity: .000001;
-						z-index: 1;
-						transform: translate(-50%, -50%) scale(10);
-						transition: visibility 0s linear 0.25s, opacity .25s ease-in-out, transform .25s ease-in-out;
-					}
-
-					p.error {
-						visibility: hidden;
-						opacity: .000001;
-						height: 0;
-						color: @orange;
-						font-size: 1em;
-						font-weight: 600;
-						transition: visibility 0s linear 0.5s, opacity .5s ease-in-out, height .5s ease-in-out;
-
-						position: absolute;
-						top: 50%;
-						left: 50%;
-						transform: translate(-50%, -50%);
-					}
-
-					&.loading {
-						input[type=submit] {
-							color: @green;
-						}
-
-						.loadingbar {
-							position: absolute;
-							top: 50%;
-							left: 50%;
-							transform: translate(-50%, -50%) scale(1);
-							visibility: visible;;
-							opacity: 1;
-							transition-delay: 0s;
-						}
-					}
-
-					&.ready {
-						input[type=submit] {
-							opacity: 1;
-						}
-					}
-
-					&.error {
-						input[type=submit] {
-							background-color: transparent;
-							color: transparent;
-							box-shadow: inset 0 0 0 2px @orange;
-							opacity: 1;
-						}
-
-						p.error {
-								visibility: visible;
-								opacity: 1;
-								height: 1.5em;
-								transition-delay: 0s;
-						}
-					}
-				}
-			}
-		}
-	}
-
-	.toolbar {
-		display: flex;
-		align-items: center;
-		height: @mapToolbarHeight;
-		background-color: @grey10;
-		border-bottom: 1px solid @grey20;
-		border-top: 1px solid @white;
-
-		.buttons {
-			flex: 1 1 auto;
-			height: 100%;
-			display: flex;
-			align-items: center;
-
-			li {
-				display: inline-block;
-				vertical-align: middle;
-				margin: 0 7px;
-
-				&:first-child {
-					margin-left: 0;
-				}
-
-				&.highlighted {
-					display: flex;
-					align-items: center;
-					height: 100%;
-					padding: 0 16px;
-					background: fade(@grey20, 50%);
-					border: 1px solid @grey20;
-					border-width: 0 1px;
-				}
-
-				&.separator {
-					border-left: 1px solid @grey20;
-					width: 1px;
-					height: 32px;
-				}
-
-				img {
-					padding: 1px;
-					background-color: @white;
-					border: 1px solid @blue_lighter;
-					border-radius: 2px;
-					cursor: pointer;
-
-					&:hover {
-						border-color: @blue_medium;
-					}
-				}
-
-				&.selected {
-					img {
-						padding: 0;
-						border-width: 2px;
-						border-color: @blue_medium;
-					}
-				}
-			}
-		}
-
-		.layers_control {
-			.header {
-				display: flex;
-				align-items: center;
-				padding-right: 10px;
-
-				p.title {
-					color: @grey75;
-					font-size: 1.3em;
-					line-height: 1em;
-					margin-right: 10px;
-
-					span {
-						font-size: 0.75em;
-						color: @grey60;
-					}
-				}
-			}
-		}
-
-		.map_extra_controls {
-			position: absolute;
-			top: 158px;
-			left: 18px;
-			z-index: 2;
-
-			.buttons {
-				flex-direction: column;
-
-				li img {
-					box-shadow: 0 0 0 4px rgba(100,100,100,.2);
-				}
-			}
-		}
-	}
-
-	.mapHolder {
-		display: flex;
-		height: 100%;
-	}
 }
 
 footer {
@@ -518,5 +220,11 @@ footer {
   }
 }
 
+.line_below {
+	border-bottom: 1px solid @grey20;
+}
+
+@import "src/css/login.less";
+@import "src/css/maplist.less";
 @import "src/css/map.less";
 @import "src/css/animations.less";

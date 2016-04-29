@@ -36,7 +36,7 @@ App.Router = Backbone.Router.extend({
   },
 
   map: function(account,viz){
-    var viz = '8260e444-0bd3-11e6-a226-0e3ff518bd15';
+    // var viz = '8260e444-0bd3-11e6-a226-0e3ff518bd15';
     var v = new App.View.Map({
       'model' : new Backbone.Model({'viz': viz,'account': account})
     });
