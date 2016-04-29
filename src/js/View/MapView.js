@@ -32,8 +32,6 @@ App.View.Map = Backbone.View.extend({
     this.toolbar.render();
     this.map = this.$('.map');
     this.map.css('width','100%').css('height', (this.$el.height() - 64) + "px"); // TODO: parameterize or calculate hardcoded toolbar height value (64px)
-    this.map.css('height','500px');
-    this.map.css('width','500px');
 
     var map;
     var mapOptions = {
@@ -57,16 +55,16 @@ App.View.Map = Backbone.View.extend({
       }).on('error', function(err) {
         console.log("some error occurred: " + err);
       });
-    
+
     return this;
   },
 
   _onDone: function(vis,layers){
-    var l = _.find(layers, function(l){ 
+    var l = _.find(layers, function(l){
         return l.type == 'layergroup';
       });
-      
-      
+
+
       // this._controlLayer = App.View.ControlLayer({
       //   'layergroup': l
       // });
