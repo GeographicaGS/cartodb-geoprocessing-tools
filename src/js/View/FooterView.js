@@ -13,7 +13,7 @@ App.View.Footer = Backbone.View.extend({
   },
 
   render: function(options){
-    var options = options || {};
+    var options = options || {classes: ''};
     this.$el.html(this._template(options));
 
     return this;
