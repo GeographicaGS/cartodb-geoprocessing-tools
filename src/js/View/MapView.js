@@ -2,6 +2,7 @@
 
 App.View.Map = Backbone.View.extend({
   _template: _.template( $('#map_template').html() ),
+  id: 'mapview',
 
   initialize: function(options) {
 
@@ -20,7 +21,7 @@ App.View.Map = Backbone.View.extend({
 
   render: function(){
 
-    this.setElement($('main'));
+    // this.setElement($('main'));
     this.$el.html(this._template());
 
     this.footer.setElement($('footer'));
@@ -31,7 +32,7 @@ App.View.Map = Backbone.View.extend({
     this.footer.render({classes: ''});
     this.toolbar.render();
     this.map = this.$('.map');
-    this.map.css('width','100%').css('height', (this.$el.height() - 64) + "px"); // TODO: parameterize or calculate hardcoded toolbar height value (64px)
+    this.map.css('width','100%').css('height', (this.$el.parent().height() - 64) + "px"); // TODO: parameterize or calculate hardcoded toolbar height value (64px)
 
     var map;
     var mapOptions = {
