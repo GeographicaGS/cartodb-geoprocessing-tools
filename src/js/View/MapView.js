@@ -1,11 +1,15 @@
 'use strict';
 
 App.View.Map = Backbone.View.extend({
-  
-  id: 'map',
+  _template: _.template( $('#map_template').html() ),
 
   initialize: function(options) {
+
     _.bindAll(this,'_onDone');
+
+    this.header = new App.View.Header();
+    this.footer = new App.View.Footer();
+    this.toolbar = new App.View.MapToolbar();
   },
 
   onClose: function(){
@@ -13,13 +17,23 @@ App.View.Map = Backbone.View.extend({
     if (this._controlLayer)
       this._controlLayer.close();
   },
-  
+
   render: function(){
-    this.$el.css('width','100%').css('height','500px');
-    
-    // // Create VIS
-    // cartodb.createVis('map', App.Config.viz_api_url(this.model.get('account')) + '/' + this.model.get('viz') + '/viz.json')
-    //   .done(this._onDone);
+
+    this.setElement($('main'));
+    this.$el.html(this._template());
+
+    this.footer.setElement($('footer'));
+    this.header.setElement($('header'));
+    this.toolbar.setElement(this.$('.toolbar'));
+
+    this.header.render();
+    this.footer.render({classes: ''});
+    this.toolbar.render();
+    this.map = this.$('.map');
+    this.map.css('width','100%').css('height', (this.$el.height() - 64) + "px"); // TODO: parameterize or calculate hardcoded toolbar height value (64px)
+    this.map.css('height','500px');
+    this.map.css('width','500px');
 
     var map;
     var mapOptions = {
@@ -27,6 +41,7 @@ App.View.Map = Backbone.View.extend({
       center: [43, 0]
     };
     map = new L.Map('map', mapOptions);
+
 
     cartodb.createLayer(map, App.Config.viz_api_url(this.model.get('account')) + '/' + this.model.get('viz') + '/viz.json')
       .addTo(map)
