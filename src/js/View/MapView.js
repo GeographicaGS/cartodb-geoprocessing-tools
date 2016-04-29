@@ -30,16 +30,14 @@ App.View.Map = Backbone.View.extend({
     this.header.render();
     this.footer.render({classes: ''});
     this.toolbar.render();
-    this.map = this.$('.map');
-    this.map.css('width','100%').css('height', (this.$el.height() - 64) + "px"); // TODO: parameterize or calculate hardcoded toolbar height value (64px)
+    this.$map = this.$('.map');
+    this.$map.css('width','100%').css('height', (this.$el.height() - 64) + "px"); // TODO: parameterize or calculate hardcoded toolbar height value (64px)
 
-    var map;
     var mapOptions = {
       zoom: 5,
       center: [43, 0]
     };
-    map = new L.Map('map', mapOptions);
-
+    this.map = new L.Map('map', mapOptions);
 
     cartodb.createLayer(map, App.Config.viz_api_url(this.model.get('account')) + '/' + this.model.get('viz') + '/viz.json')
       .addTo(map)
