@@ -19,6 +19,13 @@ App.View.Account = Backbone.View.extend({
 
   _onTypedUsername: function(e){
 
+    this.$submit.removeClass('error').removeClass('ready');
+    this.$username.removeClass('error');
+    if(this.$username.val() != ''){
+      this.$submit.addClass('loading');
+    }
+
+
     if (this._usernameTimeout)
       clearTimeout(this._usernameTimeout);
 
@@ -31,16 +38,13 @@ App.View.Account = Backbone.View.extend({
   },
 
   _changeAccountStatus: function (st) {
-    var $p = this.$('#invalid_user_text');
-    var $in = this.$('input[name="username"]');
-
     if (st){
-      $p.removeClass('show');
-      $in.removeClass('error');
+      this.$username.removeClass('error');
+      this.$submit.removeClass('error').removeClass('loading').addClass('ready');
     }
     else{
-      $p.addClass('show');
-      $in.addClass('error');
+      this.$username.addClass('error');
+      this.$submit.removeClass('ready').removeClass('loading').addClass('error');
     }
   },
 
@@ -50,20 +54,22 @@ App.View.Account = Backbone.View.extend({
     this.footer.setElement($('footer'));
     this.footer.render({classes: 'login'});
 
+    this.$username = this.$('input[name="username"]');
+    this.$submit = this.$('.submit');
+
     return this;
   },
 
   _onClickGo: function(e){
     e.preventDefault();
-    var $submit = this.$('.submit');
-    $submit.addClass('loading');
-    
+    this.$submit.addClass('loading');
+
     if (this.model.get('account_status')){
       this.model.unset('account_status');
       this.model.save();
       App.router.navigate(this.model.get('account') + '/map_list',{'trigger' : true});
     }else{
-      $submit.removeClass('loading');
+      this.$submit.removeClass('loading');
     }
 
   }
