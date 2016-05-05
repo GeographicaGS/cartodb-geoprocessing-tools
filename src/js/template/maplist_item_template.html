@@ -1,3 +1,13 @@
 <li>
-  <a href="<%= account %>/map/<%= map.id %>" jslink><%= map.name %></a>
+  <p class="title"><a href="<%= account %>/map/<%= map.id %>" jslink><%= map.name %></a></p>
+  <% if(map.description){ %>
+    <p class="description"><%= map.description %></p>
+  <% } %>
+  <% if(map.tags.length > 0){ %>
+    <p class="tags">
+      <% _.each(map.tags, function(tag){ %>
+        <a href="#<%= tag %>"><%= tag %></a>
+      <% })%>
+    </p>
+  <% } %>
 </li>
