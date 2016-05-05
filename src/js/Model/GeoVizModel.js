@@ -132,7 +132,13 @@ App.Model.GeoViz = Backbone.Model.extend({
     }
 
     this._saveAndTrigger();
-    
+  },
+
+  updateSubLayerCartoCSS:function(sublayerid,cartocss){
+    var l = this._findSublayer(sublayerid);
+    l.options.cartocss = cartocss;
+
+    this._saveAndTrigger();
   }
 
 });

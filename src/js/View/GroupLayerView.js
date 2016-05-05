@@ -82,7 +82,7 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
   },
 
   events: {
-    'click a.subviewcontrol': '_openSubView',
+    'click a.subviewcontrol': '_toggleSubView',
     'click a.toggle': '_toggle',
     'click a.remove': '_remove'
   },
@@ -91,11 +91,9 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
     this.stopListening();
   },
 
-  _openSubView: function(e){
+  _toggleSubView: function(e){
     e.preventDefault();
     var type = $(e.target).closest('a[data-el]').attr('data-el');
-    var prev = this._subview;
-
     var suffix;
     if (type == 'wizard')
       suffix = 'Wizard';
@@ -105,11 +103,18 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
       suffix = 'CartoCSS';
 
     var fn = App.View['GroupLayerPanelLayer' + suffix];
-    this._subview = new fn({model: this.model,geoVizModel: this._geoVizModel}).render();
-    this.$('.subviewholder').html(this._subview.$el);
 
-    if (prev)
-      prev.close();
+    if (this._subview instanceof fn){
+      this._subview.close();
+      this._subview = null;
+    }
+    else{
+      var prev = this._subview;
+      this._subview = new fn({model: this.model,geoVizModel: this._geoVizModel}).render();
+      this.$('.subviewholder').html(this._subview.$el);
+      if (prev)
+        prev.close();
+    }
 
     return this;
 
@@ -149,8 +154,7 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
   },
 
   render: function(){
-    var m = this.model.toJSON();
-    this.$el.html(this._template(m.options));
+    this.$el.html(this._template(this.model.toJSON().options));
     this._renderUpdateButton();
     return this;
   }
@@ -162,15 +166,47 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
   _template: _.template( $('#grouplayer-wizard_template').html() ),
 
   initialize: function(options) {
-
+    this._geoVizModel = options.geoVizModel;
+    this.listenTo(this.model,'change:geometrytype',this.render);
   },
 
   onClose: function(){
     this.stopListening();
   },
 
+  _checkGeometryType: function(){
+    var sql = new cartodb.SQL({ user: this._geoVizModel.get('account') });
+    var q = "WITH q as ({{sql}}) select st_geometrytype(the_geom_webmercator) as geometrytype from q LIMIT 1";
+
+    var _this = this;
+    sql.execute(q,{sql: this.model.get('options').sql},{cache:false})
+      .done(function(data) {
+        if (data.rows.length && data.rows[0].geometrytype)
+          _this.model.set('geometrytype',data.rows[0].geometrytype);
+        else
+          _this.model.set('geometrytype','nodata');
+      })
+      .error(function(errors) {
+        _this.model.set('geometrytype','error');
+        console.log(errors);
+      });
+  },
+
   render: function(){
-    this.$el.html(this._template());
+    // Check layer type. Is it a polygon, line or point?
+    var geometrytype = this.model.get('geometrytype'),
+      opts = {};
+    if (geometrytype){
+      opts.geometrytype = geometrytype;
+      opts.loading = false;
+    }
+    else{
+      opts.loading = true;
+      // Async request. It will fire a render again
+      this._checkGeometryType();
+    }
+
+    this.$el.html(this._template(opts));
     return this;
   }
 
@@ -184,6 +220,10 @@ App.View.GroupLayerPanelLayerCartoCSS = Backbone.View.extend({
     this._geoVizModel = options.geoVizModel;
   },
 
+  events: {
+    'click input[type="button"]' : '_update'
+  },
+
   onClose: function(){
     this.stopListening();
   },
@@ -191,6 +231,14 @@ App.View.GroupLayerPanelLayerCartoCSS = Backbone.View.extend({
   render: function(){
     this.$el.html(this._template(this.model.toJSON().options));
     return this;
+  },
+
+  _update: function(e){
+    e.preventDefault();
+
+    var cartocss = $.trim(this.$('textarea').val());
+    this.model.get('options').cartocss = cartocss;
+    this._geoVizModel.updateSubLayerCartoCSS(this.model.get('id'),cartocss);
   }
 
 });
@@ -208,7 +256,8 @@ App.View.GroupLayerPanelLayerSQL = Backbone.View.extend({
   },
 
   render: function(){
-    this.$el.html(this._template());
+
+    this.$el.html(this._template(this.model.toJSON().options));
     return this;
   }
 
