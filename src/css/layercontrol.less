@@ -4,8 +4,9 @@
   .panel {
     visibility: hidden;
     opacity: .00001;
+    width: 380px;
     position: absolute;
-    top: calc(~'100% + 12px');
+    top: calc(~'100% + 13px');
     right: 0;
     background-color: @grey05;
     padding-bottom: 10px;
@@ -28,10 +29,10 @@
     li {
       list-style: none;
       background-color: @white;
-      padding: 10px 10px 10px 5px;
+      padding: 10px 5px;
       border-bottom: 1px solid @grey10;
 
-      transition: background-color .10s ease-in-out;
+      // transition: background-color .10s ease-in-out;
 
       .ctrls {
         display: flex;
@@ -50,21 +51,19 @@
           margin: 0 5px;
         }
 
-        .subviewcontrol, .remove {
+        .remove {
           opacity: .00001;
-          transition: opacity .10s ease-in-out;
+          // transition: opacity .10s ease-in-out;
+        }
+
+        .subviewcontrol {
+          display: none;
         }
 
         .remove img {
           border-radius: 50%;
           background-color: @grey10;
           padding: 5px;
-        }
-
-        &:hover {
-          .subviewcontrol, .remove {
-            opacity: 1;
-          }
         }
       }
 
@@ -93,6 +92,16 @@
 
       &:hover {
         background-color: @grey05;
+
+        .ctrls {
+          .remove {
+            opacity: 1;
+          }
+
+          .subviewcontrol {
+            display: block;
+          }
+        }
       }
     }
   }
