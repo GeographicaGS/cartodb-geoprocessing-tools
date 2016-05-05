@@ -1,4 +1,4 @@
-App.Model.GeoViz = Backbone.Model.extend({
+App.Model.GeoViz = App.Model.Viz.extend({
   
   constructor: function() {
     this._user = new App.Model.UserLocalStorage(); 
@@ -100,32 +100,20 @@ App.Model.GeoViz = Backbone.Model.extend({
     }
   },
 
-  _getSublayers: function(){
-    return _.find(this.get('layers'), function(l){ return l.type=='layergroup'}).options.layer_definition.layers;
-  },
-
-  _findSublayer: function(sublayerid){
-    return _.findWhere(this._getSublayers(),{id: sublayerid});
-  },
-
-  _findSublayerIdx: function(sublayerid){
-    return this._getSublayers().indexOf(this._findSublayer(sublayerid));
-  },
-
   _saveAndTrigger: function(){
     this.save();
     this.trigger('change');
   },
 
   setSublayerVisibility: function(sublayerid,visible){
-    var l = this._findSublayer(sublayerid);
+    var l = this.findSublayer(sublayerid);
     l.visible = visible;
     this._saveAndTrigger();
   },
 
   removeSublayer: function(sublayerid){
-    var layers = this._getSublayers();
-    var index = this._findSublayerIdx(sublayerid);
+    var layers = this.getSublayers();
+    var index = this.findSublayerIdx(sublayerid);
 
     if (index > -1) {
       layers.splice(index, 1);
@@ -135,7 +123,7 @@ App.Model.GeoViz = Backbone.Model.extend({
   },
 
   updateSubLayerCartoCSS:function(sublayerid,cartocss){
-    var l = this._findSublayer(sublayerid);
+    var l = this.findSublayer(sublayerid);
     l.options.cartocss = cartocss;
 
     this._saveAndTrigger();

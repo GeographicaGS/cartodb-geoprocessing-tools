@@ -20,6 +20,7 @@ deps.JS = [
 
   // Models
   srcJS + 'Model/UserModel.js',
+  srcJS + 'Model/VizModel.js',
   srcJS + 'Model/CartoVizModel.js',
   srcJS + 'Model/GeoVizModel.js',
 
