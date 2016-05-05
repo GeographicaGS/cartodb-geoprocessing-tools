@@ -114,7 +114,8 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
 
   events: {
     'click a.subviewcontrol': '_openSubView',
-    'click a.toggle': '_toggle'
+    'click a.toggle': '_toggle',
+    'click a.remove': '_remove'
   },
 
   onClose: function(){
@@ -164,6 +165,15 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
 
     return this;
 
+  },
+
+  _remove: function(e){
+    e.preventDefault();
+
+    if(confirm('Are you sure?')){
+      this._geoVizModel.removeSublayer(this.model.get('id'));
+      this.close();
+    }
   },
 
   render: function(){

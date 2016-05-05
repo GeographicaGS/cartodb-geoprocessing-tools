@@ -100,18 +100,39 @@ App.Model.GeoViz = Backbone.Model.extend({
     }
   },
 
-  _findSublayer: function(sublayerid){
-    var layers = _.find(this.get('layers'), function(l){ return l.type=='layergroup'}).options.layer_definition.layers;
-    return _.findWhere(layers,{id: sublayerid});
+  _getSublayers: function(){
+    return _.find(this.get('layers'), function(l){ return l.type=='layergroup'}).options.layer_definition.layers;
+  },
 
+  _findSublayer: function(sublayerid){
+    return _.findWhere(this._getSublayers(),{id: sublayerid});
+  },
+
+  _findSublayerIdx: function(sublayerid){
+    return this._getSublayers().indexOf(this._findSublayer(sublayerid));
+  },
+
+  _saveAndTrigger: function(){
+    this.save();
+    this.trigger('change');
   },
 
   setSublayerVisibility: function(sublayerid,visible){
     var l = this._findSublayer(sublayerid);
     l.visible = visible;
-    this.save();
-    this.trigger('change');
+    this._saveAndTrigger();
+  },
 
+  removeSublayer: function(sublayerid){
+    var layers = this._getSublayers();
+    var index = this._findSublayerIdx(sublayerid);
+
+    if (index > -1) {
+      layers.splice(index, 1);
+    }
+
+    this._saveAndTrigger();
+    
   }
 
 });
