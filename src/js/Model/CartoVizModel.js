@@ -1,4 +1,4 @@
-App.Model.CartoViz = Backbone.Model.extend({
+App.Model.CartoViz = App.Model.Viz.extend({
   
   url: function(){
     return App.Config.viz_api_url(this.get('account'),this.get('id'));

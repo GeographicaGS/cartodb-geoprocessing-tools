@@ -37,6 +37,28 @@ App.View.Map = Backbone.View.extend({
     if (!this._geoVizModel.get('layers'))
         this._geoVizModel = new App.Model.GeoViz(this._cartoVizModel.toJSON());
 
+    var geolayers = this._geoVizModel.getSublayers();
+    var cartolayers = this._cartoVizModel.getSublayers();
+
+    // Loop over geovizmodel layers
+    for (var i in geolayers){
+      var geolayer = geolayers[i];
+      // copy the layer definition from CartoDB viz. CartoDB takes precedence over geo except for CartoCSS.
+      var cartolayer = this._cartoVizModel.findSublayer(geolayer.id);
+      cartolayer.options.cartocss = geolayer.options.cartocss;
+      geolayer = cartolayer;
+    }
+
+    // Copy layers from CartoViz which are not present at GeoViz. It happens when new layers are added at CartoDB editor
+    for (var i in cartolayers){
+      var cartolayer = cartolayers[i];
+      if (!this._geoVizModel.findSublayer(cartolayer.id)){
+        // New layer. Let's add it
+        console.debug('Added layer ' + cartolayer.id);
+        geolayers.push(cartolayer);
+      }
+    }
+
     if (this._user.get('autosave') && this._user.get('account')==this._geoVizModel.get('account'))
       this._geoVizModel.save();
 
