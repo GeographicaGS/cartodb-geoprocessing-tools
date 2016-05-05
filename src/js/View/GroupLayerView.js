@@ -60,6 +60,8 @@ App.View.GroupLayerPanel = Backbone.View.extend({
 
     for (var i in layers){
       var l = layers[i];
+      if (l.remove)
+        continue;
       var v = new App.View.GroupLayerPanelLayer({model: new Backbone.Model(l),geoVizModel: this.model});
       this._layers.push(v);
       this.$el.prepend(v.render().$el);
