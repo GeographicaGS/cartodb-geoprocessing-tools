@@ -112,12 +112,16 @@ App.Model.GeoViz = App.Model.Viz.extend({
   },
 
   removeSublayer: function(sublayerid){
-    var layers = this.getSublayers();
-    var index = this.findSublayerIdx(sublayerid);
+    // var layers = this.getSublayers();
+    // var index = this.findSublayerIdx(sublayerid);
 
-    if (index > -1) {
-      layers.splice(index, 1);
-    }
+    // if (index > -1) {
+    //   layers.splice(index, 1);
+    // }
+
+    var layer = this.findSublayer(sublayerid);
+    layer.remove = true;
+    layer.visible = false;
 
     this._saveAndTrigger();
   },
