@@ -1,0 +1,99 @@
+.layers_control {
+  position: relative;
+
+  .panel {
+    visibility: hidden;
+    opacity: .00001;
+    position: absolute;
+    top: calc(~'100% + 12px');
+    right: 0;
+    background-color: @grey05;
+    padding-bottom: 10px;
+    border: 1px solid @grey20;
+    border-radius: 0 0 0 3px;
+    box-shadow: 0 2px 4px 0 fade(@black, 10%);
+    transform: translateY(-25px);
+    z-index: 1;
+
+    transition: visibility 0s linear .25s, opacity .18s ease-in-out, transform .25s ease-in-out;
+
+    &.show {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0px);
+
+      transition: visibility 0s linear, opacity .25s ease-in-out .06s, transform .25s ease-in-out;
+    }
+
+    li {
+      list-style: none;
+      background-color: @white;
+      padding: 10px 10px 10px 5px;
+      border-bottom: 1px solid @grey10;
+
+      transition: background-color .10s ease-in-out;
+
+      .ctrls {
+        display: flex;
+        align-items: center;
+
+        span {
+          flex: 1 1 auto;
+          overflow-x: hidden;
+          text-overflow: ellipsis;
+
+          transition: color .25s ease-in-out;
+        }
+
+        .subviewcontrol, .toggle, .remove {
+          flex: 0 0 auto;
+          margin: 0 5px;
+        }
+
+        .subviewcontrol, .remove {
+          opacity: .00001;
+          transition: opacity .10s ease-in-out;
+        }
+
+        .remove img {
+          border-radius: 50%;
+          background-color: @grey10;
+          padding: 5px;
+        }
+
+        &:hover {
+          .subviewcontrol, .remove {
+            opacity: 1;
+          }
+        }
+      }
+
+      &.disabled {
+        .ctrls {
+          span {
+            color: @grey35;
+          }
+
+          &:hover {
+            .subviewcontrol, .remove {
+              opacity: .00001;
+            }
+          }
+        }
+      }
+
+      &.composed {
+        background-color: fade(@blue_light, 5%);
+        .ctrls {
+          span {
+            font-style: italic;
+          }
+        }
+      }
+
+      &:hover {
+        background-color: @grey05;
+      }
+    }
+  }
+}

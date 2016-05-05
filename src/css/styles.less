@@ -224,7 +224,44 @@ footer {
 	border-bottom: 1px solid @grey20;
 }
 
+.toggle {
+	position: relative;
+	height: 12px;
+	width: 20px;
+	border: 1px solid @grey35;
+	border-radius: 5px;
+	background-color: transparent;
+	font-size: 0;
+
+	transition: background-color .25s ease-in-out, border-color .25s ease-in-out;
+
+	&:after {
+		content: "";
+		display: block;
+		position: absolute;;
+		top: 1px;
+		left: 1px;
+		height: 8px;
+		width: 8px;
+		background-color: @grey35;
+		border-radius: 50%;
+
+		transition: background-color .25s ease-in-out, transform .25s ease-in-out;
+	}
+
+	&.enabled {
+		background-color: @blue_light;
+		border-color: @blue_light;
+
+		&:after {
+			transform: translateX(100%);
+			background-color: @white;
+		}
+	}
+}
+
 @import "src/css/login.less";
 @import "src/css/maplist.less";
 @import "src/css/map.less";
+@import "src/css/layercontrol.less";
 @import "src/css/animations.less";

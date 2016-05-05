@@ -2,9 +2,9 @@
   flex: 1 1 100%;
   height: calc(~'100% - ' @mapToolbarHeight);
 
-  .cartodb-zoom{
+  .cartodb-zoom, .leaflet-control-zoom {
     position: absolute;
-    left: -2px;
+    left: 9px;
     top: 62px;
     z-index: 2;
     width: auto;
@@ -12,26 +12,27 @@
     box-shadow: 0 0 0 4px rgba(100,100,100,.2);
     border-radius: 2px;
 
-    .zoom_in, .zoom_out {
+    .zoom_in, .zoom_out, .leaflet-control-zoom-in, .leaflet-control-zoom-out {
       background-position: center;
       background-repeat: no-repeat;
       width: 30px;
       height: 30px;
       outline: none;
       border: 1px solid @blue_lighter;
+      font-size: 0; // Avoid showing text labels on leaflet
 
       &:hover {
         border-color: @blue_medium;
       }
     }
 
-    .zoom_in {
+    .zoom_in, .leaflet-control-zoom-in {
       background-image: url('/img/SGV_icon_zoommore.svg');
       border-radius: 2px 2px 0 0;
       border-bottom-width: 0;
     }
 
-    .zoom_out {
+    .zoom_out, .leaflet-control-zoom-out {
       background-image: url('/img/SGV_icon_zoomless.svg');
       border-radius: 0 0 2px 2px;
     }
