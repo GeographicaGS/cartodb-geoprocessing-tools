@@ -1,1 +1,13 @@
-Here the wizard!
+<% if (loading) { %>
+  Loading
+<% }  else if (geometrytype == 'error') { %>
+  Error guessing geometry type
+<% } else if (geometrytype == 'nodata') { %>
+  Cannot open wizard for an empty layer
+<% } else if (geometrytype=='ST_MultiPolygon' || geometrytype=='ST_Polygon') { %>
+  TODO Multipolygon wizard
+<% } else if (geometrytype=='ST_MultiLine' ||  geometrytype=='ST_Line') { %>
+  TODO Line wizard
+<% } else if (geometrytype=='ST_MultiPoint' || geometrytype=='ST_Point') { %>
+  TODO Point wizard
+<% } %>
