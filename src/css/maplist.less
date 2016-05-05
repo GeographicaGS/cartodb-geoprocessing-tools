@@ -1,0 +1,25 @@
+#maplist {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  .wrapper {
+    width: 90%;
+    max-width: 570px;
+    margin: 0 auto;
+
+    &.toolbar {
+      display: flex;
+      align-items: center;
+
+      & > * {
+        display: flex;
+        align-items: stretch;
+      }
+
+      h2 {
+        flex: 1 1 100%;
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@ App.View.LayerControl = Backbone.View.extend({
   _template: _.template( $('#layercontrol_template').html() ),
 
   initialize: function(options) {
-
+   
   },
 
   onClose: function(){
@@ -13,6 +13,7 @@ App.View.LayerControl = Backbone.View.extend({
   },
 
   render: function(){
+
     this.$el.html(this._template());
 
     return this;
