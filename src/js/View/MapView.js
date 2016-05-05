@@ -12,7 +12,7 @@ App.View.Map = Backbone.View.extend({
     this.footer = new App.View.Footer();
 
     this._user = new App.Model.UserLocalStorage();
-    
+
   },
 
   onClose: function(){
@@ -63,18 +63,15 @@ App.View.Map = Backbone.View.extend({
       this._geoVizModel.save();
 
     this.postrender();
-    
+
   },
 
   postrender: function(){
-    this.groupLayer = new App.View.GroupLayer({
-      model : this._geoVizModel,
-      el: this.$('.layerpanel'),
+    this.toolbar = new App.View.MapToolbar({
+      el: this.$('.toolbar'),
+      model: this._geoVizModel,
       map: this.map
     });
-    this.groupLayer.render();
-
-    this.toolbar = new App.View.MapToolbar({el: this.$('.toolbar'),model: this._geoVizModel});
     this.toolbar.render();
   },
 
@@ -85,10 +82,10 @@ App.View.Map = Backbone.View.extend({
 
     this.footer.setElement($('footer'));
     this.header.setElement($('header'));
-    
+
     this.header.render();
     this.footer.render({classes: ''});
-    
+
     this.$map = this.$('.map');
     this.$map.css('width','100%').css('height', (this.$el.parent().height() - 64) + "px"); // TODO: parameterize or calculate hardcoded toolbar height value (64px)
 

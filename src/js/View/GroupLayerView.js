@@ -1,7 +1,12 @@
 'use strict';
 
 App.View.GroupLayer = Backbone.View.extend({
-  
+  _template: _.template( $('#grouplayer-layercontrol_template').html() ),
+
+  events: {
+    'click .tooglePanel': 'togglePanel'
+  },
+
   initialize: function(options) {
     this._map = options.map;
   },
@@ -11,14 +16,23 @@ App.View.GroupLayer = Backbone.View.extend({
   },
 
   render: function(){
+    var layers = _.find(this.model.get('layers'), function(l){ return l.type=='layergroup'}).options.layer_definition.layers;
+    var visible = _.filter(layers, function(l){return l.visible});
 
-    this._panelView = new App.View.GroupLayerPanel({model : this.model});
+    this.$el.html(this._template({total: layers.length, visible: visible.length}));
+
+    this.$panel = this.$('.panel');
+    this._panelView = new App.View.GroupLayerPanel({el: this.$panel, model : this.model});
     this._mapView = new App.View.GroupLayerMap({model : this.model, map: this._map});
 
-    this.$el.html(this._panelView.render().$el);
+    this._panelView.render();
     this._mapView.render();
 
     return this;
+  },
+
+  togglePanel: function() {
+    this.$panel.toggleClass('show');
   }
 
 });
@@ -26,9 +40,9 @@ App.View.GroupLayer = Backbone.View.extend({
 App.View.GroupLayerPanel = Backbone.View.extend({
 
   tagName: 'ul',
-  
+
   initialize: function(options) {
-    
+
   },
 
   onClose: function(){
@@ -37,13 +51,13 @@ App.View.GroupLayerPanel = Backbone.View.extend({
       v.close();
     });
   },
-  
+
   render: function(){
     var m = this.model.toJSON();
-    
+
     var layers = _.find(m.layers, function(l){ return l.type=='layergroup'}).options.layer_definition.layers;
     this._layers = [];
-    
+
     for (var i in layers){
       var l = layers[i];
       if (l.remove)
@@ -52,7 +66,7 @@ App.View.GroupLayerPanel = Backbone.View.extend({
       this._layers.push(v);
       this.$el.prepend(v.render().$el);
     };
-    
+
     return this;
   }
 
@@ -63,7 +77,7 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
   _template: _.template( $('#grouplayer-layer_template').html() ),
 
   tagName: 'li',
-  
+
   initialize: function(options) {
     this._geoVizModel = options.geoVizModel;
     this.listenTo(this.model,'change:visible',this._renderUpdateButton);
@@ -78,11 +92,10 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
   onClose: function(){
     this.stopListening();
   },
-  
+
   _toggleSubView: function(e){
     e.preventDefault();
     var type = $(e.target).closest('a[data-el]').attr('data-el');
-    
     var suffix;
     if (type == 'wizard')
       suffix = 'Wizard';
@@ -104,7 +117,7 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
       if (prev)
         prev.close();
     }
-    
+
     return this;
 
   },
@@ -112,10 +125,13 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
   _renderUpdateButton: function(){
     var $el = this.$('.toggle');
 
-    if (this.model.get('visible'))
-      $el.removeClass('disable').addClass('enable');
-    else
-      $el.removeClass('enable').addClass('disable');
+    if (this.model.get('visible')){
+      $el.removeClass('disabled').addClass('enabled');
+      this.$el.removeClass('disabled');
+    } else {
+      $el.removeClass('enabled').addClass('disabled');
+      this.$el.addClass('disabled');
+    }
 
     return this;
   },
@@ -155,11 +171,11 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
     this._geoVizModel = options.geoVizModel;
     this.listenTo(this.model,'change:geometrytype',this.render);
   },
- 
+
   onClose: function(){
     this.stopListening();
   },
-  
+
   _checkGeometryType: function(){
     var sql = new cartodb.SQL({ user: this._geoVizModel.get('account') });
     var q = "WITH q as ({{sql}}) select st_geometrytype(the_geom_webmercator) as geometrytype from q LIMIT 1";
@@ -179,7 +195,7 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
   },
 
   render: function(){
-    // Check layer type. Is it a polygon, line or point? 
+    // Check layer type. Is it a polygon, line or point?
     var geometrytype = this.model.get('geometrytype'),
       opts = {};
     if (geometrytype){
@@ -209,11 +225,11 @@ App.View.GroupLayerPanelLayerCartoCSS = Backbone.View.extend({
   events: {
     'click input[type="button"]' : '_update'
   },
- 
+
   onClose: function(){
     this.stopListening();
   },
-  
+
   render: function(){
     this.$el.html(this._template(this.model.toJSON().options));
     return this;
@@ -234,13 +250,13 @@ App.View.GroupLayerPanelLayerSQL = Backbone.View.extend({
   _template: _.template( $('#grouplayer-sql_template').html() ),
 
   initialize: function(options) {
-    
+
   },
- 
+
   onClose: function(){
     this.stopListening();
   },
-  
+
   render: function(){
 
     this.$el.html(this._template(this.model.toJSON().options));
@@ -251,18 +267,18 @@ App.View.GroupLayerPanelLayerSQL = Backbone.View.extend({
 
 
 App.View.GroupLayerMap = Backbone.View.extend({
-  
+
   initialize: function(options) {
     _.bindAll(this,'_onLayerDone');
 
-    this._map = options.map;  
+    this._map = options.map;
     this.listenTo(this.model, "change", this.render);
   },
 
   onClose: function(){
     this.stopListening();
   },
-  
+
   _onLayerDone: function(layer){
     this._layer = layer;
   },
@@ -274,7 +290,7 @@ App.View.GroupLayerMap = Backbone.View.extend({
     if (this._layer){
       this._map.removeLayer(this._layer);
     }
-    
+
     // A Clone is mandatory because createLayer changes the object received.
     // Doesn't work. Clone does a shallow copy
     // var vizjson = this.model.clone().toJSON();
@@ -286,10 +302,8 @@ App.View.GroupLayerMap = Backbone.View.extend({
       .on('error', function(err) {
         console.log("some error occurred: " + err);
       });
-    
+
     return this;
   }
 
 });
-
-
