@@ -68,7 +68,7 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
   },
 
   events: {
-    'click a.subviewcontrol': '_openSubView',
+    'click a.subviewcontrol': '_toggleSubView',
     'click a.toggle': '_toggle',
     'click a.remove': '_remove'
   },
@@ -77,10 +77,9 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
     this.stopListening();
   },
   
-  _openSubView: function(e){
+  _toggleSubView: function(e){
     e.preventDefault();
     var type = $(e.target).closest('a[data-el]').attr('data-el');
-    var prev = this._subview;
     
     var suffix;
     if (type == 'wizard')
@@ -91,12 +90,19 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
       suffix = 'CartoCSS';
 
     var fn = App.View['GroupLayerPanelLayer' + suffix];
-    this._subview = new fn({model: this.model,geoVizModel: this._geoVizModel}).render();
-    this.$('.subviewholder').html(this._subview.$el);
 
-    if (prev)
-      prev.close();
-
+    if (this._subview instanceof fn){
+      this._subview.close();
+      this._subview = null;
+    }
+    else{
+      var prev = this._subview;
+      this._subview = new fn({model: this.model,geoVizModel: this._geoVizModel}).render();
+      this.$('.subviewholder').html(this._subview.$el);
+      if (prev)
+        prev.close();
+    }
+    
     return this;
 
   },
@@ -132,8 +138,7 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
   },
 
   render: function(){
-    var m = this.model.toJSON();
-    this.$el.html(this._template(m.options));
+    this.$el.html(this._template(this.model.toJSON().options));
     this._renderUpdateButton();
     return this;
   }
@@ -166,6 +171,10 @@ App.View.GroupLayerPanelLayerCartoCSS = Backbone.View.extend({
   initialize: function(options) {
     this._geoVizModel = options.geoVizModel;
   },
+
+  events: {
+    'click input[type="button"]' : '_update'
+  },
  
   onClose: function(){
     this.stopListening();
@@ -174,6 +183,14 @@ App.View.GroupLayerPanelLayerCartoCSS = Backbone.View.extend({
   render: function(){
     this.$el.html(this._template(this.model.toJSON().options));
     return this;
+  },
+
+  _update: function(e){
+    e.preventDefault();
+
+    var cartocss = $.trim(this.$('textarea').val());
+    this.model.get('options').cartocss = cartocss;
+    this._geoVizModel.updateSubLayerCartoCSS(this.model.get('id'),cartocss);
   }
 
 });
