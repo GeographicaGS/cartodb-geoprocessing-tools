@@ -109,7 +109,7 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
   
   initialize: function(options) {
     this._geoVizModel = options.geoVizModel;
-
+    this.listenTo(this.model,'change:visible',this._renderUpdateButton);
   },
 
   events: {
@@ -141,19 +141,35 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
     if (prev)
       prev.close();
 
+    return this;
 
   },
 
+  _renderUpdateButton: function(){
+    var $el = this.$('.toggle');
+
+    if (this.model.get('visible'))
+      $el.removeClass('disable').addClass('enable');
+    else
+      $el.removeClass('enable').addClass('disable');
+
+    return this;
+  },
+
   _toggle: function(e){
-    e. preventDefault();
+    e.preventDefault();
 
     this.model.set('visible',!this.model.get('visible'));
     this._geoVizModel.setSublayerVisibility(this.model.get('id'),this.model.get('visible'));
+
+    return this;
+
   },
 
   render: function(){
     var m = this.model.toJSON();
     this.$el.html(this._template(m.options));
+    this._renderUpdateButton();
     return this;
   }
 
@@ -236,13 +252,18 @@ App.View.GroupLayerMap = Backbone.View.extend({
 
   render: function(){
 
+    console.log('Map render!');
+
     if (this._layer){
       this._map.removeLayer(this._layer);
-      this._layer.clear();
     }
     
-    // A Clone is mandatory because createLayer change the object received.
-    cartodb.createLayer(this._map, this.model.clone().toJSON())
+    // A Clone is mandatory because createLayer changes the object received.
+    // Doesn't work. Clone does a shallow copy
+    // var vizjson = this.model.clone().toJSON();
+    var vizjson = JSON.parse(JSON.stringify(this.model.toJSON()));
+
+    cartodb.createLayer(this._map, vizjson)
       .addTo(this._map)
       .on('done',this._onLayerDone)
       .on('error', function(err) {

@@ -48,15 +48,18 @@ App.Model.GeoViz = Backbone.Model.extend({
     }
     else if ( method == 'update'){
 
-      var viz_json = JSON.stringify(_this.toJSON());
-      console.log('Update save');
       if (this.get('account') != this._user.get('account')){
-        throw 'Cannot call to save on other user\'s account';
+        // throw 'Cannot call to save on other user\'s account';
+        return;
       }
       else if (!this._user.get('autosave') || !this._user.get('api_key')){
-        throw 'Autosave not enable! Bad hack attempt';
+        //throw 'Autosave not enable! Bad hack attempt';
+        return;
       }
       else{
+
+        var viz_json = JSON.stringify(_this.toJSON());
+
         sql = new cartodb.SQL({ user: this.get('account') });
         var api_key = this._user.get('api_key');
 
@@ -97,8 +100,18 @@ App.Model.GeoViz = Backbone.Model.extend({
     }
   },
 
+  _findSublayer: function(sublayerid){
+    var layers = _.find(this.get('layers'), function(l){ return l.type=='layergroup'}).options.layer_definition.layers;
+    return _.findWhere(layers,{id: sublayerid});
+
+  },
+
   setSublayerVisibility: function(sublayerid,visible){
-    console.log(this.toJSON());
+    var l = this._findSublayer(sublayerid);
+    l.visible = visible;
+    this.save();
+    this.trigger('change');
+
   }
 
 });
