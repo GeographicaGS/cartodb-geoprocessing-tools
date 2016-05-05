@@ -6,9 +6,12 @@ App.View.Map = Backbone.View.extend({
 
   initialize: function(options) {
 
+    _.bindAll(this,'_onFetchVizModel');
+
     this.header = new App.View.Header();
     this.footer = new App.View.Footer();
-    this.toolbar = new App.View.MapToolbar();
+
+    this._user = new App.Model.UserLocalStorage();
     
   },
 
@@ -20,6 +23,39 @@ App.View.Map = Backbone.View.extend({
       this.footer.close();
   },
 
+  _onFetchVizModel: function(m){
+    this._nfetches++;
+
+    if (this._nfetches==2){
+      // Both models fetched. Let's do the merge
+      this._mergeViz();
+    }
+  },
+
+  _mergeViz: function(){
+
+    if (!this._geoVizModel.get('layers'))
+        this._geoVizModel = new App.Model.GeoViz(this._cartoVizModel.toJSON());
+
+    if (this._user.get('autosave') && this._user.get('account')==this._geoVizModel.get('account'))
+      this._geoVizModel.save();
+
+    this.postrender();
+    
+  },
+
+  postrender: function(){
+    this.groupLayer = new App.View.GroupLayer({
+      model : this._geoVizModel,
+      el: this.$('.layerpanel'),
+      map: this.map
+    });
+    this.groupLayer.render();
+
+    this.toolbar = new App.View.MapToolbar({el: this.$('.toolbar'),model: this._geoVizModel});
+    this.toolbar.render();
+  },
+
   render: function(){
 
     // this.setElement($('main'));
@@ -27,12 +63,10 @@ App.View.Map = Backbone.View.extend({
 
     this.footer.setElement($('footer'));
     this.header.setElement($('header'));
-    this.toolbar.setElement(this.$('.toolbar'));
-
+    
     this.header.render();
     this.footer.render({classes: ''});
-    this.toolbar.render();
-
+    
     this.$map = this.$('.map');
     this.$map.css('width','100%').css('height', (this.$el.parent().height() - 64) + "px"); // TODO: parameterize or calculate hardcoded toolbar height value (64px)
 
@@ -42,17 +76,26 @@ App.View.Map = Backbone.View.extend({
     };
     this.map = new L.Map('map', mapOptions);
 
-    var m = new Backbone.Model({
-      map : this.map,
-      account: this.model.get('account'),
-      viz: this.model.get('viz')
+    this._cartoVizModel = new App.Model.CartoViz({
+      id: this.model.get('viz'),
+      account: this.model.get('account')
     });
-    
-    this.groupLayer = new App.View.GroupLayer({
-      model : m,
-      el: this.$('.layerpanel')
+
+    this._geoVizModel = new App.Model.GeoViz({
+      id: this.model.get('viz'),
+      account: this.model.get('account')
     });
-    this.groupLayer.render();
+
+    // Everything start after fetching models.
+    this._nfetches = 0;
+
+    this._cartoVizModel.fetch({
+      success: this._onFetchVizModel
+    });
+
+    this._geoVizModel.fetch({
+      success: this._onFetchVizModel
+    });
 
     return this;
   }

@@ -3,65 +3,20 @@
 App.View.GroupLayer = Backbone.View.extend({
   
   initialize: function(options) {
-
-    _.bindAll(this,'_onFetchVizModel');
-    this._map = this.model.get('map');
-
-    this._user = new App.Model.UserLocalStorage();
-
-    this._cartoVizModel = new App.Model.CartoViz({
-      id: this.model.get('viz'),
-      account: this.model.get('account')
-    });
-
-    this._geoVizModel = new App.Model.GeoViz({
-      id: this.model.get('viz'),
-      account: this.model.get('account')
-    });
-
+    this._map = options.map;
   },
 
   onClose: function(){
     this.stopListening();
   },
 
-  _onFetchVizModel: function(m){
-    this._nfetches++;
+  render: function(){
 
-    if (this._nfetches==2){
-      // Both models fetched. Let's do the merge
-      this._mergeViz();
-    }
-  },
-
-  _mergeViz: function(){
-
-    if (!this._geoVizModel.get('layers'))
-        this._geoVizModel = new App.Model.GeoViz(this._cartoVizModel.toJSON());
-
-    if (this._user.get('autosave') && this._user.get('account')==this._geoVizModel.get('account'))
-      this._geoVizModel.save();
-
-    this._panelView = new App.View.GroupLayerPanel({model : this._geoVizModel});
-    this._mapView = new App.View.GroupLayerMap({model : this._geoVizModel, map: this._map});
+    this._panelView = new App.View.GroupLayerPanel({model : this.model});
+    this._mapView = new App.View.GroupLayerMap({model : this.model, map: this._map});
 
     this.$el.html(this._panelView.render().$el);
     this._mapView.render();
-    
-  },
-  
-  render: function(){
-
-    // Everything start after fetching models.
-    this._nfetches = 0;
-
-    this._cartoVizModel.fetch({
-      success: this._onFetchVizModel
-    });
-
-    this._geoVizModel.fetch({
-      success: this._onFetchVizModel
-    });
 
     return this;
   }
@@ -136,7 +91,7 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
       suffix = 'CartoCSS';
 
     var fn = App.View['GroupLayerPanelLayer' + suffix];
-    this._subview = new fn({model: this.model}).render();
+    this._subview = new fn({model: this.model,geoVizModel: this._geoVizModel}).render();
     this.$('.subviewholder').html(this._subview.$el);
 
     if (prev)
@@ -209,7 +164,7 @@ App.View.GroupLayerPanelLayerCartoCSS = Backbone.View.extend({
   _template: _.template( $('#grouplayer-cartocss_template').html() ),
 
   initialize: function(options) {
-    
+    this._geoVizModel = options.geoVizModel;
   },
  
   onClose: function(){
@@ -217,7 +172,7 @@ App.View.GroupLayerPanelLayerCartoCSS = Backbone.View.extend({
   },
   
   render: function(){
-    this.$el.html(this._template());
+    this.$el.html(this._template(this.model.toJSON().options));
     return this;
   }
 
