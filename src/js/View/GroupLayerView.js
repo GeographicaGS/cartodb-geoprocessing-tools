@@ -44,7 +44,7 @@ App.View.GroupLayerPanel = Backbone.View.extend({
   tagName: 'ul',
 
   initialize: function(options) {
-
+    this.listenTo(this.model,'addSublayer',this._renderSublayer)
   },
 
   onClose: function(){
@@ -62,14 +62,17 @@ App.View.GroupLayerPanel = Backbone.View.extend({
 
     for (var i in layers){
       var l = layers[i];
-      if (l.remove)
-        continue;
-      var v = new App.View.GroupLayerPanelLayer({model: new Backbone.Model(l),geoVizModel: this.model});
-      this._layers.push(v);
-      this.$el.prepend(v.render().$el);
+      if (l.remove) continue;
+      this._renderSublayer(l);
     };
 
     return this;
+  },
+
+  _renderSublayer: function(l){
+    var v = new App.View.GroupLayerPanelLayer({model: new Backbone.Model(l),geoVizModel: this.model});
+    this._layers.push(v);
+    this.$el.prepend(v.render().$el);
   }
 
 });
@@ -153,7 +156,7 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
     e.preventDefault();
 
     this.model.set('visible',!this.model.get('visible'));
-    this._geoVizModel.setSublayerVisibility(this.model.get('id'),this.model.get('visible'));
+    this._geoVizModel.setSublayerVisibility(this.model.get('gid'),this.model.get('visible'));
 
     return this;
 
@@ -161,15 +164,20 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
 
   _remove: function(e){
     e.preventDefault();
+    if (!this.model.get('geolayer')) return;
 
     if(confirm('Are you sure?')){
-      this._geoVizModel.removeSublayer(this.model.get('id'));
+      this._geoVizModel.removeSublayer(this.model.get('gid'));
       this.close();
     }
   },
 
   render: function(){
-    this.$el.html(this._template(this.model.toJSON().options));
+    this.$el.html(this._template(this.model.get('options')));
+    if (!this.model.get('geolayer')){
+      this.$('.remove').addClass('disabled');
+    }
+
     this._renderUpdateButton();
     return this;
   }
@@ -255,7 +263,7 @@ App.View.GroupLayerPanelLayerCartoCSS = Backbone.View.extend({
 
     var cartocss = $.trim(this.$('textarea').val());
     this.model.get('options').cartocss = cartocss;
-    this._geoVizModel.updateSubLayerCartoCSS(this.model.get('id'),cartocss);
+    this._geoVizModel.updateSubLayerCartoCSS(this.model.get('gid'),cartocss);
   }
 
 });
@@ -289,6 +297,7 @@ App.View.GroupLayerMap = Backbone.View.extend({
 
     this._map = options.map;
     this.listenTo(this.model, "change", this.render);
+    this.listenTo(this.model, "addSublayer", this.render);
   },
 
   onClose: function(){

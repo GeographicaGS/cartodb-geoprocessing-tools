@@ -8,7 +8,11 @@ App.View.Map = Backbone.View.extend({
 
     _.bindAll(this,'_onFetchVizModel');
 
-    this.header = new App.View.Header();
+     var m = new Backbone.Model({
+      section: 'map',
+      account : this.model.get('account')
+    });
+    this.header = new App.View.Header({model: m});
     this.footer = new App.View.Footer();
 
     this._user = new App.Model.UserLocalStorage();
@@ -34,6 +38,9 @@ App.View.Map = Backbone.View.extend({
 
   _mergeViz: function(){
 
+    // Add GID to cartoVizModel
+    this._cartoVizModel.addLayerGID();
+
     if (!this._geoVizModel.get('layers'))
         this._geoVizModel = new App.Model.GeoViz(this._cartoVizModel.toJSON());
 
@@ -41,20 +48,38 @@ App.View.Map = Backbone.View.extend({
     var cartolayers = this._cartoVizModel.getSublayers();
 
     // Loop over geovizmodel layers
+    var toremove = [];
     for (var i in geolayers){
       var geolayer = geolayers[i];
-      // copy the layer definition from CartoDB viz. CartoDB takes precedence over geo except for CartoCSS.
-      var cartolayer = this._cartoVizModel.findSublayer(geolayer.id);
-      cartolayer.options.cartocss = geolayer.options.cartocss;
-      geolayer = cartolayer;
+      if (!geolayer.geolayer){
+        // Layer which comes from CartoDB Editor
+        var cartolayer = this._cartoVizModel.findSublayer(geolayer.gid);
+        if (!cartolayer){
+          // It's a non geolayer and it's not at CartoDB. It has been removed from CartoDB editor.
+          toremove.push(i);  
+        }
+        else{
+          // Copy the layer definition from CartoDB viz. CartoDB takes precedence over geo except for CartoCSS.
+          cartolayer.options.cartocss = geolayer.options.cartocss;
+          geolayers[i] = cartolayer;
+        }
+      }
+      else{
+        // TODO check if parent layer exists at CartoDB Editor. If it doesn't exist should be removed
+      }
+    }
+
+    // Remove all layers.
+    for (var i in toremove){
+      geolayers[i].splice(toremove[i],1);
     }
 
     // Copy layers from CartoViz which are not present at GeoViz. It happens when new layers are added at CartoDB editor
     for (var i in cartolayers){
       var cartolayer = cartolayers[i];
-      if (!this._geoVizModel.findSublayer(cartolayer.id)){
+      if (!this._geoVizModel.findSublayer(cartolayer.gid)){
         // New layer. Let's add it
-        console.debug('Added layer ' + cartolayer.id);
+        console.debug('Added layer ' + cartolayer.gid);
         geolayers.push(cartolayer);
       }
     }

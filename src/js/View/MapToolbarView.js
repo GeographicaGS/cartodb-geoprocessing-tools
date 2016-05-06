@@ -8,12 +8,50 @@ App.View.MapToolbar = Backbone.View.extend({
     var options = options || {};
     if(options.map)
       this._map = options.map;
+
+    this.listenTo(App.events,'tool:close',this._closeTool)
     // this.layersControl = new App.View.LayerControl();
   },
 
-  onClose: function(){
+  events: {
+    'click li[data-tool]' : '_openTool'
+  },
 
+  onClose: function(){
     this.stopListening();
+    this._closeTool();
+  },
+
+  _openTool: function(e){
+    var $li = $(e.target).closest('li'),
+      type = $li.attr('data-tool'),
+      cn;
+
+    if (type == 'clip'){
+      cn = 'Clip';
+    }
+    else{
+      throw new Error('Unsupported tool type: '+ type);
+    }
+
+    var fn = App.View.Tool[cn];
+    if (this._tool)
+      this._tool.close();
+
+    this._tool = new fn({
+      geoVizModel: this.model, 
+    });
+
+    this.$('.toolholder').html(this._tool.render().$el).show();
+
+  },
+
+  _closeTool: function(){
+    this.$('.toolholder').hide();
+    if (this._tool){
+      this._tool.close();
+      this._tool = null;
+    }
   },
 
   render: function(){

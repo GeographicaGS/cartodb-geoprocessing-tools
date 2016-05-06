@@ -14,6 +14,13 @@ App.Model.CartoViz = App.Model.Viz.extend({
     {
       throw 'Unsupported method at CartoViz Model';
     }
+  },
+
+  addLayerGID: function(){
+    var layers = this.getSublayers();
+    for (var i in layers){
+      layers[i].gid = layers[i].id;
+    }
   }
 });
 
