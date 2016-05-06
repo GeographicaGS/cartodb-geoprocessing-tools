@@ -4,7 +4,7 @@ App.View.GroupLayer = Backbone.View.extend({
   _template: _.template( $('#grouplayer-layercontrol_template').html() ),
 
   events: {
-    'click .tooglePanel': 'togglePanel'
+    'click .togglePanel': 'togglePanel'
   },
 
   initialize: function(options) {
@@ -22,6 +22,7 @@ App.View.GroupLayer = Backbone.View.extend({
     this.$el.html(this._template({total: layers.length, visible: visible.length}));
 
     this.$panel = this.$('.panel');
+    this.$togglePanelBtn = this.$('.togglePanel');
     this._panelView = new App.View.GroupLayerPanel({el: this.$panel, model : this.model});
     this._mapView = new App.View.GroupLayerMap({model : this.model, map: this._map});
 
@@ -33,6 +34,7 @@ App.View.GroupLayer = Backbone.View.extend({
 
   togglePanel: function() {
     this.$panel.toggleClass('show');
+    this.$togglePanelBtn.toggleClass('selected');
   }
 
 });
@@ -95,6 +97,9 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
 
   _toggleSubView: function(e){
     e.preventDefault();
+
+    $(e.currentTarget).parent().children('.selected').removeClass('selected');
+
     var type = $(e.target).closest('a[data-el]').attr('data-el');
     var suffix;
     if (type == 'wizard')
@@ -106,20 +111,28 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
 
     var fn = App.View['GroupLayerPanelLayer' + suffix];
 
-    if (this._subview instanceof fn){
-      this._subview.close();
-      this._subview = null;
-    }
-    else{
-      var prev = this._subview;
-      this._subview = new fn({model: this.model,geoVizModel: this._geoVizModel}).render();
-      this.$('.subviewholder').html(this._subview.$el);
-      if (prev)
-        prev.close();
-    }
+    this.$('.subviewholder').get(0).className = 'subviewholder';
+    this.$el.removeClass('selected');
+    var that = this;
+    setTimeout(function(){
+      var isInstance = that._subview instanceof fn;
+      if(that._subview && isInstance){
+        that._subview.close();
+        that._subview = null;
+      }
+
+      if (!isInstance){
+        var prev = that._subview;
+        that._subview = new fn({model: that.model,geoVizModel: that._geoVizModel}).render();
+        that.$('.subviewholder').html(that._subview.$el).get(0).className = 'subviewholder ' + type;
+        that.$el.addClass('selected');
+        $(e.currentTarget).addClass('selected');
+        if (prev)
+          prev.close();
+      }
+    }, 200);
 
     return this;
-
   },
 
   _renderUpdateButton: function(){
@@ -166,6 +179,7 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
 App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
 
   _template: _.template( $('#grouplayer-wizard_template').html() ),
+  className: 'wizard',
 
   initialize: function(options) {
     this._geoVizModel = options.geoVizModel;
@@ -217,6 +231,7 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
 App.View.GroupLayerPanelLayerCartoCSS = Backbone.View.extend({
 
   _template: _.template( $('#grouplayer-cartocss_template').html() ),
+  className: 'css',
 
   initialize: function(options) {
     this._geoVizModel = options.geoVizModel;
@@ -248,6 +263,7 @@ App.View.GroupLayerPanelLayerCartoCSS = Backbone.View.extend({
 App.View.GroupLayerPanelLayerSQL = Backbone.View.extend({
 
   _template: _.template( $('#grouplayer-sql_template').html() ),
+  className: 'sql',
 
   initialize: function(options) {
 

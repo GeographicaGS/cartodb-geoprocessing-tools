@@ -29,7 +29,7 @@
     li {
       list-style: none;
       background-color: @white;
-      padding: 10px 5px;
+      padding: 0;
       border-bottom: 1px solid @grey10;
 
       // transition: background-color .10s ease-in-out;
@@ -40,6 +40,7 @@
 
         span {
           flex: 1 1 auto;
+          padding: 10px 0;
           overflow-x: hidden;
           text-overflow: ellipsis;
 
@@ -54,16 +55,142 @@
         .remove {
           opacity: .00001;
           // transition: opacity .10s ease-in-out;
+          line-height: 0;
         }
 
         .subviewcontrol {
           display: none;
+          outline: none;
+          opacity: .75;
+          line-height: 0;
+          transition: opacity .10s ease-in-out;
+
+          &.selected, &:hover {
+            opacity: 1;
+          }
         }
 
-        .remove img {
-          border-radius: 50%;
-          background-color: @grey10;
-          padding: 5px;
+        .remove {
+          outline: none;
+          img {
+            border-radius: 50%;
+            background-color: @grey10;
+            padding: 5px;
+          }
+        }
+      }
+
+      .subviewholder {
+        background-color: @grey60;
+        color: @grey30;
+        position: relative;
+        height: 100%;
+        max-height: 0;
+        padding: 0 20px;
+        overflow: hidden;
+
+        transition: max-height .20s ease-in-out, padding .20s ease-in-out;
+
+        &:before {
+          content: "";
+          position: absolute;
+          top: -8px;
+          right: 0;
+          width: 0;
+          height: 0;
+          border-style: solid;
+          border-width: 0 7px 8px 7px;
+          border-color: transparent transparent @grey60 transparent;
+          opacity: .00001;
+
+          transition: transform .20s ease-in-out, opacity .20s ease-in-out;
+        }
+
+        &:after {
+          content: '';
+          display: block;
+          clear: both;
+        }
+
+        &:empty {
+          // display: none;
+
+          &:before {
+            transform: translateY(10px);
+            opacity: .00001;
+          }
+        }
+
+        &.sql, &.cartocss, &.wizard {
+          max-height: 475px;
+          padding: 20px 20px 10px;
+
+          &:before {
+            opacity: 1;
+          }
+        }
+
+        &.sql {
+          &:before {
+            // right: 75px;
+            transform: translateX(-74px);
+          }
+        }
+
+        &.cartocss {
+          &:before {
+            // right: 111px;
+            transform: translateX(-110px);
+          }
+        }
+
+        &.wizard {
+          &:before {
+            // right: 147px;
+            transform: translateX(-147px);
+          }
+        }
+
+        pre {
+          color: @white;
+          font-family: courier, monospace;
+          font-weight: 600;
+          margin-bottom: 10px;
+        }
+
+        textarea {
+          width: 100%;
+          height: 400px;
+          padding: 10px;
+          background-color: @grey55;
+          color: @white;
+          border: 1px solid @grey75;
+          border-radius: 2px;
+          font-family: courier, monospace;
+          font-weight: 600;
+          resize: none;
+        }
+
+        .button {
+          background-color: @blue_light;
+          color: @white;
+          display: inline-block;
+          padding: 8px 10px;
+          border-radius: 2px;
+          margin-top: 10px;
+          float: right;
+          .font(bold);
+
+          transition: background-color .10s ease-in-out;
+
+          img {
+            vertical-align: middle;
+            margin-left: 5px;
+          }
+
+          &:hover {
+            background-color: lighten(@blue_light, 5%);
+          }
         }
       }
 
@@ -79,6 +206,10 @@
             }
           }
         }
+
+        .subviewholder {
+          display: none;
+        }
       }
 
       &.composed {
@@ -93,6 +224,18 @@
       &:hover {
         background-color: @grey05;
 
+        .ctrls {
+          .remove {
+            opacity: 1;
+          }
+
+          .subviewcontrol {
+            display: block;
+          }
+        }
+      }
+
+      &.selected {
         .ctrls {
           .remove {
             opacity: 1;
