@@ -1,9 +1,9 @@
 <ul class="buttons">
   <li class="highlighted"><img src="/img/SGV_tool-bookmark.svg" alt="Bookmarks" /></li>
-  <li><img src="/img/SGV_tool-union.svg" alt="Union" /></li>
-  <li><img src="/img/SGV_tool-erase.svg" alt="Erase" /></li>
-  <li><img src="/img/SGV_tool-intersect.svg" alt="Intersect" /></li>
-  <li><img src="/img/SGV_tool-clip.svg" alt="Clip" /></li>
+  <li data-tool="union"><img src="/img/SGV_tool-union.svg" alt="Union" /></li>
+  <li data-tool="erase"><img src="/img/SGV_tool-erase.svg" alt="Erase" /></li>
+  <li data-tool="intersect"><img src="/img/SGV_tool-intersect.svg" alt="Intersect" /></li>
+  <li data-tool="clip"><img src="/img/SGV_tool-clip.svg" alt="Clip" /></li>
   <li class="separator"></li>
   <li><img src="/img/SGV_tool-buffer.svg" alt="Buffer" /></li>
   <li><img src="/img/SGV_tool-stat.svg" alt="Stats" /></li>
@@ -12,6 +12,7 @@
   <li><img src="/img/SGV_tool-area.svg" alt="Area" /></li>
 </ul>
 <div class="layers_control"></div>
+<div class="toolholder" style="position:fixed;left:10px;top:50px;background-color: #333;color: #fff;display: none;z-index: 1000"></div>
 <div class="map_extra_controls">
   <ul class="buttons">
     <li><img src="/img/SGV_icon-report.svg" alt="Report" /></li>

@@ -1,26 +1,32 @@
 'use strict';
 
 App.View.Header = Backbone.View.extend({
-  _title: '',
-
+  
   initialize: function(options) {
-    var options = options || {section: 'map', title: 'Untitled map'};
-    if(options.section == 'map'){
+    var section = this.model.get('section');
+
+    if(section == 'map'){
       this._template = _.template( $('#map_header_template').html() );
-    }else if(options.section == 'maplist'){
+    }else if(section == 'maplist'){
       this._template = _.template( $('#maplist_header_template').html() );
     }
-    this._title = options.title;
-    this.userControl = new App.View.UserControl();
+    
+    if (!this.model.get('title'))
+      this.model.set('title','Untitled map');
+
+    this.userControl = new App.View.UserControl({
+      model: new App.Model.UserLocalStorage(),
+      account: this.model.get('account')
+    });
+
   },
 
   onClose: function(){
-
     this.stopListening();
   },
 
   render: function(){
-    this.$el.html(this._template({title: this._title}));
+    this.$el.html(this._template({title: this.model.get('title')}));
 
     this.userControl.setElement(this.$('.user'));
     this.userControl.render();

@@ -6,7 +6,12 @@ App.View.MapList = Backbone.View.extend({
   id: 'maplist',
 
   initialize: function(options) {
-    this.header = new App.View.Header({section: 'maplist', title: this.model.get('account'), username: this.model.get('account')});
+
+    var m = new Backbone.Model({
+      section: 'maplist',
+      account: this.model.get('account')
+    });
+    this.header = new App.View.Header({model: m});
     this.footer = new App.View.Footer();
 
     _.bindAll(this,'_onAccountChecked');

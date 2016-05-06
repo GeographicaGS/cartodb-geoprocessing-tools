@@ -26,8 +26,9 @@ App.Model.GeoViz = App.Model.Viz.extend({
             q = "SELECT viz FROM {{tablename}} WHERE id_viz='{{id_viz}}'"
             sql.execute(q,{tablename: tablename, id_viz: _this.get('id')},{cache:false})
               .done(function(data) {
-                if (data && data.rows.length && data.rows[0].viz) 
+                if (data && data.rows.length && data.rows[0].viz) {
                   options.success(data.rows[0].viz);
+                }
                 else{
                   options.success({});
                 }
@@ -52,13 +53,14 @@ App.Model.GeoViz = App.Model.Viz.extend({
         // throw 'Cannot call to save on other user\'s account';
         return;
       }
+
       else if (!this._user.get('autosave') || !this._user.get('api_key')){
         //throw 'Autosave not enable! Bad hack attempt';
         return;
       }
       else{
 
-        var viz_json = JSON.stringify(_this.toJSON());
+        var viz_json = JSON.stringify(_this.toJSON()).replace(/'/g, "''");
 
         sql = new cartodb.SQL({ user: this.get('account') });
         var api_key = this._user.get('api_key');
@@ -112,16 +114,24 @@ App.Model.GeoViz = App.Model.Viz.extend({
   },
 
   removeSublayer: function(sublayerid){
-    // var layers = this.getSublayers();
-    // var index = this.findSublayerIdx(sublayerid);
-
-    // if (index > -1) {
-    //   layers.splice(index, 1);
-    // }
 
     var layer = this.findSublayer(sublayerid);
-    layer.remove = true;
-    layer.visible = false;
+
+    if (layer.geolayer){
+      // Layers added from the geoprocessing tools are completely removed. 
+      var layers = this.getSublayers();
+      var index = this.findSublayerIdx(sublayerid);
+
+      if (index > -1) {
+        layers.splice(index, 1);
+      }
+    }
+    // else{
+    //   // Layers added from CartoDB editor are not completely removed.  
+    //   var layer = this.findSublayer(sublayerid);
+    //   layer.remove = true;
+    //   layer.visible = false;
+    // }
 
     this._saveAndTrigger();
   },
@@ -131,6 +141,88 @@ App.Model.GeoViz = App.Model.Viz.extend({
     l.options.cartocss = cartocss;
 
     this._saveAndTrigger();
+  },
+
+  getSublayersByGeometryType: function(geometrytypes,cb){
+
+    var sublayers = this.getSublayers();
+
+    var queries = _.map(sublayers,function(sub){
+      var t = "SELECT '{{id}}' as id, st_geometrytype(the_geom_webmercator) as geometrytype FROM ({{{q}}}) s LIMIT 1";
+      return Mustache.render(t,{id: sub.id, q: sub.options.sql});
+    });
+
+    var q = '(' + queries.join(') UNION (') + ')';
+    var sql = new cartodb.SQL({ user: this.get('account') });
+
+    sql.execute(q)
+      .done(function(data) {
+        var a = _.filter(sublayers,function(n){
+          var l = _.findWhere(data.rows,{id: n.id});
+          if (typeof geometrytypes == 'string')
+            geometrytypes = [geometrytypes];
+          var flag = true;
+          for (var i in geometrytypes){
+            if (l.geometrytype.toLowerCase().indexOf(geometrytypes[i])!=-1)
+              return true;
+          }
+          return false;
+        });
+        cb(a,null);
+      })
+      .error(function(errors) {
+        cb(null,errors)
+      });
+  },
+
+  getSublayersFields: function(sublayerid,cb){
+    var sub = this.findSublayer(sublayerid);
+    if (!sub){
+      return cb(null,new Error('Sublayer with id \'' + sublayerid + '\' not found'));
+    }
+
+    var sql = new cartodb.SQL({ user: this.get('account') });
+    var q = ' SELECT * FROM ({{{q}}}) as s LIMIT 1';
+
+    sql.execute(q,{q: sub.options.sql})
+      .done(function(data) {
+        if (data.rows.length)
+          cb(_.allKeys(data.rows[0]),null);
+        else
+          cb([],null);
+      })
+      .error(function(errors) {
+        cb(null,errors)
+      });
+
+  },
+  _guid: function guid() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+      s4() + '-' + s4() + s4() + s4();
+  },
+
+  getUUID: function(){
+    do{
+      var uuid = this._guid();
+    }
+    while (this.findSublayer(uuid))
+    return uuid;
+  },
+
+  addSublayer:function(layerdef){
+    var layers = this.getSublayers();
+    layers.push(layerdef);
+    delete layerdef.id;
+    layerdef.order = layers.length;
+    layerdef.geolayer = true;
+    layerdef.gid = this.getUUID();
+    this.trigger('addSublayer',layerdef);
+    this.save();
   }
 
 });

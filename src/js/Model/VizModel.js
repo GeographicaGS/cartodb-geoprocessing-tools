@@ -4,8 +4,8 @@ App.Model.Viz = Backbone.Model.extend({
     return _.find(this.get('layers'), function(l){ return l.type=='layergroup'}).options.layer_definition.layers;
   },
 
-  findSublayer: function(sublayerid){
-    return _.findWhere(this.getSublayers(),{id: sublayerid});
+  findSublayer: function(sublayerid,field){
+    return _.findWhere(this.getSublayers(),{gid: sublayerid});
   },
 
   findSublayerIdx: function(sublayerid){
