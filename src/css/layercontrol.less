@@ -47,6 +47,11 @@
           transition: color .25s ease-in-out;
         }
 
+        .drag {
+          flex: 0 0 auto;
+          cursor: grab;
+        }
+
         .subviewcontrol, .toggle, .remove {
           flex: 0 0 auto;
           margin: 0 5px;
@@ -91,12 +96,12 @@
         &:before {
           content: "";
           position: absolute;
-          top: -8px;
+          top: -6px;
           right: 0;
           width: 0;
           height: 0;
           border-style: solid;
-          border-width: 0 7px 8px 7px;
+          border-width: 0 5px 6px 5px;
           border-color: transparent transparent @grey60 transparent;
           opacity: .00001;
 
@@ -122,8 +127,9 @@
           height: 100%;
           max-height: 0;
           overflow: hidden;
+          opacity: .00001;
 
-          transition: max-height .3s ease-in-out;
+          transition: max-height .3s ease-in-out, opacity .3s ease-in-out;
         }
 
         &.sql, &.cartocss, &.wizard {
@@ -135,27 +141,25 @@
 
           & > div {
             max-height: 475px;
+            opacity: 1;
           }
         }
 
         &.sql {
           &:before {
-            // right: 75px;
-            transform: translateX(-74px);
+            transform: translateX(-76px);
           }
         }
 
         &.cartocss {
           &:before {
-            // right: 111px;
-            transform: translateX(-110px);
+            transform: translateX(-112px);
           }
         }
 
         &.wizard {
           &:before {
-            // right: 147px;
-            transform: translateX(-147px);
+            transform: translateX(-149px);
           }
         }
 
