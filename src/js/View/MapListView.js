@@ -22,6 +22,7 @@ App.View.MapList = Backbone.View.extend({
     if (st){
       this.$el.html(this._template({'model': this.model.toJSON()}));
       this.$maplist = this.$('.maplist');
+      this.$mapNumber = this.$('.toolbar h2 span');
       this.collection.fetch({reset: true});
     }
     else{
@@ -42,6 +43,7 @@ App.View.MapList = Backbone.View.extend({
   },
 
   refreshList: function(){
+    this.$mapNumber.html(this.collection.getNrecords());
     var $maplist_ul = this.$maplist.children('ul').first();
     $maplist_ul.empty();
     var that = this;
