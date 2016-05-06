@@ -14,7 +14,7 @@ App.Router = Backbone.Router.extend({
   },
 
   home: function(){
-    var m = new App.Model.UserLocalStorage(),
+    var m = App.getUserModel(),
         account = m.get('account');
 
     if (account){

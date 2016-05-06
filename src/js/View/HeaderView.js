@@ -15,7 +15,7 @@ App.View.Header = Backbone.View.extend({
       this.model.set('title','Untitled map');
 
     this.userControl = new App.View.UserControl({
-      model: new App.Model.UserLocalStorage(),
+      model: App.getUserModel(),
       account: this.model.get('account')
     });
 

@@ -6,7 +6,6 @@ App.View.UserControl = Backbone.View.extend({
   initialize: function(options) {
     this._account = options.account;
     this.listenTo(this.model,'change',this._renderSaveStatus);
-
   },
 
   onClose: function(){
@@ -22,11 +21,9 @@ App.View.UserControl = Backbone.View.extend({
     var $st = this.$('.save-status');
 
     if (this.model.get('account')!= this._account)
-      $st.addClass('notallowed');
-    else if (this.model.get('autosave') && this.model.get('api_key'))
-      $st.addClass('enabled');
-    else
-      $st.addClass('disabled');
+      $st.attr('data-status','notallowed');
+    else 
+      $st.attr('data-status',this.model.get('autosave'));
 
   },
 
@@ -49,8 +46,7 @@ App.View.UserControl = Backbone.View.extend({
     else{
       this._autoSaveView.close();
       this._autoSaveView = null;
-    }
-
+    } 
   }
 
 });
@@ -61,15 +57,80 @@ App.View.UserAutosave = Backbone.View.extend({
 
   initialize: function(options) {
     this._account = options.account;
+    this.listenTo(this.model,'change:autosave',this._render);
+    //this.listenTo(this.model,'change:api_key',this._render);
   },
 
   onClose: function(){
-
     this.stopListening();
   },
 
+  events: {
+    'click .button' : '_changeStatus',
+    'keyup input' : '_updateAPIKeyTimer'
+  },
+
+  _render: function(){
+    var api_key = this.model.get('api_key'),
+        autosave = this.model.get('autosave');
+    this.$el.attr('data-status',autosave);
+    
+    this.$('input').val(api_key);
+
+    this.$('.co_api_key').removeClass('validating');
+
+    if (api_key && autosave=='waiting')
+      this.$el.addClass('issue');
+    else
+      this.$el.removeClass('issue');
+
+  },
+
+  _changeStatus: function(){
+    var st = this.model.get('autosave');
+
+    if (st == 'enabled' || st == 'waiting'){
+      this.model.set({
+        'autosave':'disabled',
+        'api_key' : null
+      }).save();
+    }
+    else if (st == 'disabled'){
+      this.model.set('autosave','waiting').save();
+    }
+  },
+
+  _updateAPIKeyTimer: function(){
+    
+    this.$el.addClass('checking');
+
+    if (this._apikeyTimeout)
+      clearTimeout(this._apikeyTimeout);
+
+    var _this = this;
+    this._apikeyTimeout = setTimeout(function(){
+      clearTimeout(_this._apikeyTimeout);
+      _this._updateAPIKey();
+    },750);
+  },
+
+  _updateAPIKey: function(){
+
+    this.model.set('api_key',$.trim(this.$('input').val()));
+
+    var _this = this;
+    this.model.validateAPIKey(function(cb){
+      _this.model.set('autosave',cb ? 'enabled' : 'waiting');
+      _this.model.createConfigTable();
+      _this.model.save();
+      _this.$el.removeClass('checking');
+    });
+
+  },
+
   render: function(){
-    this.$el.html(this._template({m: this.model.toJSON(), account: this._account}));
+    this.$el.html(this._template());
+    this._render();
     return this;
   }
 

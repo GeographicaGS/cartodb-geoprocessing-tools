@@ -138,18 +138,78 @@ header {
 			background-position: center;
 			border-radius: 2px;
 
-			&.des {
+			&[data-status='disabled'] {
 				background-image: url('/img/SGV_icon-autosave_des.svg');
 			}
 
-			&.act {
+			&[data-status='enabled'] {
 				background-image: url('/img/SGV_icon-autosave_act.svg');
 			}
 
-			&.waiting {
+			&[data-status='waiting'] {
 				background-image: url('/img/SGV_icon-autosave_waiting.svg');
 			}
 		}
+
+    .autosave-holder{
+      position: absolute;
+      top: 75px;
+      right: 20px;
+      z-index: 300;
+      background-color: #000;
+      color: #fff;
+
+      .checking{
+        &:before{
+          content:'Checking...';
+          display:block;
+        }
+      }
+
+      [data-status]{
+        .button{
+          width: 10px;
+          height:10px;
+          cursor: pointer;
+        }
+
+        .co_api_key{
+          p{
+            display: none;
+          }
+        }
+      }
+
+      [data-status='disabled']{
+        .co_api_key{
+          display: none;
+        }
+
+        .button{
+          background-color: #ccc;
+        }
+      }
+
+      [data-status='waiting']{
+        .button{
+          background-color: #f00;
+        }
+
+        &.issue .co_api_key p{
+          display: block;
+        }
+      }
+
+      [data-status='enabled']{
+        .button{
+          background-color: #0f0;
+        }
+
+        .help{
+          display: none;
+        }
+      }
+    }
 	}
 }
 

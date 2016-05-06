@@ -1,5 +1,9 @@
 App.Model.User = Backbone.Model.extend({
   
+  defaults:{
+    autosave : 'disabled'
+  },
+
   checkAccount: function(account,cb){
     var sql = new cartodb.SQL({ 'user': account});
     sql.execute("SELECT now()")
@@ -36,6 +40,10 @@ App.Model.UserLocalStorage = App.Model.User.extend({
     }
     else
       console.error('Not supported localStorage');
+
+    if (this.get('autosave') == 'enabled'){
+      this.validateAPIKey();
+    }
   },
 
   save: function(){
@@ -43,6 +51,8 @@ App.Model.UserLocalStorage = App.Model.User.extend({
       localStorage.setItem('user',JSON.stringify(this.toJSON()));
     else
       console.error('Not supported localStorage');
+
+    return this;
   },
 
   set: function(attributes,options){
@@ -57,66 +67,23 @@ App.Model.UserLocalStorage = App.Model.User.extend({
       });
     }
 
-    var autosave = typeof attributes === 'object' ? attributes.autosave : attributes == 'autosave' ? options : null;
-    if (autosave){
-      this._setAutosave(autosave);
-      if (attributes === 'object')
-        delete attributes.autosave;
-      else
-        // Only autosave return.
-        return;
-    }
+    // var autosave = typeof attributes === 'object' ? attributes.autosave : attributes == 'autosave' ? options : null;
+    // if (autosave){
+    //   this._setAutosave(autosave);
+    //   if (attributes === 'object')
+    //     delete attributes.autosave;
+    //   else
+    //     // Cannot call to super
+    //     return this;
+    // }
     
     Backbone.Model.prototype.set.apply(this, [attributes,options]); 
-
-
-    // if (autosave){
-
-    //   if (!this.get('account') && !attributes.account){
-    //     throw 'Cannot set autosave without a valid account';
-    //   }  
-
-    //   var api_key = this.get('api_key') || attributes.api_key;
-    //   if (!api_key){
-    //     throw 'Cannot set autosave without a valid api_key';
-    //   }  
-    //   // Check if user has the config table at his account.
-    //   // Create SQL object
-    //   var sql = new cartodb.SQL({ user: this.get('account') });
-    //   // check if table exists
-    //   var q = "select count(*) as n from CDB_UserTables() as name where name='{{tablename}}'";
-    //   sql.execute(q,{tablename: App.Config.Data.CFG_TABLE_NAME},{cache: true})
-    //     .done(function(data) {
-    //       if (data && data.rows.length && data.rows[0].n){
-    //         // Table already exits 
-    //         Backbone.Model.prototype.set.apply(_this, [attributes,options]);
-    //       }
-    //       else{
-    //         // Let's create the table
-    //         q = 'CREATE TABLE {{tablename}} (id_viz text, viz json, PRIMARY KEY(id_viz)); GRANT SELECT ON {{tablename}} TO publicuser;';
-    //         sql.execute(q,{tablename: App.Config.Data.CFG_TABLE_NAME},{api_key: api_key,cache: true})
-    //           .done(function(data) {
-    //             Backbone.Model.prototype.set.apply(_this, [attributes,options]);
-    //           })
-    //           .error(function(errors) {
-    //             console.error('Cannot create config table at CartoDB. ' + errors);
-    //           });
-    //       }
-    //     })
-    //     .error(function(errors) {
-    //       console.error('Cannot check if config table exists. ' + errors);
-    //     });
-    // }
-    // else{
-    //   Backbone.Model.prototype.set.apply(this, [attributes,options]); 
-    // }
-    
 
     return this;
    
   },
 
-  _createConfigTable: function(){
+  createConfigTable: function(){
     var sql = new cartodb.SQL({ user: this.get('account') });
     // check if table exists
     var q = "select count(*) as n from CDB_UserTables() as name where name='{{tablename}}'";
@@ -142,7 +109,7 @@ App.Model.UserLocalStorage = App.Model.User.extend({
       });
   },
 
-  _validateAPIKey: function(cb){
+  validateAPIKey: function(cb){
     if (!this.get('api_key'))
       return false;
 
@@ -150,31 +117,37 @@ App.Model.UserLocalStorage = App.Model.User.extend({
     var sql = new cartodb.SQL({ user: this.get('account') });
     // check if table exists
     var q = "BEGIN;CREATE VIEW {{name}} as select 1; drop view {{name}}; COMMIT;";
-    sql.execute(q,{name: 'cdb_geoproctool_apikeytest'},{cache: true,api_key:this.get('api_key') + '111'})
+    var _this = this;
+    sql.execute(q,{name: 'cdb_geoproctool_apikeytest'},{cache: true,api_key:this.get('api_key')})
       .done(function(data) {
-        cb(true);
+        if (cb)
+          cb(true);
       })
       .error(function(errors) {
-        console.error(errors);
+        if (_this.get('autosave') == 'enabled'){
+          _this.set('autosave','waiting');
+        }
+        if (cb)
+          cb(false);
       });
   },
 
-  _setAutosave: function(status){
-    if (['disabled','waiting'].indexOf(status)!=-1){
-      this.set('autosave',status);
-    }
-    else if (status == 'enabled'){
-      // Check if it's a valid a api_key
-      var _this = this;
-      this._validateAPIKey(function(valid){
-        if (valid){
-          _this._createConfigTable();
-          _this.set('autosave',status);
-        }
-        else
-          _this.set('autosave','waiting');
-      });
-    }
-  }
+  // _setAutosave: function(status){
+  //   if (['disabled','waiting'].indexOf(status)!=-1){
+  //     Backbone.Model.prototype.set.apply(this,['autosave',status]);
+  //   }
+  //   else if (status == 'enabled'){
+  //     // Check if it's a valid a api_key
+  //     var _this = this;
+  //     this.validateAPIKey(function(valid){
+  //       if (valid){
+  //         _this._createConfigTable();
+  //         Backbone.Model.prototype.set.apply(_this,['autosave','enabled']);
+  //       }
+  //       else
+  //        Backbone.Model.prototype.set.apply(_this,['autosave','waiting']);
+  //     });
+  //   }
+  // }
 
 });

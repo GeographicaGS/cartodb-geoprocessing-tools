@@ -1,7 +1,7 @@
 App.Model.GeoViz = App.Model.Viz.extend({
   
   constructor: function() {
-    this._user = new App.Model.UserLocalStorage(); 
+    this._user = App.getUserModel(); 
     Backbone.Model.apply(this, arguments);
   },
 
@@ -54,7 +54,7 @@ App.Model.GeoViz = App.Model.Viz.extend({
         return;
       }
 
-      else if (!this._user.get('autosave') || !this._user.get('api_key')){
+      else if (this._user.get('autosave')!='enabled' || !this._user.get('api_key')){
         //throw 'Autosave not enable! Bad hack attempt';
         return;
       }

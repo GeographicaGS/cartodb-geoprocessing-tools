@@ -15,7 +15,7 @@ App.View.Map = Backbone.View.extend({
     this.header = new App.View.Header({model: m});
     this.footer = new App.View.Footer();
 
-    this._user = new App.Model.UserLocalStorage();
+    this._user = App.getUserModel();
 
   },
 

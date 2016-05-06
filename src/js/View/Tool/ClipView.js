@@ -58,7 +58,6 @@ App.View.Tool.Clip = Backbone.View.extend({
       return;
       
     this._geoVizModel.getSublayersFields(this.model.get('input'),this._onSublayersFields);
-    //
 
   },  
 
