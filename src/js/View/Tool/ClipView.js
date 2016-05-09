@@ -75,7 +75,10 @@ App.View.Tool.Clip = Backbone.View.extend({
     var q = [
       ' WITH a as ({{{input_query}}}), b as ({{{cut_query}}})',
       'SELECT distinct {{fields}},st_intersection(a.the_geom_webmercator,b.the_geom_webmercator) as the_geom_webmercator',
-        ' FROM a,b WHERE st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)'];
+        ' FROM a,b ',
+        ' WHERE st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)',
+        // Remove elements who only are at the boundary. It avoid geometry_collections...
+        ' AND not st_touches(a.the_geom_webmercator,b.the_geom_webmercator)'];
 
     q = Mustache.render(q.join(' '),{
           input_query: inputlayer.options.sql, 

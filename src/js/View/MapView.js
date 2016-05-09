@@ -60,8 +60,9 @@ App.View.Map = Backbone.View.extend({
           toremove.push(i);
         }
         else{
-          // Copy the layer definition from CartoDB viz. CartoDB takes precedence over geo except for CartoCSS.
-          cartolayer.options.cartocss = geolayer.options.cartocss;
+          // Copy the layer definition from CartoDB viz. CartoDB takes precedence over GeoViz except for visibility
+          cartolayer.visible = geolayer.visible;
+          //cartolayer.options.cartocss = geolayer.options.cartocss;
           geolayers[i] = cartolayer;
         }
       }
