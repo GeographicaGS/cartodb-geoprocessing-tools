@@ -23,9 +23,9 @@ App.View.Map = Backbone.View.extend({
     this.stopListening();
     $(window).off('resize');
     if (this.header)
-      this.header.close();
+      this.header.remove();
     if (this.footer)
-      this.footer.close();
+      this.footer.remove();
   },
 
   _onFetchVizModel: function(m){

@@ -1,19 +1,30 @@
-<div>
-  <a href='#' class='cancel'>Cancel</a>
-  <a href='#' class='run disable'>Run</a>
+<div class="header">
+  <h3>Clip</h3>
+  <div class="actions">
+  <a href='#' class='button notfilled cancel'>Cancel</a>
+  <a href='#' class='run button disable'>
+    Run
+    <img src="/img/SGV_icon-check-white.svg">
+  </a>
+  </div>
 </div>
-
-<div>
-  <p>Input Layer</p>
-  <select name='input'>
-    <option>Choose layer...</option>
-  </select>
-
-  <p>Cutting Layer</p>
-  <select name='cut'>
-    <option>Choose layer...</option>
-  </select>
-
-  <p>Result Layer</p>
-  <input name='name' placeholder='Write a layer name' />
+<div class="content">
+  <ol>
+    <li>
+      <p>Input Layer</p>
+      <select name='input'>
+        <option>Choose layer...</option>
+      </select>
+    </li>
+    <li>
+      <p>Cutting Layer</p>
+      <select name='cut'>
+        <option>Choose layer...</option>
+      </select>
+    </li>
+    <li>
+      <p>Result Layer</p>
+      <label for="clip-name">Name</label>
+      <input type="text" id="cliname" name='name' placeholder='Write a layer name' />
+    </li>
 </div>

@@ -25,9 +25,7 @@ App.View.Header = Backbone.View.extend({
 
   },
 
-  onClose: function(){
-    this.stopListening();
-  },
+  onClose: function(){},
 
   remove: function(){
     this.stopListening();
