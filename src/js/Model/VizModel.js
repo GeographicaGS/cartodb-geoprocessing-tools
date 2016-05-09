@@ -10,6 +10,10 @@ App.Model.Viz = Backbone.Model.extend({
 
   findSublayerIdx: function(sublayerid){
     return this.getSublayers().indexOf(this.findSublayer(sublayerid));
+  },
+
+  getSublayersIds: function(){
+    return _.pluck(this.getSublayers(),'gid');
   }
 
 });

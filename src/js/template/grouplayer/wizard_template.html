@@ -1,13 +1,13 @@
-<% if (loading) { %>
+<% if (!m.geometrytype) { %>
   Loading
-<% }  else if (geometrytype == 'error') { %>
+<% }  else if (m.geometrytype == 'error') { %>
   Error guessing geometry type
-<% } else if (geometrytype == 'nodata') { %>
+<% } else if (m.geometrytype == 'nodata') { %>
   Cannot open wizard for an empty layer
-<% } else if (geometrytype=='ST_MultiPolygon' || geometrytype=='ST_Polygon') { %>
+<% } else if (m.geometrytype=='ST_MultiPolygon' || m.geometrytype=='ST_Polygon') { %>
   TODO Multipolygon wizard
-<% } else if (geometrytype=='ST_MultiLine' ||  geometrytype=='ST_Line' ||geometrytype=='ST_GeometryCollection') { %>
+<% } else if (m.geometrytype=='ST_MultiLine' || m.geometrytype=='ST_Line' || m.geometrytype=='ST_GeometryCollection') { %>
   TODO Line wizard
-<% } else if (geometrytype=='ST_MultiPoint' || geometrytype=='ST_Point') { %>
+<% } else if (m.geometrytype=='ST_MultiPoint' || m.geometrytype=='ST_Point') { %>
   TODO Point wizard
 <% } %>

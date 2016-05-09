@@ -86,6 +86,8 @@ App.View.Map = Backbone.View.extend({
       }
     }
 
+    this._geoVizModel.guessSublayersGeometryTypesSerial();
+
     if (this._user.get('autosave') && this._user.get('account')==this._geoVizModel.get('account'))
       this._geoVizModel.save();
 

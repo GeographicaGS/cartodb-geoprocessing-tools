@@ -86,6 +86,7 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
   initialize: function(options) {
     this._geoVizModel = options.geoVizModel;
     this.listenTo(this.model,'change:visible',this._renderUpdateButton);
+    this.listenTo(this._geoVizModel,'sublayer:set:geometrytype',this._sublayerGeometrytype);
   },
 
   events: {
@@ -96,6 +97,11 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
 
   onClose: function(){
     this.stopListening();
+  },
+
+  _sublayerGeometrytype: function(l){
+    if (l.gid == this.model.get('gid'))
+      this.model.set('geometrytype',l.geometrytype);
   },
 
   _toggleSubView: function(e){
@@ -193,45 +199,15 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
   initialize: function(options) {
     this._geoVizModel = options.geoVizModel;
     this.listenTo(this.model,'change:geometrytype',this.render);
+    
   },
 
   onClose: function(){
     this.stopListening();
   },
 
-  _checkGeometryType: function(){
-    var sql = new cartodb.SQL({ user: this._geoVizModel.get('account') });
-    var q = "WITH q as ({{{sql}}}) select st_geometrytype(the_geom_webmercator) as geometrytype from q LIMIT 1";
-
-    var _this = this;
-    sql.execute(q,{sql: this.model.get('options').sql},{cache:false})
-      .done(function(data) {
-        if (data.rows.length && data.rows[0].geometrytype)
-          _this.model.set('geometrytype',data.rows[0].geometrytype);
-        else
-          _this.model.set('geometrytype','nodata');
-      })
-      .error(function(errors) {
-        _this.model.set('geometrytype','error');
-        console.log(errors);
-      });
-  },
-
   render: function(){
-    // Check layer type. Is it a polygon, line or point?
-    var geometrytype = this.model.get('geometrytype'),
-      opts = {};
-    if (geometrytype){
-      opts.geometrytype = geometrytype;
-      opts.loading = false;
-    }
-    else{
-      opts.loading = true;
-      // Async request. It will fire a render again
-      this._checkGeometryType();
-    }
-
-    this.$el.html(this._template(opts));
+    this.$el.html(this._template({m: this.model.toJSON()}));
     return this;
   }
 

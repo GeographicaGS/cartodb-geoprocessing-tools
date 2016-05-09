@@ -4,7 +4,7 @@ App.View.Tool.Clip = Backbone.View.extend({
   _template: _.template( $('#tool-clip_template').html() ),
 
   initialize: function(options) { 
-    _.bindAll(this,'_onCuttingLayers','_onSublayersFields');
+    _.bindAll(this,'_onSublayersFields');
     this._geoVizModel = options.geoVizModel;
     this.model = new Backbone.Model({
       'input': null,
@@ -107,24 +107,15 @@ App.View.Tool.Clip = Backbone.View.extend({
     }
 
     // Fill cutting layers combo
-    this._geoVizModel.getSublayersByGeometryType('polygon',this._onCuttingLayers);
+    var cutlayers = this._geoVizModel.getSublayersByGeometryType('polygon');
+
+    var $select = this.$('select[name="cut"]');
+    for (var i in cutlayers){
+      $select.append('<option value="' + cutlayers[i].gid + '">' + cutlayers[i].options.layer_name + '</option>');  
+    }
 
     return this;
       
-  },
-
-  _onCuttingLayers: function(layers,err){
-    if (err){
-      console.error('Cannot get Cutting Layers');
-      console.error(err);
-      return;
-    }
-
-    var $select = this.$('select[name="cut"]');
-    for (var i in layers){
-      $select.append('<option value="' + layers[i].gid + '">' + layers[i].options.layer_name + '</option>');  
-    }
-    
   }
 
 });
