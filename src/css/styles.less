@@ -67,11 +67,12 @@ body{
 	font-size: 14px;
 	display: flex;
 	flex-direction: column;
-	min-height: 100vh;
+	height: 100vh;
 }
 
 header {
 	display: flex;
+	flex: 0 0 auto;
 	align-items: center;
 	height: 75px;
 	width: 100%;
@@ -218,9 +219,11 @@ main {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
+	overflow: auto;
 }
 
 footer {
+	flex: 0 0 auto;
 
 	& > div {
 		height: 34px;
@@ -321,6 +324,11 @@ footer {
 	}
 }
 
+.scrollable {
+	overflow: auto;
+}
+
+@import "src/css/scrollbars.less";
 @import "src/css/login.less";
 @import "src/css/maplist.less";
 @import "src/css/map.less";

@@ -6,9 +6,9 @@ App.View.Map = Backbone.View.extend({
 
   initialize: function(options) {
 
-    _.bindAll(this,'_onFetchVizModel');
+    _.bindAll(this,'_onFetchVizModel','resizeMap');
 
-     var m = new Backbone.Model({
+    var m = new Backbone.Model({
       section: 'map',
       account : this.model.get('account')
     });
@@ -21,10 +21,11 @@ App.View.Map = Backbone.View.extend({
 
   onClose: function(){
     this.stopListening();
+    $(window).off('resize');
     if (this.header)
-      this.header.close();
+      this.header.remove();
     if (this.footer)
-      this.footer.close();
+      this.footer.remove();
   },
 
   _onFetchVizModel: function(m){
@@ -56,7 +57,7 @@ App.View.Map = Backbone.View.extend({
         var cartolayer = this._cartoVizModel.findSublayer(geolayer.gid);
         if (!cartolayer){
           // It's a non geolayer and it's not at CartoDB. It has been removed from CartoDB editor.
-          toremove.push(i);  
+          toremove.push(i);
         }
         else{
           // Copy the layer definition from CartoDB viz. CartoDB takes precedence over GeoViz except for visibility
@@ -142,7 +143,14 @@ App.View.Map = Backbone.View.extend({
       success: this._onFetchVizModel
     });
 
+    $(window).on('resize', this.resizeMap);
+
     return this;
+  },
+
+  resizeMap: function(e){
+    this.$map.css('height', (this.$el.parent().height() - 64) + "px"); // TODO: parameterize or calculate
+    this.map.invalidateSize();
   }
 
 });

@@ -7,9 +7,12 @@ App.View.Footer = Backbone.View.extend({
 
   },
 
-  onClose: function(){
+  onClose: function(){},
 
+  remove: function(){
     this.stopListening();
+    this.$el.empty();
+    return this;
   },
 
   render: function(options){

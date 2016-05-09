@@ -1,7 +1,11 @@
 'use strict';
 
 App.View.Header = Backbone.View.extend({
-  
+
+  events: {
+    'click .back-btn': 'goBack'
+  },
+
   initialize: function(options) {
     var section = this.model.get('section');
 
@@ -10,7 +14,7 @@ App.View.Header = Backbone.View.extend({
     }else if(section == 'maplist'){
       this._template = _.template( $('#maplist_header_template').html() );
     }
-    
+
     if (!this.model.get('title'))
       this.model.set('title','Untitled map');
 
@@ -21,8 +25,12 @@ App.View.Header = Backbone.View.extend({
 
   },
 
-  onClose: function(){
+  onClose: function(){},
+
+  remove: function(){
     this.stopListening();
+    this.$el.empty();
+    return this;
   },
 
   render: function(){
@@ -32,6 +40,11 @@ App.View.Header = Backbone.View.extend({
     this.userControl.render();
 
     return this;
+  },
+
+  goBack: function(e) {
+    e.preventDefault();
+    window.history.back();
   }
 
 });

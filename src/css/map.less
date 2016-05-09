@@ -194,6 +194,7 @@
 		background-color: @grey10;
 		border-bottom: 1px solid @grey20;
 		border-top: 1px solid @white;
+    position: relative;
     // z-index: 106;
 
 		.buttons {
@@ -271,7 +272,7 @@
 
 		.map_extra_controls {
 			position: absolute;
-			top: 158px;
+			top: 80px;
 			left: 18px;
 			z-index: 2;
 
@@ -289,4 +290,33 @@
 		display: flex;
 		height: 100%;
 	}
+
+  .button {
+    background-color: @blue_light;
+    color: @white;
+    display: inline-block;
+    padding: 8px 10px;
+    border-radius: 2px;
+    .font(bold);
+
+    transition: background-color .10s ease-in-out;
+
+    img {
+      vertical-align: middle;
+      margin-left: 5px;
+    }
+
+    &:hover {
+      background-color: lighten(@blue_light, 5%);
+    }
+
+    &.notfilled {
+      background-color: transparent;
+      color: @blue_light;
+
+      &:hover {
+        color: lighten(@blue_light, 5%);
+      }
+    }
+  }
 }

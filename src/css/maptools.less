@@ -2,8 +2,70 @@
   position:absolute;
   left:10px;
   top:50px;
-  background-color: #333;
-  color: #fff;
+  background-color: @white;
+  color: @grey75;
+  border: 1px solid @grey20;
+  box-shadow: 0 2px 8px 0 fade(@black, 10%);
   display: none;
-  z-index: 120;
+  z-index: 1080;
+
+  .header {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+
+    h3 {
+      flex: 1 1 auto;
+      .font();
+      font-size: 18px;
+    }
+
+    .actions {
+      flex: 0 0 auto;
+    }
+  }
+
+  .content {
+    ol {
+      list-style-position: inside;
+
+      li {
+        padding: 16px;
+        border-top: 1px solid @grey20;
+
+        p {
+          color: @grey50;
+          margin-bottom: 8px;
+        }
+      }
+    }
+
+    select, input[type=text] {
+      width: 100%;
+    }
+
+    select {
+      background-color: @white;
+      color: @grey60;
+      padding: 10px 10px 8px;
+      border: 1px solid @grey30;
+      border-radius: 2px;
+      font-size: 14px;
+      line-height: 1.2em;
+
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      text-indent: 1px;
+      text-overflow: '';
+      position: relative;
+
+      &:after {
+        content: url('/img/SGV_arrow-select.svg');
+        display: block;
+        position: absolute;
+        right: 10px;
+        
+      }
+    }
+  }
 }
