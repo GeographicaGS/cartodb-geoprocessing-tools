@@ -176,6 +176,7 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
     this.$el.html(this._template(this.model.get('options')));
     if (!this.model.get('geolayer')){
       this.$('.remove').addClass('disabled');
+      this.$('a[data-el="wizard"]').addClass('disabled');
     }
 
     this._renderUpdateButton();
@@ -200,7 +201,7 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
 
   _checkGeometryType: function(){
     var sql = new cartodb.SQL({ user: this._geoVizModel.get('account') });
-    var q = "WITH q as ({{sql}}) select st_geometrytype(the_geom_webmercator) as geometrytype from q LIMIT 1";
+    var q = "WITH q as ({{{sql}}}) select st_geometrytype(the_geom_webmercator) as geometrytype from q LIMIT 1";
 
     var _this = this;
     sql.execute(q,{sql: this.model.get('options').sql},{cache:false})
@@ -254,12 +255,18 @@ App.View.GroupLayerPanelLayerCartoCSS = Backbone.View.extend({
   },
 
   render: function(){
-    this.$el.html(this._template(this.model.toJSON().options));
+    this.$el.html(this._template({m: this.model.toJSON()}));
+    if (!this.model.get('geolayer'))
+      this.$el.addClass('cartolayer');
+    
     return this;
   },
 
   _update: function(e){
     e.preventDefault();
+    
+    if (!this.model.get('geolayer'))
+      return;
 
     var cartocss = $.trim(this.$('textarea').val());
     this.model.get('options').cartocss = cartocss;
