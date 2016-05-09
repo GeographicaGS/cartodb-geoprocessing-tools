@@ -1,255 +1,266 @@
-.layers_control {
-  position: relative;
+#mapview {
 
-  .panel {
-    visibility: hidden;
-    opacity: .00001;
-    width: 380px;
-    max-height: 50vh;
-    overflow-y: auto;
-    position: absolute;
-    top: calc(~'100% + 13px');
-    right: 0;
-    background-color: @grey05;
-    padding-bottom: 10px;
-    border: 1px solid @grey20;
-    border-radius: 0 0 0 3px;
-    box-shadow: 0 2px 4px 0 fade(@black, 10%);
-    transform: translateY(-25px);
-    z-index: 110;
+  .layers_control {
+    position: relative;
 
-    transition: visibility 0s linear .25s, opacity .18s ease-in-out, transform .25s ease-in-out;
+    .panel {
+      visibility: hidden;
+      opacity: .00001;
+      width: 380px;
+      max-height: 50vh;
+      overflow-y: auto;
+      position: absolute;
+      top: calc(~'100% + 13px');
+      right: 0;
+      background-color: @grey05;
+      padding-bottom: 10px;
+      border: 1px solid @grey20;
+      border-radius: 0 0 0 3px;
+      box-shadow: 0 2px 4px 0 fade(@black, 10%);
+      transform: translateY(-25px);
+      z-index: 110;
 
-    &.show {
-      visibility: visible;
-      opacity: 1;
-      transform: translateY(0px);
+      transition: visibility 0s linear .25s, opacity .18s ease-in-out, transform .25s ease-in-out;
 
-      transition: visibility 0s linear, opacity .25s ease-in-out .06s, transform .25s ease-in-out;
-    }
+      &.show {
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(0px);
 
-    li {
-      list-style: none;
-      background-color: @white;
-      padding: 0;
-      border-bottom: 1px solid @grey10;
-
-      // transition: background-color .10s ease-in-out;
-
-      .ctrls {
-        display: flex;
-        align-items: center;
-
-        span {
-          flex: 1 1 auto;
-          padding: 10px 0;
-          overflow-x: hidden;
-          text-overflow: ellipsis;
-
-          transition: color .25s ease-in-out;
-        }
-
-        .drag {
-          flex: 0 0 auto;
-          cursor: grab;
-          padding: 5px 0;
-          margin-right: 10px;
-          opacity: .5;
-        }
-
-        .subviewcontrol, .toggle, .remove {
-          flex: 0 0 auto;
-          margin: 0 5px;
-        }
-
-        .remove {
-          opacity: .00001;
-          // transition: opacity .10s ease-in-out;
-          line-height: 0;
-        }
-
-        .subviewcontrol {
-          display: none;
-          outline: none;
-          opacity: .75;
-          line-height: 0;
-          transition: opacity .10s ease-in-out;
-
-          &.selected, &:hover {
-            opacity: 1;
-          }
-        }
-
-        .remove {
-          outline: none;
-          img {
-            border-radius: 50%;
-            background-color: @grey10;
-            padding: 5px;
-          }
-        }
+        transition: visibility 0s linear, opacity .25s ease-in-out .06s, transform .25s ease-in-out;
       }
 
-      .subviewholder {
-        background-color: @grey60;
-        color: @grey30;
-        position: relative;
-        padding: 0 20px;
+      li {
+        list-style: none;
+        background-color: @white;
+        padding: 0;
+        border-bottom: 1px solid @grey10;
 
-        transition: padding .20s ease-in-out;
+        // transition: background-color .10s ease-in-out;
 
-        &:before {
-          content: "";
-          position: absolute;
-          top: -6px;
-          right: 0;
-          width: 0;
-          height: 0;
-          border-style: solid;
-          border-width: 0 5px 6px 5px;
-          border-color: transparent transparent @grey60 transparent;
-          opacity: .00001;
-
-          transition: transform .20s ease-in-out .25s, opacity .20s ease-in-out .25s;
-        }
-
-        &:after {
-          content: '';
-          display: block;
-          clear: both;
-        }
-
-        &:empty {
-          // display: none;
-
-          &:before {
-            transform: translateY(10px);
-            opacity: .00001;
-          }
-        }
-
-        & > div {
-          height: 100%;
-          max-height: 0;
-          overflow: hidden;
-          opacity: .00001;
-
-          transition: max-height .3s ease-in-out, opacity .3s ease-in-out;
-        }
-
-        &.sql, &.cartocss, &.wizard {
-          padding: 20px 20px 10px;
-
-          &:before {
-            opacity: 1;
-          }
-
-          & > div {
-            max-height: 475px;
-            opacity: 1;
-          }
-        }
-
-        &.sql {
-          &:before {
-            transform: translateX(-76px);
-          }
-        }
-
-        &.cartocss {
-
-          &:before {
-            transform: translateX(-112px);
-          }
-          .cartolayer{
-            .button.apply{
-              display: none;
-            }
-
-          }
-        }
-
-        &.wizard {
-          &:before {
-            transform: translateX(-149px);
-          }
-        }
-
-        pre {
-          color: @white;
-          font-family: courier, monospace;
-          font-weight: 600;
-          margin-bottom: 10px;
-        }
-
-        textarea {
-          width: 100%;
-          height: 400px;
-          padding: 10px;
-          background-color: @grey55;
-          color: @white;
-          border: 1px solid @grey75;
-          border-radius: 2px;
-          font-family: courier, monospace;
-          font-weight: 600;
-          resize: none;
-        }
-
-        .button {
-          float: right;
-          margin-top: 10px;
-        }
-      }
-
-      &.disabled {
         .ctrls {
+          display: flex;
+          align-items: center;
+
           span {
-            color: @grey35;
+            flex: 1 1 auto;
+            padding: 10px 0;
+            overflow-x: hidden;
+            text-overflow: ellipsis;
+
+            transition: color .25s ease-in-out;
           }
 
-          &:hover {
-            .subviewcontrol, .remove {
-              opacity: .00001;
+          .drag {
+            flex: 0 0 auto;
+            cursor: grab;
+            padding: 5px 0;
+            margin-right: 10px;
+            opacity: .5;
+          }
+
+          .subviewcontrol, .toggle, .remove {
+            flex: 0 0 auto;
+            margin: 0 5px;
+          }
+
+          .remove {
+            opacity: .00001;
+            // transition: opacity .10s ease-in-out;
+            line-height: 0;
+          }
+
+          .subviewcontrol {
+            display: none;
+            outline: none;
+            opacity: .75;
+            line-height: 0;
+            transition: opacity .10s ease-in-out;
+
+            &.selected, &:hover {
+              opacity: 1;
+            }
+          }
+
+          .remove {
+            outline: none;
+            img {
+              border-radius: 50%;
+              background-color: @grey10;
+              padding: 5px;
             }
           }
         }
 
         .subviewholder {
-          display: none;
-        }
-      }
+          background-color: @grey60;
+          color: @grey30;
+          position: relative;
+          padding: 0 20px;
 
-      &.composed {
-        background-color: fade(@blue_light, 5%);
-        .ctrls {
-          span {
-            font-style: italic;
+          transition: padding .20s ease-in-out;
+
+          &:before {
+            content: "";
+            position: absolute;
+            top: -6px;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 5px 6px 5px;
+            border-color: transparent transparent @grey60 transparent;
+            opacity: .00001;
+
+            transition: transform .20s ease-in-out .25s, opacity .20s ease-in-out .25s;
           }
-        }
-      }
 
-      &:hover {
-        background-color: @grey05;
-
-        .ctrls {
-          .remove {
-            opacity: 1;
-          }
-
-          .subviewcontrol {
+          &:after {
+            content: '';
             display: block;
+            clear: both;
+          }
+
+          &:empty {
+            // display: none;
+
+            &:before {
+              transform: translateY(10px);
+              opacity: .00001;
+            }
+          }
+
+          & > div {
+            height: 100%;
+            max-height: 0;
+            overflow: hidden;
+            opacity: .00001;
+
+            transition: max-height .3s ease-in-out, opacity .3s ease-in-out;
+          }
+
+          &.sql, &.cartocss, &.wizard {
+            padding: 20px 20px 10px;
+
+            &:before {
+              opacity: 1;
+            }
+
+            & > div {
+              max-height: 475px;
+              opacity: 1;
+            }
+          }
+
+          &.sql {
+            &:before {
+              transform: translateX(-76px);
+            }
+          }
+
+          &.cartocss {
+
+            &:before {
+              transform: translateX(-112px);
+            }
+            .cartolayer{
+              .button.apply{
+                display: none;
+              }
+
+            }
+          }
+
+          &.wizard {
+            &:before {
+              transform: translateX(-149px);
+            }
+          }
+
+          pre {
+            color: @white;
+            font-family: courier, monospace;
+            font-weight: 600;
+            margin-bottom: 10px;
+          }
+
+          textarea {
+            width: 100%;
+            height: 400px;
+            padding: 10px;
+            background-color: @grey55;
+            color: @white;
+            border: 1px solid @grey75;
+            border-radius: 2px;
+            font-family: courier, monospace;
+            font-weight: 600;
+            resize: none;
+          }
+
+          .button {
+            float: right;
+            margin-top: 10px;
+
+            &.notfilled {
+              color: @white;
+
+              &:hover {
+                color: fade(@white, 80%);
+              }
+            }
           }
         }
-      }
 
-      &.selected {
-        .ctrls {
-          .remove {
-            opacity: 1;
+        &.disabled {
+          .ctrls {
+            span {
+              color: @grey35;
+            }
+
+            &:hover {
+              .subviewcontrol, .remove {
+                opacity: .00001;
+              }
+            }
           }
 
-          .subviewcontrol {
-            display: block;
+          .subviewholder {
+            display: none;
+          }
+        }
+
+        &.composed {
+          background-color: fade(@blue_light, 5%);
+          .ctrls {
+            span {
+              font-style: italic;
+            }
+          }
+        }
+
+        &:hover {
+          background-color: @grey05;
+
+          .ctrls {
+            .remove {
+              opacity: 1;
+            }
+
+            .subviewcontrol {
+              display: block;
+            }
+          }
+        }
+
+        &.selected {
+          .ctrls {
+            .remove {
+              opacity: 1;
+            }
+
+            .subviewcontrol {
+              display: block;
+            }
           }
         }
       }
