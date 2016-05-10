@@ -1,13 +1,20 @@
 .toolholder {
   position:absolute;
   left:10px;
-  top:50px;
+  top:60px;
   background-color: @white;
   color: @grey75;
   border: 1px solid @grey20;
   box-shadow: 0 2px 8px 0 fade(@black, 10%);
   display: none;
   z-index: 1080;
+
+  &.clip {
+    transform: translateX(207px);
+    width: 320px;
+  }
+
+  .top_triangle(8px, 8px, 14px, @white, @grey20);
 
   .header {
     display: flex;
@@ -16,6 +23,7 @@
 
     h3 {
       flex: 1 1 auto;
+      padding-left: 10px;
       .font();
       font-size: 18px;
     }
@@ -33,23 +41,43 @@
         padding: 16px;
         border-top: 1px solid @grey20;
 
-        p {
-          color: @grey50;
+        p.title {
+          display: inline-block;
           margin-bottom: 8px;
+          color: @grey50;
+        }
+
+        div {
+          display: flex;
+          align-items: center;
+
+          label {
+            margin-right: 20px;
+
+            & + input {
+              flex: 1 1 auto;
+            }
+          }
         }
       }
     }
 
+    label {
+
+    }
+
     select, input[type=text] {
       width: 100%;
+      padding: 8px 10px;
+      border: 1px solid @grey30;
+      border-radius: 2px;
+      font-family: inherit;
     }
 
     select {
-      background-color: @white;
+      background: url('/img/SGV_arrow-select.svg') no-repeat calc(~'100% - 10px') center @white;
       color: @grey60;
-      padding: 10px 10px 8px;
-      border: 1px solid @grey30;
-      border-radius: 2px;
+
       font-size: 14px;
       line-height: 1.2em;
 
@@ -57,14 +85,35 @@
       -moz-appearance: none;
       text-indent: 1px;
       text-overflow: '';
-      position: relative;
+      outline: none;
+    }
 
-      &:after {
-        content: url('/img/SGV_arrow-select.svg');
-        display: block;
-        position: absolute;
-        right: 10px;
-        
+    input[type=text] {
+      background-color: @grey05;
+
+      .placeholder {
+        color: @grey50;
+        font-style: italic;
+      }
+
+      ::-webkit-input-placeholder {
+        .placeholder
+      }
+
+      ::-moz-placeholder {
+        .placeholder
+      }
+
+      :-ms-input-placeholder {
+        .placeholder
+      }
+
+      :-ms-input-placeholder {
+        .placeholder
+      }
+
+      [placeholder]:-ms-input-placeholder {
+        .placeholder
       }
     }
   }

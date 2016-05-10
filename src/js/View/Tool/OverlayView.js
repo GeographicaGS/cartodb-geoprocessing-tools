@@ -36,9 +36,9 @@ App.View.Tool.Overlay = Backbone.View.extend({
     
     for (var o in m)
       if (!m[o])
-        return $run.addClass('disable');
+        return $run.addClass('disabled');
 
-    return $run.removeClass('disable');
+    return $run.removeClass('disabled');
     
   },
 
@@ -54,7 +54,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
   _runTool: function(e){
     e.preventDefault();
 
-    if ($(e.target).closest('a').hasClass('disable'))
+    if ($(e.target).closest('a').hasClass('disabled'))
       return;
       
     var _this = this;

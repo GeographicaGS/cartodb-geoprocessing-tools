@@ -42,15 +42,17 @@ App.View.MapToolbar = Backbone.View.extend({
       this._tool.close();
 
     this._tool = new fn({
-      geoVizModel: this.model, 
+      geoVizModel: this.model,
     });
 
-    this.$('.toolholder').html(this._tool.render().$el).show();
-
+    this.$('.toolholder').html(this._tool.render().$el).show().get(0).className = "toolholder " + type;
+    this.$selectedToolBtn = $(e.currentTarget);
+    this.$selectedToolBtn.addClass('selected');
   },
 
   _closeTool: function(){
     this.$('.toolholder').hide();
+    this.$selectedToolBtn.removeClass('selected');
     if (this._tool){
       this._tool.close();
       this._tool = null;

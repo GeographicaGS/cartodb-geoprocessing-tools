@@ -328,6 +328,78 @@ footer {
 	overflow: auto;
 }
 
+.top_triangle(@left, @height, @width, @bg_color, @border_color){
+	&:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: @height * -1 - 1px;
+    left: @left;
+    border-style: solid;
+    border-width: 0 @width/2 @height;
+    border-color: transparent transparent @border_color transparent;
+  }
+
+  &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: @height * -1;
+    left: @left;
+    border-style: solid;
+    border-width: 0 @width/2 @height;
+    border-color: transparent transparent @bg_color transparent;
+  }
+}
+
+.tooltip {
+	position: relative;
+	font-size: 12px;
+
+	&:hover:before{
+		content: "";
+		position: absolute;
+		left: calc(~'50% - 6px');
+		bottom: calc(~'100% + 8px - 6px');
+		border-style: solid;
+		border-color: fade(@grey80,90%) transparent;
+		border-width: 6px 6px 0 6px;
+		z-index: 1081;
+	}
+
+	&:hover:after{
+		content: attr(title);
+		position: absolute;
+		left: 50%;
+		bottom: calc(~'100% + 8px');
+		transform: translateX(-50%);
+		display: flex;
+		align-items: center;
+		height: 20px;
+		padding: 5px 15px;
+		border-radius: 2px;
+		background-color: fade(@grey80,90%);
+		color: @white;
+		z-index: 1081;
+	}
+
+	&.bottom {
+		&:hover {
+			&:before {
+				bottom: auto;
+				top: calc(~'100% + 8px - 6px');
+				border-color: fade(@grey80,90%) transparent;
+				border-width: 0 6px 6px 6px;
+			}
+
+			&:after {
+				bottom: auto;
+				top: calc(~'100% + 8px');
+			}
+		}
+	}
+}
+
 @import "src/css/scrollbars.less";
 @import "src/css/login.less";
 @import "src/css/maplist.less";
