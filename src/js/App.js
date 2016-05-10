@@ -178,7 +178,6 @@ App.loading = function(){
 
 App.ini = function(){
 
-
   this.$main = $('main');
   this.router = new App.Router();
   
@@ -192,6 +191,5 @@ App.ini = function(){
 }
 
 App.getUserModel = function(){
-  
   return this._userModel;
 }

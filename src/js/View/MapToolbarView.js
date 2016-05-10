@@ -33,6 +33,9 @@ App.View.MapToolbar = Backbone.View.extend({
     else if (type == 'intersection'){
       cn = 'Intersection';
     }
+     else if (type == 'erase'){
+      cn = 'Erase';
+    }
     else{
       throw new Error('Unsupported tool type: '+ type);
     }
