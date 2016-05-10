@@ -53,12 +53,12 @@
   font-style: italic;
 }
 
-.font(@style) when(@style=ultrabold){
+.font(@style) when(@style=black){
   .fontweight(900);
 }
 
-.font(@style) when(@style=ultrabolditalic){
-  .fontweight(ultrabold);
+.font(@style) when(@style=blackitalic){
+  .fontweight(black);
   font-style: italic;
 }
 
@@ -68,6 +68,11 @@ body{
 	display: flex;
 	flex-direction: column;
 	height: 100vh;
+}
+
+input, select, textarea {
+	font-family: inherit;
+	font-size: inherit;
 }
 
 header {
@@ -82,135 +87,6 @@ header {
 
 	&:empty {
 		display: none;
-	}
-
-	.back-btn {
-		margin: 0 10px 0 20px;
-	}
-
-	h1 {
-		flex: 1 1 auto;
-		margin: 0 10px;
-		.font(light);
-		font-size: 1.7em;
-
-		&.center {
-			text-align: center;
-			font-size: 2.15em;
-
-			span {
-				font-weight: 900;
-				font-style: italic;
-			}
-		}
-	}
-
-	.logos {
-		padding-right: 10px;
-		a {
-			margin: 0 10px;
-			img {
-				height: 42px;
-			}
-		}
-	}
-
-	.user {
-		flex: 0 0 200px;
-		height: 100%;
-		display: flex;
-		padding: 20px;
-		align-items: center;
-		background-color: rgba(255,255,255,.05);
-		box-shadow: inset 2px 0 0 0 rgba(0,0,0,.2);
-		cursor: pointer;
-
-		span {
-			flex: 1 1 100%;
-			padding: 0 10px;
-		}
-
-		.save-status {
-			flex: 0 0 42px;
-			height: 42px;
-			width: 42px;
-			background-color: @blue_dark;
-			background-repeat: no-repeat;
-			background-position: center;
-			border-radius: 2px;
-
-			&[data-status='disabled'] {
-				background-image: url('/img/SGV_icon-autosave_des.svg');
-			}
-
-			&[data-status='enabled'] {
-				background-image: url('/img/SGV_icon-autosave_act.svg');
-			}
-
-			&[data-status='waiting'] {
-				background-image: url('/img/SGV_icon-autosave_waiting.svg');
-			}
-		}
-
-    .autosave-holder{
-      position: absolute;
-      top: 75px;
-      right: 20px;
-      z-index: 300;
-      background-color: #000;
-      color: #fff;
-
-      .checking{
-        &:before{
-          content:'Checking...';
-          display:block;
-        }
-      }
-
-      [data-status]{
-        .button{
-          width: 10px;
-          height:10px;
-          cursor: pointer;
-        }
-
-        .co_api_key{
-          p{
-            display: none;
-          }
-        }
-      }
-
-      [data-status='disabled']{
-        .co_api_key{
-          display: none;
-        }
-
-        .button{
-          background-color: #ccc;
-        }
-      }
-
-      [data-status='waiting']{
-        .button{
-          background-color: #f00;
-        }
-
-        &.issue .co_api_key p{
-          display: block;
-        }
-      }
-
-      [data-status='enabled']{
-        .button{
-          background-color: #0f0;
-        }
-
-        .help{
-          display: none;
-        }
-      }
-    }
 	}
 }
 
@@ -289,6 +165,7 @@ footer {
 
 .toggle {
 	position: relative;
+	display: block;
 	height: 12px;
 	width: 20px;
 	border: 1px solid @grey35;
@@ -401,6 +278,7 @@ footer {
 }
 
 @import "src/css/scrollbars.less";
+@import "src/css/header.less";
 @import "src/css/login.less";
 @import "src/css/maplist.less";
 @import "src/css/map.less";
