@@ -360,7 +360,7 @@ footer {
 		content: "";
 		position: absolute;
 		left: calc(~'50% - 6px');
-		bottom: calc(~'100% + 5px - 6px');
+		bottom: calc(~'100% + 8px - 6px');
 		border-style: solid;
 		border-color: fade(@grey80,90%) transparent;
 		border-width: 6px 6px 0 6px;
@@ -371,8 +371,11 @@ footer {
 		content: attr(title);
 		position: absolute;
 		left: 50%;
-		bottom: calc(~'100% + 5px');
+		bottom: calc(~'100% + 8px');
 		transform: translateX(-50%);
+		display: flex;
+		align-items: center;
+		height: 20px;
 		padding: 5px 15px;
 		border-radius: 2px;
 		background-color: fade(@grey80,90%);
@@ -384,14 +387,14 @@ footer {
 		&:hover {
 			&:before {
 				bottom: auto;
-				top: calc(~'100% + 5px - 6px');
+				top: calc(~'100% + 8px - 6px');
 				border-color: fade(@grey80,90%) transparent;
 				border-width: 0 6px 6px 6px;
 			}
 
 			&:after {
 				bottom: auto;
-				top: calc(~'100% + 5px');
+				top: calc(~'100% + 8px');
 			}
 		}
 	}
