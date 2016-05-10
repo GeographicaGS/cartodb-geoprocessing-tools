@@ -2,7 +2,7 @@
   <h3>Clip</h3>
   <div class="actions">
   <a href='#' class='button notfilled cancel'>Cancel</a>
-  <a href='#' class='run button disable'>
+  <a href='#' class='run button disabled'>
     Run
     <img src="/img/SGV_icon-check-white.svg">
   </a>
@@ -11,20 +11,22 @@
 <div class="content">
   <ol>
     <li>
-      <p>Input Layer</p>
+      <p class="title">Input Layer</p>
       <select name='input'>
         <option>Choose layer...</option>
       </select>
     </li>
     <li>
-      <p>Cutting Layer</p>
+      <p class="title">Cutting Layer</p>
       <select name='cut'>
         <option>Choose layer...</option>
       </select>
     </li>
     <li>
-      <p>Result Layer</p>
-      <label for="clip-name">Name</label>
-      <input type="text" id="cliname" name='name' placeholder='Write a layer name' />
+      <p class="title">Result Layer</p>
+      <div>
+        <label for="clip-name">Name</label>
+        <input type="text" id="cliname" name='name' placeholder='Write a layer name' />
+      </div>
     </li>
 </div>

@@ -299,7 +299,7 @@
     border-radius: 2px;
     .font(bold);
 
-    transition: background-color .10s ease-in-out;
+    transition: background-color .10s ease-in-out, opacity .10s ease-in-out;
 
     img {
       vertical-align: middle;
@@ -319,8 +319,16 @@
       }
     }
 
+    &.disabled {
+      opacity: .4;
+
+      &:hover {
+        background-color: @blue_light;
+      }
+    }
+
     & + .button {
-      margin: 10px;
+      margin-left: 10px;
     }
   }
 }
