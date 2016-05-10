@@ -183,10 +183,11 @@ App.ini = function(){
   this.router = new App.Router();
   
   this._userModel = new App.Model.UserLocalStorage();
-  this._userModel.on('ready',function(){
-    Backbone.history.start({pushState: true});  
+  this._userModel.fetch({
+    'success' : function(){
+      Backbone.history.start({pushState: true});  
+    }
   });
-
   
 }
 
