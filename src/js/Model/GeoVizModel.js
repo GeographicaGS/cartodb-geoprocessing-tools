@@ -194,27 +194,56 @@ App.Model.GeoViz = App.Model.Viz.extend({
   // },
 
 
+  // getSublayerGeometryType : function(id,cb){
+  //   var l = this.findSublayer(id);
+  //   if (!l)
+  //     return cb(null);
+
+  //   var q = "WITH q as ({{{sql}}}),"
+  //       // Take 200 records for the heuristics. TODO: Improve it.
+  //       + " geomtype as (select st_geometrytype(the_geom_webmercator) as geometrytype from q LIMIT 200),"
+  //       // Group by geometrytype
+  //       + " r as (select geometrytype,count(*) as n from geomtype group by geometrytype)"
+  //       // Take the biggest group
+  //       + " select geometrytype from r order by n DESC LIMIT 1";
+
+  //   var sql = new cartodb.SQL({ user: this.get('account') });
+
+  //   sql.execute(q,{sql: l.options.sql})
+  //     .done(function(data) {
+  //       if (data && data.rows && data.rows.length)
+  //         cb(data.rows[0].geometrytype,l);
+  //       else 
+  //         cb(null,l);
+  //     })
+  //     .error(function(errors) {
+  //       cb(null,l,errors)
+  //     });
+
+  // },
+
+
   getSublayerGeometryType : function(id,cb){
     var l = this.findSublayer(id);
     if (!l)
       return cb(null);
 
-    var q = "WITH q as ({{{sql}}}),"
-        // Take 200 records for the heuristics. TODO: Improve it.
-        + " geomtype as (select st_geometrytype(the_geom_webmercator) as geometrytype from q LIMIT 200),"
-        // Group by geometrytype
-        + " r as (select geometrytype,count(*) as n from geomtype group by geometrytype)"
-        // Take the biggest group
-        + " select geometrytype from r order by n DESC LIMIT 1";
+    var q = "WITH q as ({{{sql}}})"
+        + "select st_geometrytype(the_geom_webmercator) as geometrytype from q group by geometrytype";
 
     var sql = new cartodb.SQL({ user: this.get('account') });
 
     sql.execute(q,{sql: l.options.sql})
       .done(function(data) {
-        if (data && data.rows && data.rows.length)
+        if (data && data.rows && data.rows.length==1){
           cb(data.rows[0].geometrytype,l);
-        else 
+        }
+        else if (data && data.rows && data.rows.length>1){
+          cb('multi',l);
+        }
+        else{
           cb(null,l);
+        }
       })
       .error(function(errors) {
         cb(null,l,errors)
@@ -222,44 +251,61 @@ App.Model.GeoViz = App.Model.Viz.extend({
 
   },
 
-  guessSublayerGeometryType: function(id,cb){
+
+  // guessSublayerGeometryType: function(id,cb){
     
-    var _this = this;
+  //   var _this = this;
 
-    this.getSublayerGeometryType(id,function(geometrytype,l,err){
-      if (err)
-        console.log('Cannot guess sublayer '+ l.gid + ' geometry type');
-      else{
+  //   this.getSublayerGeometryType(id,function(geometrytype,l,err){
+  //     if (err)
+  //       console.log('Cannot guess sublayer '+ l.gid + ' geometry type');
+  //     else{
+  //       l.geometrytype = geometrytype;
+  //       _this.trigger('sublayer:set:geometrytype',l);
+  //     }
+
+  //     if (cb)
+  //       cb(geometrytype,l,err);
+  //   });
+
+  // },
+
+  // _guessSublayersGeometryTypesSerial: function(ids,i,cb){
+  //   var _this = this;
+  //   this.guessSublayerGeometryType(ids[i],function(geometrytype,l,err){
+  //     i++;
+  //     if (i<ids.length)
+  //       _this._guessSublayersGeometryTypesSerial(ids,i,cb);
+  //     else if (cb)
+  //         cb();
+
+  //   });
+  // },
+
+  // guessSublayersGeometryTypesSerial: function(){
+
+  //   var _this = this,
+  //     ids = this.getSublayersIds();
+
+  //   this._guessSublayersGeometryTypesSerial(ids,0,function(){
+  //     _this.save();
+  //   });
+    
+  // },
+
+  calculateSublayersGeometryTypes: function(cb){
+
+    var ids = this.getSublayersIds(),
+      counter = 0;
+
+    for (var i in ids){
+      this.getSublayerGeometryType(ids[i],function(geometrytype,l,err){
+        counter++;
         l.geometrytype = geometrytype;
-        _this.trigger('sublayer:set:geometrytype',l);
-      }
-
-      if (cb)
-        cb(geometrytype,l,err);
-    });
-
-  },
-
-  _guessSublayersGeometryTypesSerial: function(ids,i,cb){
-    var _this = this;
-    this.guessSublayerGeometryType(ids[i],function(geometrytype,l,err){
-      i++;
-      if (i<ids.length)
-        _this._guessSublayersGeometryTypesSerial(ids,i,cb);
-      else if (cb)
+        if (counter==ids.length)
           cb();
-
-    });
-  },
-
-  guessSublayersGeometryTypesSerial: function(){
-
-    var _this = this,
-      ids = this.getSublayersIds();
-
-    this._guessSublayersGeometryTypesSerial(ids,0,function(){
-      _this.save();
-    });
+      });
+    }
     
   },
 
@@ -312,15 +358,15 @@ App.Model.GeoViz = App.Model.Viz.extend({
     layerdef.gid = this.getUUID();
     this.trigger('addSublayer',layerdef);
     this.save();
-    this.guessSublayerGeometryType(layerdef.gid);
+    //this.guessSublayerGeometryType(layerdef.gid);
   },
 
-  save: function(attributes,options){
-    if (!attributes)
-      attributes = {};
+  // save: function(attributes,options){
+  //   if (!attributes)
+  //     attributes = {};
     
-    attributes['updated_at_ts'] = new Date().getTime();
-    Backbone.Model.prototype.save.apply(this, [attributes,options]);
-  } 
+  //   attributes['updated_at_ts'] = new Date().getTime();
+  //   Backbone.Model.prototype.save.apply(this, [attributes,options]);
+  // } 
 
 });

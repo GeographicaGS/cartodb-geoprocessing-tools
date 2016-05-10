@@ -18,6 +18,8 @@ deps.JS = [
   // Namespace
   srcJS + 'Config.js',
 
+  srcJS + 'Utils.js',
+
   // Models
   srcJS + 'Model/UserModel.js',
   srcJS + 'Model/VizModel.js',
@@ -40,7 +42,7 @@ deps.JS = [
   srcJS + 'View/MapToolbarView.js',
   srcJS + 'View/MapView.js',
   // Tool Views
-  srcJS + 'View/Tool/ClipView.js',
+  srcJS + 'View/Tool/OverlayView.js',
 
   // Router
   srcJS + 'Router.js',

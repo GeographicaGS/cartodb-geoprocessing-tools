@@ -1,5 +1,5 @@
 <div class="header">
-  <h3>Clip</h3>
+  <h3><%= title %></h3>
   <div class="actions">
   <a href='#' class='button notfilled cancel'>Cancel</a>
   <a href='#' class='run button disable'>
@@ -30,9 +30,9 @@
       <% if (output_type) { %>
         <label for="output_type">Output</label>
         <select name='output_type'>
-          <option>Points</option>
-          <option>Lines</option>
-          <option>Polygons</option>
+          <option value=1>Points</option>
+          <option value=2>Lines</option>
+          <option value=3>Polygons</option>
         </select>
       <% } %>
     </li>

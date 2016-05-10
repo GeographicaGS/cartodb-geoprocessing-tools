@@ -1,8 +1,4 @@
 <% if (!m.geometrytype) { %>
-  Loading
-<% }  else if (m.geometrytype == 'error') { %>
-  Error guessing geometry type
-<% } else if (m.geometrytype == 'nodata') { %>
   Cannot open wizard for an empty layer
 <% } else if (m.geometrytype=='ST_MultiPolygon' || m.geometrytype=='ST_Polygon') { %>
   TODO Multipolygon wizard

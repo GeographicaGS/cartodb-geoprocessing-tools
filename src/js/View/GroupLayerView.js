@@ -86,7 +86,7 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
   initialize: function(options) {
     this._geoVizModel = options.geoVizModel;
     this.listenTo(this.model,'change:visible',this._renderUpdateButton);
-    this.listenTo(this._geoVizModel,'sublayer:set:geometrytype',this._sublayerGeometrytype);
+    //this.listenTo(this._geoVizModel,'sublayer:set:geometrytype',this._sublayerGeometrytype);
   },
 
   events: {
@@ -99,10 +99,10 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
     this.stopListening();
   },
 
-  _sublayerGeometrytype: function(l){
-    if (l.gid == this.model.get('gid'))
-      this.model.set('geometrytype',l.geometrytype);
-  },
+  // _sublayerGeometrytype: function(l){
+  //   if (l.gid == this.model.get('gid'))
+  //     this.model.set('geometrytype',l.geometrytype);
+  // },
 
   _toggleSubView: function(e){
     e.preventDefault();
@@ -289,6 +289,9 @@ App.View.GroupLayerMap = Backbone.View.extend({
 
   _onLayerDone: function(layer){
     this._layer = layer;
+    layer.on("load", function() {
+      $('.cartodb-tiles-loader').animate({opacity: 0}, 400);
+    });
   },
 
   render: function(){
@@ -296,6 +299,7 @@ App.View.GroupLayerMap = Backbone.View.extend({
     console.log('Map render!');
 
     if (this._layer){
+      this._layer.hide();
       this._map.removeLayer(this._layer);
     }
 
@@ -303,6 +307,8 @@ App.View.GroupLayerMap = Backbone.View.extend({
     // Doesn't work. Clone does a shallow copy
     // var vizjson = this.model.clone().toJSON();
     var vizjson = JSON.parse(JSON.stringify(this.model.toJSON()));
+
+    $('.cartodb-tiles-loader').animate({opacity: 1}, 400);
 
     cartodb.createLayer(this._map, vizjson)
       .addTo(this._map)

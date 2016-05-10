@@ -6,7 +6,7 @@ App.View.Map = Backbone.View.extend({
 
   initialize: function(options) {
 
-    _.bindAll(this,'_onFetchVizModel','resizeMap');
+    _.bindAll(this,'_onFetchVizModel','resizeMap','_onCreatedVIS','_render');
 
     var m = new Backbone.Model({
       section: 'map',
@@ -86,16 +86,14 @@ App.View.Map = Backbone.View.extend({
       }
     }
 
-    this._geoVizModel.guessSublayersGeometryTypesSerial();
-
     if (this._user.get('autosave') && this._user.get('account')==this._geoVizModel.get('account'))
       this._geoVizModel.save();
 
-    this.postrender();
+    this._geoVizModel.calculateSublayersGeometryTypes(this._render);
 
   },
 
-  postrender: function(){
+  _render: function(){
     this.toolbar = new App.View.MapToolbar({
       el: this.$('.toolbar'),
       model: this._geoVizModel,
@@ -118,11 +116,52 @@ App.View.Map = Backbone.View.extend({
     this.$map = this.$('.map');
     this.$map.css('width','100%').css('height', (this.$el.parent().height() - 64) + "px"); // TODO: parameterize or calculate hardcoded toolbar height value (64px)
 
-    var mapOptions = {
-      zoom: 5,
-      center: [43, 0]
-    };
-    this.map = new L.Map('map', mapOptions);
+
+    var url = 'http://alasarr.cartodb.com/api/v2/viz/d1e1bf50-1675-11e6-a016-0e3ff518bd15/viz.json';
+    cartodb.createVis('map', url)
+      .done(this._onCreatedVIS);
+
+
+    // var mapOptions = {
+    //   zoom: 5,
+    //   center: [43, 0]
+    // };
+    // this.map = new L.Map('map', mapOptions);
+
+    // this._cartoVizModel = new App.Model.CartoViz({
+    //   id: this.model.get('viz'),
+    //   account: this.model.get('account')
+    // });
+
+    // this._geoVizModel = new App.Model.GeoViz({
+    //   id: this.model.get('viz'),
+    //   account: this.model.get('account')
+    // });
+
+    // // Everything start after fetching models.
+    // this._nfetches = 0;
+
+    // this._cartoVizModel.fetch({
+    //   success: this._onFetchVizModel
+    // });
+
+    // this._geoVizModel.fetch({
+    //   success: this._onFetchVizModel
+    // });
+
+    // $(window).on('resize', this.resizeMap);
+
+    return this;
+  },
+
+  _onCreatedVIS: function(vis,layers){
+
+    this.map = vis.getNativeMap();
+    this.vis = vis;
+    // We only use the vis for the CartoDB loading control
+    // for (var i in layers){
+    //   layers[i].hide();
+    // }
 
     this._cartoVizModel = new App.Model.CartoViz({
       id: this.model.get('viz'),
@@ -146,9 +185,8 @@ App.View.Map = Backbone.View.extend({
     });
 
     $(window).on('resize', this.resizeMap);
-
-    return this;
   },
+
 
   resizeMap: function(e){
     this.$map.css('height', (this.$el.parent().height() - 64) + "px"); // TODO: parameterize or calculate
