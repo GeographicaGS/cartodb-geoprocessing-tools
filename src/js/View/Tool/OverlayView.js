@@ -8,8 +8,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
     this.model = new Backbone.Model({
       'input': null,
       'overlay': null,
-      'name':null,
-      'output_type' : 1 //1 == POINT, 2 == LINESTRING, 3 == POLYGON. http://postgis.net/docs/ST_CollectionExtract.html
+      'name':null
     });
     this.listenTo(this.model,'change',this._updateModelUI);
   },
@@ -54,9 +53,13 @@ App.View.Tool.Overlay = Backbone.View.extend({
   _runTool: function(e){
     e.preventDefault();
 
-    if ($(e.target).closest('a').hasClass('disabled'))
+    var $run = $(e.target).closest('a');
+
+    if ($run.hasClass('disabled')|| $run.hasClass('loading'))
       return;
       
+    $run.addClass('running');
+
     var _this = this;
     this.run(function(newLayer){
       this._geoVizModel.addSublayer(newLayer);
@@ -75,7 +78,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
 
   render: function(){
 
-    this.$el.html(this._template({output_type: this._outputType, title: this._title}));
+    this.$el.html(this._template({title: this._title}));
     
     // Fill input layer combo
     var inputLayers = this.getInputLayers();
@@ -100,7 +103,6 @@ App.View.Tool.Overlay = Backbone.View.extend({
 App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
   initialize: function(options) { 
     _.bindAll(this,'_onSublayersFields');
-    this._outputType = false;
     this._title = 'Clip';
     App.View.Tool.Overlay.prototype.initialize.apply(this,[options]);
   },
@@ -123,7 +125,6 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
 
 
     // TODO Extract from geometry collections: http://postgis.refractions.net/documentation/manual-2.1SVN/ST_CollectionExtract.html
-
     var q = [
       " WITH a as ({{{input_query}}}), b as ({{{overlay_query}}}),",
       " r as (",
@@ -196,16 +197,12 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
 
     // Chose a cartodb_id. Input layer takes precendence over overlay
     var common_fields = _.intersection(this._fields['input'],this._fields['overlay']);
-    var input_fields = _.difference(this._fields['input'],this._fields['overlay']);
+    var input_fields = this._fields['input'];
     var overlay_fields = _.difference(this._fields['overlay'],this._fields['input']);
 
     input_fields = _.map(input_fields,function(f){
       return 'a.' + f;
     });
-
-    input_fields = input_fields.concat(_.map(common_fields,function(f){
-      return 'a.' + f + ' as ' + f + '_1';
-    }));
 
     overlay_fields = _.map(overlay_fields,function(f){
       return 'b.' + f;
@@ -228,11 +225,15 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
     var inputlayer = this._geoVizModel.findSublayer(this.model.get('input'));
     var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
 
+    // TODO Extract from geometry collections: http://postgis.refractions.net/documentation/manual-2.1SVN/ST_CollectionExtract.html
     var q = [
-      ' WITH a as ({{{input_query}}}), b as ({{{overlay_query}}})',
-      'SELECT distinct {{{fields}}},st_intersection(a.the_geom_webmercator,b.the_geom_webmercator) as the_geom_webmercator',
-        ' FROM a,b ',
-        ' WHERE st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)'];
+      " WITH a as ({{{input_query}}}), b as ({{{overlay_query}}}),",
+      " r as (",
+        "SELECT distinct {{fields}},st_multi(st_intersection(a.the_geom_webmercator,b.the_geom_webmercator)) as the_geom_webmercator",
+        " FROM a,b ",
+        " WHERE st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)",
+      ")",
+      " select * from r where st_geometrytype(the_geom_webmercator) ='" +  Utils.getPostgisMultiType(inputlayer.geometrytype) + "'"];
 
     q = Mustache.render(q.join(' '),{
           input_query: inputlayer.options.sql, 
@@ -244,6 +245,7 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
     newLayer.options.sql = q;
     newLayer.options.cartocss = "#overlay{ polygon-fill: #FF6600;polygon-opacity: 0.7;line-color: #FFF;line-width: 0.5;line-opacity: 1;}";
     newLayer.options.layer_name = this.model.get('name');
+    newLayer.options.geometrytype = inputlayer.geometrytype;
     this._runCB(newLayer);
 
   }

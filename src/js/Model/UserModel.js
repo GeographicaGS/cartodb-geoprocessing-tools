@@ -18,15 +18,15 @@ App.Model.User = Backbone.Model.extend({
 
 App.Model.UserLocalStorage = App.Model.User.extend({
   
-  constructor: function() {
-    Backbone.Model.apply(this, arguments);
-    if(typeof(Storage) !== "undefined") {
-      // Load Model from localStorage
-      this._loadFromLocalStorage();
-    }
-  },
+  // constructor: function() {
+  //   Backbone.Model.apply(this, arguments);
+  //   if(typeof(Storage) !== "undefined") {
+  //     // Load Model from localStorage
+  //     this._loadFromLocalStorage();
+  //   }
+  // },
 
-  _loadFromLocalStorage: function(){
+  _loadFromLocalStorage: function(options){
     if(typeof(Storage) !== "undefined"){
       var user = localStorage.getItem('user');
       if (user){
@@ -34,35 +34,45 @@ App.Model.UserLocalStorage = App.Model.User.extend({
           Backbone.Model.prototype.set.apply(this, [JSON.parse(user)]); 
         }
         catch(err){
-          console.error('Cannot parse user localStorage info: '+ err.message);
+          throw new Error('Cannot parse user localStorage info: '+ err.message);
         }
       }
     }
     else
-      console.error('Not supported localStorage');
+      throw new Error('Not supported localStorage');
 
     if (this.get('autosave') == 'enabled'){
       var _this = this;
       this.validateAPIKey(function(st){
         if (st)
           _this.createConfigTable(function(){
-            _this.trigger('ready');
+           if (options && options.success)
+            options.success(_this);
           })
       });
     }
     else{
-      this.trigger('ready');
+      if (options && options.success)
+            options.success(this);
     }
   },
 
-  save: function(){
-    if(typeof(Storage) !== "undefined") 
-      localStorage.setItem('user',JSON.stringify(this.toJSON()));
-    else
-      console.error('Not supported localStorage');
+  sync: function(method, model, options){
+    if (method == "read"){
+      this._loadFromLocalStorage(options);
+    }
+    else if ( method == 'update'){
+      if(typeof(Storage) !== "undefined"){
+        localStorage.setItem('user',JSON.stringify(this.toJSON()));
+        if (options && options.success)
+            options.success(this);
+      }
 
-    return this;
+      else
+        console.error('Not supported localStorage');
+    }
   },
+
 
   set: function(attributes,options){
     var _this = this;

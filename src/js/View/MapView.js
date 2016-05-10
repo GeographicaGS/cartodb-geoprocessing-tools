@@ -76,7 +76,7 @@ App.View.Map = Backbone.View.extend({
 
     // Remove all layers.
     for (var i in toremove){
-      geolayers[i].splice(toremove[i],1);
+      geolayers.splice(toremove[i],1);
     }
 
     // Copy layers from CartoViz which are not present at GeoViz. It happens when new layers are added at CartoDB editor
