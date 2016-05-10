@@ -22,7 +22,7 @@ App.View.UserControl = Backbone.View.extend({
 
     if (this.model.get('account')!= this._account)
       $st.attr('data-status','notallowed');
-    else 
+    else
       $st.attr('data-status',this.model.get('autosave'));
 
   },
@@ -46,7 +46,7 @@ App.View.UserControl = Backbone.View.extend({
     else{
       this._autoSaveView.close();
       this._autoSaveView = null;
-    } 
+    }
   }
 
 });
@@ -66,15 +66,20 @@ App.View.UserAutosave = Backbone.View.extend({
   },
 
   events: {
-    'click .button' : '_changeStatus',
+    'click .toggle' : '_changeStatus',
     'keyup input' : '_updateAPIKeyTimer'
   },
 
   _render: function(){
     var api_key = this.model.get('api_key'),
         autosave = this.model.get('autosave');
+    this.$toggle = this.$('.toggle');
     this.$el.attr('data-status',autosave);
-    
+    if(autosave == 'waiting' || autosave == 'enabled'){
+      this.$toggle.addClass('enabled');
+    }
+
+
     this.$('input').val(api_key);
 
     this.$('.co_api_key').removeClass('validating');
@@ -86,7 +91,7 @@ App.View.UserAutosave = Backbone.View.extend({
 
   },
 
-  _changeStatus: function(){
+  _changeStatus: function(e){
     var st = this.model.get('autosave');
 
     if (st == 'enabled' || st == 'waiting'){
@@ -94,14 +99,16 @@ App.View.UserAutosave = Backbone.View.extend({
         'autosave':'disabled',
         'api_key' : null
       }).save();
+      this.$toggle.removeClass('enabled');
     }
     else if (st == 'disabled'){
       this.model.set('autosave','waiting').save();
+      this.$toggle.addClass('enabled');
     }
   },
 
   _updateAPIKeyTimer: function(){
-    
+
     this.$el.addClass('checking');
 
     if (this._apikeyTimeout)
@@ -129,7 +136,7 @@ App.View.UserAutosave = Backbone.View.extend({
   },
 
   render: function(){
-    this.$el.html(this._template());
+    this.$el.html(this._template({account: this._account}));
     this._render();
     return this;
   }

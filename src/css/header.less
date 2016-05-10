@@ -1,0 +1,263 @@
+header {
+  .back-btn {
+		margin: 0 10px 0 20px;
+	}
+
+	h1 {
+		flex: 1 1 auto;
+		margin: 0 10px;
+		.font(light);
+		font-size: 1.7em;
+
+		&.center {
+			text-align: center;
+			font-size: 2.15em;
+
+			span {
+				font-weight: 900;
+				font-style: italic;
+			}
+		}
+	}
+
+	.logos {
+		padding-right: 10px;
+		a {
+			margin: 0 10px;
+			img {
+				height: 42px;
+			}
+		}
+	}
+
+	.user {
+		flex: 0 0 200px;
+		height: 100%;
+		display: flex;
+		padding: 20px;
+		align-items: center;
+		background-color: rgba(255,255,255,.05);
+		box-shadow: inset 2px 0 0 0 rgba(0,0,0,.2);
+		cursor: pointer;
+
+		span {
+			flex: 1 1 100%;
+			padding: 0 10px;
+		}
+
+		.save-status {
+			flex: 0 0 42px;
+			height: 42px;
+			width: 42px;
+			background-color: @blue_dark;
+			background-repeat: no-repeat;
+			background-position: center;
+			border-radius: 2px;
+
+			&[data-status='disabled'] {
+				background-image: url('/img/SGV_icon-autosave_des.svg');
+			}
+
+			&[data-status='enabled'] {
+				background-image: url('/img/SGV_icon-autosave_act.svg');
+			}
+
+			&[data-status='waiting'] {
+				background-image: url('/img/SGV_icon-autosave_waiting.svg');
+			}
+		}
+
+    .autosave-holder{
+      position: absolute;
+      top: 75px;
+      right: 20px;
+      width: 320px;
+      padding: 18px 20px;
+      border: 1px solid @grey20;
+      border-radius: 2px;
+      box-shadow: 0 -2px 8px 0 fade(@black, 10%);
+      background-color: @white;
+      color: @blue_light;
+      .top_triangle(calc(~'100% - 26px'), 8px, 14px, @white, @grey20);
+      z-index: 300;
+
+      &:empty {
+        display: none;
+      }
+
+      .header {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 18px;
+
+        h4 {
+          flex: 1 1 auto;
+          .font(black);
+        }
+      }
+
+      .checking{
+        &:before{
+          content:'Checking...';
+          display:block;
+        }
+      }
+
+      .co_api_key {
+        .help {
+          float:right;
+          padding-top: 5px;
+          vertical-align: middle;
+
+          img {
+            vertical-align: middle;
+            margin-left: 2px;
+          }
+
+          &:after {
+            content: "";
+            display: block;
+            clear: both;
+          }
+        }
+
+        &:after {
+          content: "";
+          display: block;
+          clear: both;
+        }
+      }
+
+      p.help {
+        display: block;
+        color: @grey35;
+        font-size: 14px;
+        line-height: 18px;
+        font-style: italic;
+
+        strong {
+          .font(bold);
+        }
+
+        img {
+          vertical-align: bottom;
+          position: relative;
+          top: 2px;
+        }
+      }
+
+      [data-status]{
+        .toggle{
+          cursor: pointer;
+
+          &:before {
+            content: "";
+            display: inline-block;
+            position: absolute;
+            top: -2px;
+            right: calc(~'100% + 10px');
+            color: @grey35;
+            font-size: 14px;
+            line-height: 1em;
+            font-style: italic;
+            text-align: right;
+          }
+        }
+
+        .co_api_key{
+          p{
+            display: none;
+            margin-bottom: 5px;
+          }
+
+          input[type=text] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid @grey50;
+            border-radius: 2px;
+            background-color: @grey05;
+          }
+
+          .placeholder {
+  					color: @grey50;
+  					font-style: italic;
+  				}
+
+  				::-webkit-input-placeholder {
+  					.placeholder
+  				}
+
+  				::-moz-placeholder {
+  					.placeholder
+  				}
+
+  				:-ms-input-placeholder {
+  					.placeholder
+  				}
+
+  				:-ms-input-placeholder {
+  				 	.placeholder
+  				}
+
+  				[placeholder]:-ms-input-placeholder {
+  					.placeholder
+  				}
+        }
+      }
+
+      [data-status='disabled']{
+        .toggle:before {
+          content: "Deactivated";
+        }
+        .co_api_key{
+          display: none;
+        }
+      }
+
+      [data-status='waiting']{
+        .toggle.enabled {
+          background-color: @waiting;
+          border-color: @waiting;
+
+          &:before {
+            content: "Waiting...";
+          }
+        }
+
+        .co_api_key {
+          input[type=text] {
+            border-color: @waiting;
+          }
+        }
+
+        &.issue .co_api_key p{
+          display: block;
+          color: @waiting;
+        }
+      }
+
+      [data-status='enabled']{
+        .toggle.enabled {
+          background-color: @green;
+          border-color: @green;
+
+          &:before {
+            content: "Activated";
+          }
+        }
+
+        .co_api_key {
+          input[type=text] {
+            border-color: @green;
+            background-color: @green;
+            color: @white;
+          }
+        }
+
+        .help{
+          display: none;
+        }
+      }
+    }
+	}
+}
