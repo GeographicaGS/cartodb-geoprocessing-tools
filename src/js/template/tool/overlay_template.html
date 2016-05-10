@@ -1,5 +1,5 @@
 <div class="header">
-  <h3>Clip</h3>
+  <h3><%= title %></h3>
   <div class="actions">
   <a href='#' class='button notfilled cancel'>Cancel</a>
   <a href='#' class='run button disabled'>
@@ -18,15 +18,15 @@
     </li>
     <li>
       <p class="title">Cutting Layer</p>
-      <select name='cut'>
+      <select name='overlay'>
         <option>Choose layer...</option>
       </select>
     </li>
     <li>
       <p class="title">Result Layer</p>
       <div>
-        <label for="clip-name">Name</label>
-        <input type="text" id="cliname" name='name' placeholder='Write a layer name' />
+        <label for="output-name">Name</label>
+        <input type="text" id="output-name" name='name' placeholder='Write a layer name' />
       </div>
     </li>
 </div>

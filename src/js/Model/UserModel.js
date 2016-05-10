@@ -42,7 +42,16 @@ App.Model.UserLocalStorage = App.Model.User.extend({
       console.error('Not supported localStorage');
 
     if (this.get('autosave') == 'enabled'){
-      this.validateAPIKey();
+      var _this = this;
+      this.validateAPIKey(function(st){
+        if (st)
+          _this.createConfigTable(function(){
+            _this.trigger('ready');
+          })
+      });
+    }
+    else{
+      this.trigger('ready');
     }
   },
 
@@ -83,21 +92,34 @@ App.Model.UserLocalStorage = App.Model.User.extend({
    
   },
 
-  createConfigTable: function(){
+  createConfigTable: function(cb){
+    var api_key = this.get('api_key'),
+        autosave = this.get('autosave');
+
+    if (!api_key || autosave!='enabled'){
+      if (cb)
+        cb(false);
+      return;
+    }
+
     var sql = new cartodb.SQL({ user: this.get('account') });
     // check if table exists
     var q = "select count(*) as n from CDB_UserTables() as name where name='{{tablename}}'";
     sql.execute(q,{tablename: App.Config.Data.CFG_TABLE_NAME},{cache: true})
       .done(function(data) {
-        if (data && data.rows.length && data.rows[0].n)
+        if (data && data.rows.length && data.rows[0].n){
+          if (cb)
+            cb(false);
           // Table already exits 
           return;
+        }
         
         // Let's create the table
         var q = 'CREATE TABLE {{tablename}} (id_viz text, viz json, PRIMARY KEY(id_viz)); GRANT SELECT ON {{tablename}} TO publicuser;';
         sql.execute(q,{tablename: App.Config.Data.CFG_TABLE_NAME},{api_key: api_key,cache: true})
           .done(function(data) {
-            
+            if (cb)
+              cb(true);
           })
           .error(function(errors) {
             console.error('Cannot create config table at CartoDB. ' + errors);
