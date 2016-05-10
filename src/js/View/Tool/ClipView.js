@@ -3,7 +3,7 @@
 App.View.Tool.Clip = Backbone.View.extend({
   _template: _.template( $('#tool-clip_template').html() ),
 
-  initialize: function(options) { 
+  initialize: function(options) {
     _.bindAll(this,'_onSublayersFields');
     this._geoVizModel = options.geoVizModel;
     this.model = new Backbone.Model({
@@ -33,13 +33,13 @@ App.View.Tool.Clip = Backbone.View.extend({
 
     var m = this.model.toJSON(),
       $run = this.$('.run');
-    
+
     for (var o in m)
       if (!m[o])
-        return $run.addClass('disable');
+        return $run.addClass('disabled');
 
-    return $run.removeClass('disable');
-    
+    return $run.removeClass('disabled');
+
   },
 
   _updateModel: function(e){
@@ -54,12 +54,12 @@ App.View.Tool.Clip = Backbone.View.extend({
   _runTool: function(e){
     e.preventDefault();
 
-    if ($(e.target).closest('a').hasClass('disable'))
+    if ($(e.target).closest('a').hasClass('disabled'))
       return;
-      
+
     this._geoVizModel.getSublayersFields(this.model.get('input'),this._onSublayersFields);
 
-  },  
+  },
 
   _onSublayersFields: function(fields,err){
     if (err)
@@ -67,7 +67,7 @@ App.View.Tool.Clip = Backbone.View.extend({
 
     var inputlayer = this._geoVizModel.findSublayer(this.model.get('input'));
     var cutlayer = this._geoVizModel.findSublayer(this.model.get('cut'));
-    
+
     // Remove geometry fields. We're building it with the clipping
     fields = _.without(fields,'the_geom_webmercator','the_geom');
     fields = _.map(fields,function(f){ return 'a.'+ f});
@@ -81,7 +81,7 @@ App.View.Tool.Clip = Backbone.View.extend({
         ' AND not st_touches(a.the_geom_webmercator,b.the_geom_webmercator)'];
 
     q = Mustache.render(q.join(' '),{
-          input_query: inputlayer.options.sql, 
+          input_query: inputlayer.options.sql,
           cut_query: cutlayer.options.sql,
           fields: fields.join(',')
         });
@@ -98,12 +98,12 @@ App.View.Tool.Clip = Backbone.View.extend({
   render: function(){
 
     this.$el.html(this._template());
-    
+
     // Fill input layer combo
     var inputLayers = this._geoVizModel.getSublayers();
     var $select = this.$('select[name="input"]');
     for (var i in inputLayers){
-      $select.append('<option value="' + inputLayers[i].gid + '">' + inputLayers[i].options.layer_name + '</option>');  
+      $select.append('<option value="' + inputLayers[i].gid + '">' + inputLayers[i].options.layer_name + '</option>');
     }
 
     // Fill cutting layers combo
@@ -111,11 +111,11 @@ App.View.Tool.Clip = Backbone.View.extend({
 
     var $select = this.$('select[name="cut"]');
     for (var i in cutlayers){
-      $select.append('<option value="' + cutlayers[i].gid + '">' + cutlayers[i].options.layer_name + '</option>');  
+      $select.append('<option value="' + cutlayers[i].gid + '">' + cutlayers[i].options.layer_name + '</option>');
     }
 
     return this;
-      
+
   }
 
 });
