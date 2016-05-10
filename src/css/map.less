@@ -2,19 +2,26 @@
   flex: 1 1 100%;
   height: calc(~'100% - ' @mapToolbarHeight);
 
+  z-index: 1;
+
   &.leaflet-container {
     background-color: @white;
   }
 
   .cartodb-zoom, .leaflet-control-zoom {
     position: absolute;
-    left: 9px;
+    left: -1px;
     top: 62px;
     z-index: 2;
     width: auto;
     border: none;
     box-shadow: 0 0 0 4px rgba(100,100,100,.2);
     border-radius: 2px;
+
+    transition: transform .25s;
+    &.translated{
+      transform: translateX(350px);
+    }
 
     .zoom_in, .zoom_out, .leaflet-control-zoom-in, .leaflet-control-zoom-out {
       background-position: center;
@@ -275,6 +282,11 @@
 			top: 80px;
 			left: 18px;
 			z-index: 2;
+      
+      transition: transform .25s;
+      &.translated{
+        transform: translateX(350px);
+      }
 
 			.buttons {
 				flex-direction: column;
@@ -289,6 +301,7 @@
 	.mapHolder {
 		display: flex;
 		height: 100%;
+    position: relative;
 	}
 
   .button {

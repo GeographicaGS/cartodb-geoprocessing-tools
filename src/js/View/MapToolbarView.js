@@ -14,7 +14,8 @@ App.View.MapToolbar = Backbone.View.extend({
   },
 
   events: {
-    'click li[data-tool]' : '_openTool'
+    'click li[data-tool]' : '_openTool',
+    'click .map_extra_controls .tooltip' : '_openReportList'
   },
 
   onClose: function(){
@@ -32,6 +33,9 @@ App.View.MapToolbar = Backbone.View.extend({
     }
     else if (type == 'intersection'){
       cn = 'Intersection';
+    }
+    else if (type == 'statistical'){
+      cn = 'Statistical';
     }
     else{
       throw new Error('Unsupported tool type: '+ type);
@@ -57,6 +61,13 @@ App.View.MapToolbar = Backbone.View.extend({
       this._tool.close();
       this._tool = null;
     }
+  },
+
+  _openReportList:function(e){
+    $(e.currentTarget).toggleClass('selected');
+    $(e.currentTarget).closest('.map_extra_controls').toggleClass('translated');
+    $('.cartodb-zoom').toggleClass('translated');
+    $('.left-sidebar').toggleClass('activated');
   },
 
   render: function(){

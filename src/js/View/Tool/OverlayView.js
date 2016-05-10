@@ -249,3 +249,15 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
   }
 
 });
+
+App.View.Tool.OverlayStatistical = App.View.Tool.Overlay.extend({
+  _template: _.template( $('#tool-overlay_statistical_template').html() ),
+
+  initialize: function(options) { 
+    // _.bindAll(this,'_onSublayersFields');
+    this._outputType = false;
+    this._title = 'Statistical report';
+    App.View.Tool.Overlay.prototype.initialize.apply(this,[options]);
+  }
+
+});

@@ -26,6 +26,9 @@ App.View.Map = Backbone.View.extend({
       this.header.remove();
     if (this.footer)
       this.footer.remove();
+
+    if(this.reportView)
+      this.reportView.close();
   },
 
   _onFetchVizModel: function(m){
@@ -112,6 +115,10 @@ App.View.Map = Backbone.View.extend({
 
     this.header.render();
     this.footer.render({classes: ''});
+
+    this.reportView = new App.View.Report();
+    this.reportView.setElement($('.left-sidebar'));
+    this.reportView.render();
 
     this.$map = this.$('.map');
     this.$map.css('width','100%').css('height', (this.$el.parent().height() - 64) + "px"); // TODO: parameterize or calculate hardcoded toolbar height value (64px)
