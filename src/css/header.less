@@ -38,12 +38,16 @@ header {
 		align-items: center;
 		background-color: rgba(255,255,255,.05);
 		box-shadow: inset 2px 0 0 0 rgba(0,0,0,.2);
-		cursor: pointer;
 
-		span {
+    & > span {
 			flex: 1 1 100%;
 			padding: 0 10px;
+      cursor: pointer;
 		}
+
+    & > img {
+      cursor: pointer;
+    }
 
 		.save-status {
 			flex: 0 0 42px;
@@ -53,6 +57,7 @@ header {
 			background-repeat: no-repeat;
 			background-position: center;
 			border-radius: 2px;
+      cursor: pointer;
 
 			&[data-status='disabled'] {
 				background-image: url('/img/SGV_icon-autosave_des.svg');
@@ -93,6 +98,7 @@ header {
         h4 {
           flex: 1 1 auto;
           .font(black);
+          line-height: 1em;
         }
       }
 
