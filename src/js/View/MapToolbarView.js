@@ -21,6 +21,9 @@ App.View.MapToolbar = Backbone.View.extend({
   onClose: function(){
     this.stopListening();
     this._closeTool();
+
+    if(this.reportView)
+      this.reportView.close();
   },
 
   _openTool: function(e){
@@ -47,6 +50,7 @@ App.View.MapToolbar = Backbone.View.extend({
 
     this._tool = new fn({
       geoVizModel: this.model,
+      reportView: cn == 'Statistical' ? this.reportView: null
     });
 
     this.$('.toolholder').html(this._tool.render().$el).show().get(0).className = "toolholder " + type;
@@ -81,6 +85,17 @@ App.View.MapToolbar = Backbone.View.extend({
       map: this._map
     });
     this.groupLayer.render();
+
+    this.reportView = new App.View.Report({'map':this._map, geoVizModel: this.model});
+    this.reportView.setElement($('.left-sidebar'));
+    this.reportView.render();
+    this.listenTo(this.reportView.reportCollection,'add', function(){
+      this.$('.map_extra_controls .tooltip').addClass('selected');
+      this.$('.map_extra_controls .tooltip').closest('.map_extra_controls').addClass('translated');
+      $('.cartodb-zoom').addClass('translated');
+      $('.left-sidebar').addClass('activated');
+      this._closeTool();
+    });
 
     return this;
   }

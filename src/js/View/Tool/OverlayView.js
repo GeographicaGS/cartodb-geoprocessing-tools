@@ -254,12 +254,107 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
 
 App.View.Tool.OverlayStatistical = App.View.Tool.Overlay.extend({
   _template: _.template( $('#tool-overlay_statistical_template').html() ),
+  _template_field_options: _.template( $('#tool-overlay_statistical_field_options').html() ),
 
   initialize: function(options) { 
     // _.bindAll(this,'_onSublayersFields');
     this._outputType = false;
     this._title = 'Statistical report';
     App.View.Tool.Overlay.prototype.initialize.apply(this,[options]);
+    this.model.unset('overlay');
+    this.reportView = options.reportView;
+  },
+
+  events: {
+    // 'change [name]' : '_updateModel',
+    'change [name="input"]' : '_updateField',
+    'change [name="field"]' : '_fieldChange',
+    'click a.add': '_addField',
+    'click a.remove': '_removeField',
+    'click a.run': '_runTool',
+    'click a.cancel': '_cancelTool',
+  },
+
+  _updateField:function(e){
+    var _this = this;
+    var $select = this.$('select[name="field"]');
+    $select.find('option:not(.choose)').remove()
+    this.$('.wraper_field.extra').remove();
+    this.$('.wraper_field .options').children().remove();
+
+    this._geoVizModel.getSublayersFields($(e.currentTarget).val(),function(fields,errors){
+      _this.currentFields = [];
+      _.each(fields, function(f) {
+        if(f!='cartodb_id' && f!='the_geom' && f!='the_geom_webmercator'){
+          _this.currentFields.push(f);
+          $select.append('<option value="' + f + '">' + f + '</option>');  
+        }
+      });
+    });
+  },
+
+  _addField:function(e){
+    e.preventDefault();
+    var options = '';
+    _.each(this.currentFields, function(f) {
+      options += '<option value="' + f + '">' + f + '</option>'
+    });
+    this.$('.field_list').append('<div class="wraper_field extra">'
+                                  +'  <select name="field">'
+                                  +'    <option class="choose">Choose field...</option>'
+                                  +     options
+                                  +'  </select>'
+                                  +'  <a href="#" class="remove"></a>'
+                                  +'  <div class="options"></div>'
+                                  +'</div>');
+  },
+
+  _removeField:function(e){
+    e.preventDefault();
+    $(e.currentTarget).closest('.wraper_field').remove();
+  },
+
+  _fieldChange:function(e){
+    var options = $(e.currentTarget).closest('.wraper_field').find('.options');
+    if(options.children().length == 0)
+      options.html(this._template_field_options());
+
+    this.$('.add').removeClass('hide');
+  },
+
+  _runTool: function(cb){
+    // var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
+    var reportModel = new App.Model.Report({account: this.model.get('account')});
+    reportModel.set('name',  this.$('#output-name').val());
+    reportModel.set('layer', this.$('[name="input"] option:selected').text());
+    reportModel.set('layer_sql', this._geoVizModel.findSublayer(this.$('[name="input"]').val()).options.sql);
+    reportModel.set('fields',[]);
+    _.each(this.$('.field_list .wraper_field'),function(f) {
+      var json = {'name':$(f).find('[name="field"]').val(), 'operations':[]};
+      _.each($(f).find('input:checked'),function(i) {
+        json.operations.push($(i).val());
+      });
+      reportModel.get('fields').push(json)
+    });
+
+    this.reportView.reportCollection.add(reportModel);
+    this._geoVizModel.set('reports',this.reportView.reportCollection.toJSON());
+    this._geoVizModel.save();
+  },
+
+  render: function(){
+
+    this.$el.html(this._template({title: this._title}));
+    
+    // Fill input layer combo
+    var inputLayers = this.getInputLayers();
+    var $select = this.$('select[name="input"]');
+    for (var i in inputLayers){
+      if(!inputLayers[i].geoLayer)
+        $select.append('<option value="' + inputLayers[i].gid + '">' + inputLayers[i].options.layer_name + '</option>');  
+    }
+
+    return this;
   }
 
 });
