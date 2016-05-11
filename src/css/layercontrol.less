@@ -30,7 +30,7 @@
         transition: visibility 0s linear, opacity .25s ease-in-out .06s, transform .25s ease-in-out;
       }
 
-      li {
+      & > li {
         list-style: none;
         background-color: @white;
         padding: 0;
@@ -172,6 +172,30 @@
           }
 
           &.wizard {
+            padding: 0 20px;
+
+            li {
+              display: flex;
+              align-items: center;
+              padding: 10px 0;
+              border-bottom: 1px solid @grey55;
+
+              &:last-child {
+                border-bottom: none;
+              }
+
+              label {
+                flex: 1 0 170px;
+              }
+
+              input, select {
+                margin-left: 8px;
+              }
+
+              select {
+                width: 145px;
+              }
+            }
             &:before {
               transform: translateX(-149px);
             }
@@ -208,6 +232,52 @@
                 color: fade(@white, 80%);
               }
             }
+          }
+
+          input[type="color"] {
+            height: 30px;
+            width: 16px;
+            padding: 0;
+            border: 1px solid @grey75;
+            border-radius: 2px;
+            background-color: @grey55;
+            outline: none;
+          }
+
+          input[type="number"] {
+            height: 30px;
+            width: 56px;
+            padding: 8px;
+            border: 1px solid @grey75;
+            border-radius: 2px;
+            background-color: @grey55;
+            color: @white;
+            outline: none;
+
+            &.opacity {
+              background: url('/img/SGV_bg-opacity.png') repeat @white;
+              color: @grey60;
+            }
+          }
+
+          select {
+            padding: 8px;
+            border: 1px solid @grey75;
+            border-radius: 2px;
+            background: url('/img/SGV_arrow-select-grey.svg') no-repeat calc(~'100% - 10px') center @grey60;
+            color: @white;
+            outline: none;
+
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            text-indent: 1px;
+            text-overflow: '';
+            outline: none;
+          }
+
+          label {
+            color: @grey30;
+            font-size: 14px;
           }
         }
 
