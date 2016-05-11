@@ -23,6 +23,8 @@ App.View.MapToolbar = Backbone.View.extend({
   },
 
   _openTool: function(e){
+    this.$('.buttons .selected').removeClass('selected');
+
     var $li = $(e.target).closest('li'),
       type = $li.attr('data-tool'),
       cn;
@@ -58,7 +60,7 @@ App.View.MapToolbar = Backbone.View.extend({
 
   _closeTool: function(){
     this.$('.toolholder').hide();
-    this.$selectedToolBtn.removeClass('selected');
+    this.$('.buttons .selected').removeClass('selected');
     if (this._tool){
       this._tool.close();
       this._tool = null;
