@@ -50,6 +50,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
 
     this.model.set(name,value);
 
+    return this;
   },
 
   _renderOverlaySelect: function(){
@@ -75,9 +76,11 @@ App.View.Tool.Overlay = Backbone.View.extend({
     overlaylayers = _.without(overlaylayers,input);
 
     var $select = this.$('select[name="overlay"]');
+    var html = '';
     for (var i in overlaylayers){
-      $select.html('<option value="' + overlaylayers[i].gid + '">' + overlaylayers[i].options.layer_name + '</option>');  
+      html += '<option value="' + overlaylayers[i].gid + '">' + overlaylayers[i].options.layer_name + '</option>';  
     }
+    $select.html(html);
   
     this.model.set('overlay',$select.val());
 
@@ -216,7 +219,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
   createLayer: function(){
     var newLayer = JSON.parse(JSON.stringify(this._geoVizModel.findSublayer(this.model.get('input'))));
     newLayer.options.sql = this.model.get('sql');
-    newLayer.options.cartocss = "#overlay{ polygon-fill: #FF6600;polygon-opacity: 0.7;line-color: #FFF;line-width: 0.5;line-opacity: 1;}";
+    newLayer.options.cartocss = App.Model.Wizard.getModelInstance(this.model.get('geometrytype')).toCartoCSS();
     newLayer.options.layer_name = this.model.get('name');
     newLayer.options.geometrytype = this.model.get('geometrytype');
     newLayer.visible = true;
@@ -249,7 +252,7 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
     var inputlayer = this._geoVizModel.findSublayer(this.model.get('input'));
     var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
 
-    this.model.set('geometrytype',Utils.getPostgisMultiType(inputlayer.geometrytype));
+    this.model.set('geometrytype',App.Utils.getPostgisMultiType(inputlayer.geometrytype));
     
     // TODO Extract from geometry collections: http://postgis.refractions.net/documentation/manual-2.1SVN/ST_CollectionExtract.html
     var q = [
@@ -292,7 +295,7 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
     var inputlayer = this._geoVizModel.findSublayer(this.model.get('input'));
     var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
 
-    var outputgeomtype = Utils.getPostgisMultiType(inputlayer.geometrytype);
+    var outputgeomtype = App.Utils.getPostgisMultiType(inputlayer.geometrytype);
 
     // TODO Extract from geometry collections: http://postgis.refractions.net/documentation/manual-2.1SVN/ST_CollectionExtract.html
     var q = [
@@ -337,7 +340,7 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
     var inputlayer = this._geoVizModel.findSublayer(this.model.get('input'));
     var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
 
-    var outputgeomtype = Utils.getPostgisMultiType(inputlayer.geometrytype);
+    var outputgeomtype = App.Utils.getPostgisMultiType(inputlayer.geometrytype);
 
     // TODO Extract from geometry collections: http://postgis.refractions.net/documentation/manual-2.1SVN/ST_CollectionExtract.html
     var q = [

@@ -17,57 +17,24 @@ App.Model.User = Backbone.Model.extend({
 });
 
 App.Model.UserLocalStorage = App.Model.User.extend({
-  
-  // constructor: function() {
-  //   Backbone.Model.apply(this, arguments);
-  //   if(typeof(Storage) !== "undefined") {
-  //     // Load Model from localStorage
-  //     this._loadFromLocalStorage();
-  //   }
-  // },
 
-  _loadFromLocalStorage: function(options){
+  _loadFromLocalStorage: function(){
     if(typeof(Storage) !== "undefined"){
-      var user = localStorage.getItem('user');
-      if (user){
-        try{
-          Backbone.Model.prototype.set.apply(this, [JSON.parse(user)]); 
-        }
-        catch(err){
-          throw new Error('Cannot parse user localStorage info: '+ err.message);
-        }
-      }
+      return JSON.parse(localStorage.getItem('user')) || {};
     }
     else
       throw new Error('Not supported localStorage');
 
-    if (this.get('autosave') == 'enabled'){
-      var _this = this;
-      this.validateAPIKey(function(st){
-        if (st)
-          _this.createConfigTable(function(){
-           if (options && options.success)
-            options.success(_this);
-          })
-      });
-    }
-    else{
-      if (options && options.success)
-            options.success(this);
-    }
   },
 
   sync: function(method, model, options){
     if (method == "read"){
-      this._loadFromLocalStorage(options);
+      options.success(this._loadFromLocalStorage());
     }
-    else if ( method == 'update'){
+    else if ( method == 'update' || method=='create'){
       if(typeof(Storage) !== "undefined"){
         localStorage.setItem('user',JSON.stringify(this.toJSON()));
-        if (options && options.success)
-            options.success(this);
       }
-
       else
         console.error('Not supported localStorage');
     }
@@ -164,6 +131,21 @@ App.Model.UserLocalStorage = App.Model.User.extend({
       });
   },
 
+  validateAndCreate: function(cb){
+
+    if (this.get('autosave') == 'enabled'){
+      var _this = this;
+      this.validateAPIKey(function(st){
+        if (st)
+          _this.createConfigTable(function(){
+            cb(_this);
+          })
+      });
+    }
+    else{
+      cb(this);
+    }
+  }
   // _setAutosave: function(status){
   //   if (['disabled','waiting'].indexOf(status)!=-1){
   //     Backbone.Model.prototype.set.apply(this,['autosave',status]);

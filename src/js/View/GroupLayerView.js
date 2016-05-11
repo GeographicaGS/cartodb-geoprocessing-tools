@@ -194,12 +194,39 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
   initialize: function(options) {
     _.bindAll(this,'_onLayerFields');
     this._geoVizModel = options.geoVizModel;
+
+    this.cartocssModel = App.Model.Wizard.getModelInstance(this.model.get('geometrytype'));
     
+    this.listenTo(this.cartocssModel,'change',this._onChangeCartoCSSField);
+    
+
   },
 
-  // events: {
-  //   'change [name]' : '_onChangeField'
-  // },
+  events: {
+    'change [name]' : '_onChangeFieldUI'
+  },
+
+  _onChangeFieldUI: function(e){
+    var $e = $(e.target),
+      name = $e.attr('name');
+
+    this.cartocssModel.set(name,$e.val().trim());
+
+  },
+
+  _onChangeCartoCSSField:function(){
+    var cartocss = this.cartocssModel.toCartoCSS();
+
+    if (this._cartoCSSTimeout)
+      clearTimeout(this._cartoCSSTimeout);
+
+    var _this = this;
+    this._cartoCSSTimeout = setTimeout(function(){
+      clearTimeout(_this._cartoCSSTimeout);
+      _this._geoVizModel.updateSubLayerCartoCSS(_this.model.get('id'),cartocss);
+    },500);
+
+  },
 
   onClose: function(){
     this.stopListening();
@@ -214,9 +241,11 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
   },
 
   render: function(){
+    
     this.$el.html(this._template({
       m: this.model.toJSON(),
-      comp_ops: ['multiply','screen','overlay','darken']
+      comp_ops: ['multiply','screen','overlay','darken'],
+      cartocss: this.cartocssModel.toJSON()
     }));
 
     this._geoVizModel.getSublayersFields(this.model.get('gid'),this._onLayerFields);

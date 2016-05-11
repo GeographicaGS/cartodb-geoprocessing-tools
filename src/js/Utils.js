@@ -1,4 +1,4 @@
-Utils = {
+App.Utils = {
   getPostgisMultiType: function(type){
     // TODO: Complete it with all PostGIS types.
     if (type=='ST_Polygon')
