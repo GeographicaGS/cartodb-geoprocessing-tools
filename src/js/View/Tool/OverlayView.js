@@ -11,6 +11,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
       'name':null
     });
     this.listenTo(this.model,'change',this._updateModelUI);
+    this.listenTo(this.model,'change:input',this._renderOverlaySelect);
   },
 
   events: {
@@ -50,6 +51,36 @@ App.View.Tool.Overlay = Backbone.View.extend({
 
   },
 
+  _renderOverlaySelect: function(){
+
+    var input = this._geoVizModel.findSublayer(this.model.get('input'));
+
+    if (!input) 
+      return;
+
+    var gtypes = [];
+    if (input.geometrytype=='ST_MultiPolygon' || input.geometrytype=='ST_Polygon'){
+      gtypes = ['polygon'];
+    }
+    else if (input.geometrytype=='ST_MultiLineString' || input.geometrytype=='ST_LineString'){
+      gtypes = ['polygon','line'];
+    }
+    else if (input.geometrytype=='ST_MultiPoint' || input.geometrytype=='ST_Point'){
+      gtypes = ['polygon','line','point'];
+    }
+    
+    var overlaylayers = this._geoVizModel.getSublayersByGeometryType(gtypes);
+    // Remove input layers
+    overlaylayers = _.without(overlaylayers,input);
+
+    var $select = this.$('select[name="overlay"]');
+    for (var i in overlaylayers){
+      $select.html('<option value="' + overlaylayers[i].gid + '">' + overlaylayers[i].options.layer_name + '</option>');  
+    }
+  
+    return this;
+  },
+
   _runTool: function(e){
     e.preventDefault();
 
@@ -84,12 +115,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
     }
 
     // Fill overlay layers combo
-    var overlaylayers = this.getOverlayLayers();
-
-    var $select = this.$('select[name="overlay"]');
-    for (var i in overlaylayers){
-      $select.append('<option value="' + overlaylayers[i].gid + '">' + overlaylayers[i].options.layer_name + '</option>');  
-    }
+    this._renderOverlaySelect();
 
     return this;
   },
@@ -242,10 +268,6 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
 
     this.createLayer();
 
-  },
-
-  getOverlayLayers: function(){
-    return this._geoVizModel.getSublayersByGeometryType('polygon');
   }
 
 });
