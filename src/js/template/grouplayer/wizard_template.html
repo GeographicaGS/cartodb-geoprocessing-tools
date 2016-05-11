@@ -4,21 +4,21 @@
   <ul>
     <li>
       <label>Polygon Fill</label>
-      <input type="text" name="polygon-fill" value="" />
-      <input type="text" name="polygon-opacity" />
+      <input type="color" name="polygon-fill" value="" />
+      <input type="number" name="polygon-opacity" class="opacity" step="0.1" min="0.0" max="1.0" value="1"/>
     </li>
     <li>
       <label>Polygon Stroke</label>
-      <input type="text" name="line-width" value="" />
-      <input type="text" name="line-color" value="" />
-      <input type="text" name="line-opacity" />
+      <input type="number" name="line-width" value="" step="1" min="0" value="1" />
+      <input type="color" name="line-color" value="" />
+      <input type="number" name="line-opacity" class="opacity" step="0.1" min="0.0" max="1.0" value="1" />
     </li>
     <li>
       <label>Composite operation</label>
       <select name="polygon-comp-op">
         <option value="">None</option>
         <% _.each(comp_ops,function(op){ %>
-        <option value="<%= op%>"><%= op %></option> 
+        <option value="<%= op%>"><%= op %></option>
         <% }); %>
       </select>
     </li>
@@ -33,16 +33,16 @@
   <ul>
    <li>
       <label>Line Stroke</label>
-      <input type="text" name="line-width" value="" />
-      <input type="text" name="line-color" value="" />
-      <input type="text" name="line-opacity" />
+      <input type="number" name="line-width" value="" step="1" min="0" value="1" />
+      <input type="color" name="line-color" value="" />
+      <input type="number" name="line-opacity" class="opacity" step="0.1" min="0.0" max="1.0" value="1" />
     </li>
     <li>
       <label>Composite operation</label>
       <select name="line-comp-op">
         <option value="">None</option>
         <% _.each(comp_ops,function(op){ %>
-        <option value="<%= op%>"><%= op %></option> 
+        <option value="<%= op%>"><%= op %></option>
         <% }); %>
       </select>
     </li>
@@ -57,21 +57,21 @@
    <ul>
     <li>
       <label>Marker Fill</label>
-      <input type="text" name="marker-width" />
-      <input type="text" name="marker-fill" value="" />
-      <input type="text" name="marker-fill-opacity" value="" />
+      <input type="number" name="marker-width" step="1" min="0" value="1" />
+      <input type="color" name="marker-fill" value="" />
+      <input type="number" name="marker-fill-opacity" class="opacity" value="" step="0.1" min="0.0" max="1.0" value="1" />
     </li>
     <li>
       <label>Marker Stroke</label>
-      <input type="text" name="marker-line-width" />
-      <input type="text" name="marker-line-color" value="" />
-      <input type="text" name="marker-line-opacity" value="" />
+      <input type="number" name="marker-line-width" step="1" min="0" value="1"/>
+      <input type="color" name="marker-line-color" value="" />
+      <input type="number" name="marker-line-opacity" class="opacity" value="" step="0.1" min="0.0" max="1.0" value="1" />
     </li>
     <li>
       <label>Composite operation</label>
       <select name="marker-comp-op">
         <% _.each(comp_ops,function(op){ %>
-        <option value="<%= op%>"><%= op %></option> 
+        <option value="<%= op%>"><%= op %></option>
         <% }); %>
       </select>
     </li>
