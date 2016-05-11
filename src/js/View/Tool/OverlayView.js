@@ -109,6 +109,10 @@ App.View.Tool.Overlay = Backbone.View.extend({
     return this._geoVizModel.getSublayers();
   },
 
+  getCartoDBID: function(){
+    return 'ROW_NUMBER() OVER () AS cartodb_id';
+  },
+
   render: function(){
 
     this.$el.html(this._template({title: this._title}));
@@ -133,21 +137,20 @@ App.View.Tool.Overlay = Backbone.View.extend({
           throw new Error('Cannot get input layer fields');
         
       // Remove geometry fields. We're building it with the clipping
-      fields = _.without(fields,'the_geom_webmercator','the_geom');
+      fields = _.without(fields,'the_geom_webmercator','the_geom','cartodb_id');
 
       _this._fields[attr] = fields;
 
       if (_this._fields.input && _this._fields.overlay){
         // Both layer fetches. Do the merge
 
-        if (_this._fields['input'].indexOf('cartodb_id')!= -1 && _this._fields['overlay'].indexOf('cartodb_id')!= -1){
-          // CartoDB id is at both layers
-          // Let's remove it from the overlay.
-          var index = _this._fields['overlay'].indexOf('cartodb_id');
-          _this._fields['overlay'].splice(index, 1);
-        }
+        // if (_this._fields['input'].indexOf('cartodb_id')!= -1 && _this._fields['overlay'].indexOf('cartodb_id')!= -1){
+        //   // CartoDB id is at both layers
+        //   // Let's remove it from the overlay.
+        //   var index = _this._fields['overlay'].indexOf('cartodb_id');
+        //   _this._fields['overlay'].splice(index, 1);
+        // }
 
-        // Chose a cartodb_id. Input layer takes precendence over overlay
         var common_fields = _.intersection(_this._fields['input'],_this._fields['overlay']);
         var input_fields = _this._fields['input'];
         var overlay_fields = _.difference(_this._fields['overlay'],_this._fields['input']);
@@ -254,17 +257,23 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
 
     this.model.set('geometrytype',App.Utils.getPostgisMultiType(inputlayer.geometrytype));
     
+    console.log(queryFields);
+
     // TODO Extract from geometry collections: http://postgis.refractions.net/documentation/manual-2.1SVN/ST_CollectionExtract.html
     var q = [
       " WITH a as ({{{input_query}}}), b as ({{{overlay_query}}}),",
       " r as (",
-        "SELECT distinct {{fields}},st_multi(st_intersection(a.the_geom_webmercator,b.the_geom_webmercator)) as the_geom_webmercator",
+        "SELECT distinct {{cartodb_id}},{{fields}},st_multi(st_intersection(a.the_geom_webmercator,b.the_geom_webmercator)) as the_geom_webmercator",
         " FROM a,b ",
         " WHERE st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)",
       ")",
-      " select * from r where st_geometrytype(the_geom_webmercator) ='" + this.model.get('geometrytype') + "'"];
+      " select * from r where ",
+        "st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' OR "
+        "st_geometrytype(the_geom_webmercator)='" + this.model.get('geometrytype') + "'"];
+
 
     q = Mustache.render(q.join(' '),{
+          cartodb_id: this.getCartoDBID(),
           input_query: inputlayer.options.sql, 
           overlay_query: overlaylayer.options.sql,
           fields: queryFields
