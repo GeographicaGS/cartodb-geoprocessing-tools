@@ -1,9 +1,85 @@
 <% if (!m.geometrytype) { %>
-  Cannot open wizard for an empty layer
+  <p class="error">Cannot open wizard for an empty layer</p>
 <% } else if (m.geometrytype=='ST_MultiPolygon' || m.geometrytype=='ST_Polygon') { %>
-  TODO Multipolygon wizard
-<% } else if (m.geometrytype=='ST_MultiLine' || m.geometrytype=='ST_Line' || m.geometrytype=='ST_GeometryCollection') { %>
-  TODO Line wizard
+  <ul>
+    <li>
+      <label>Polygon Fill</label>
+      <input type="text" name="polygon-fill" value="" />
+      <input type="text" name="polygon-opacity" />
+    </li>
+    <li>
+      <label>Polygon Stroke</label>
+      <input type="text" name="line-width" value="" />
+      <input type="text" name="line-color" value="" />
+      <input type="text" name="line-opacity" />
+    </li>
+    <li>
+      <label>Composite operation</label>
+      <select name="polygon-comp-op">
+        <option value="">None</option>
+        <% _.each(comp_ops,function(op){ %>
+        <option value="<%= op%>"><%= op %></option> 
+        <% }); %>
+      </select>
+    </li>
+    <li>
+      <label>Label text</label>
+      <select name="text-field">
+        <option value="">None</option>
+      </select>
+    </li>
+  </ul>
+<% } else if (m.geometrytype=='ST_MultiLineString' || m.geometrytype=='ST_LineString') { %>
+  <ul>
+   <li>
+      <label>Line Stroke</label>
+      <input type="text" name="line-width" value="" />
+      <input type="text" name="line-color" value="" />
+      <input type="text" name="line-opacity" />
+    </li>
+    <li>
+      <label>Composite operation</label>
+      <select name="line-comp-op">
+        <option value="">None</option>
+        <% _.each(comp_ops,function(op){ %>
+        <option value="<%= op%>"><%= op %></option> 
+        <% }); %>
+      </select>
+    </li>
+    <li>
+      <label>Label text</label>
+      <select name="text-field">
+        <option value="">None</option>
+      </select>
+    </li>
+  </ul>
 <% } else if (m.geometrytype=='ST_MultiPoint' || m.geometrytype=='ST_Point') { %>
-  TODO Point wizard
+   <ul>
+    <li>
+      <label>Marker Fill</label>
+      <input type="text" name="marker-width" />
+      <input type="text" name="marker-fill" value="" />
+      <input type="text" name="marker-fill-opacity" value="" />
+    </li>
+    <li>
+      <label>Marker Stroke</label>
+      <input type="text" name="marker-line-width" />
+      <input type="text" name="marker-line-color" value="" />
+      <input type="text" name="marker-line-opacity" value="" />
+    </li>
+    <li>
+      <label>Composite operation</label>
+      <select name="marker-comp-op">
+        <% _.each(comp_ops,function(op){ %>
+        <option value="<%= op%>"><%= op %></option> 
+        <% }); %>
+      </select>
+    </li>
+    <li>
+      <label>Label text</label>
+      <select name="text-field">
+        <option value="">None</option>
+      </select>
+    </li>
+  </ul>
 <% } %>

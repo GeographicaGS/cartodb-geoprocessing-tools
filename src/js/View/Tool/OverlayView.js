@@ -8,8 +8,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
     this.model = new Backbone.Model({
       'input': null,
       'overlay': null,
-      'name':null,
-      'output_type' : 1 //1 == POINT, 2 == LINESTRING, 3 == POLYGON. http://postgis.net/docs/ST_CollectionExtract.html
+      'name':null
     });
     this.listenTo(this.model,'change',this._updateModelUI);
   },
@@ -54,9 +53,13 @@ App.View.Tool.Overlay = Backbone.View.extend({
   _runTool: function(e){
     e.preventDefault();
 
-    if ($(e.target).closest('a').hasClass('disabled'))
+    var $run = $(e.target).closest('a');
+
+    if ($run.hasClass('disabled')|| $run.hasClass('running'))
       return;
       
+    $run.addClass('running');
+
     var _this = this;
     this.run(function(newLayer){
       this._geoVizModel.addSublayer(newLayer);
@@ -75,7 +78,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
 
   render: function(){
 
-    this.$el.html(this._template({output_type: this._outputType, title: this._title}));
+    this.$el.html(this._template({title: this._title}));
     
     // Fill input layer combo
     var inputLayers = this.getInputLayers();
@@ -93,37 +96,95 @@ App.View.Tool.Overlay = Backbone.View.extend({
     }
 
     return this;
+  },
+
+  _getFields: function(attr,cb){
+    var _this = this;
+    this._geoVizModel.getSublayersFields(this.model.get(attr),function(fields){
+      if (!fields)
+          throw new Error('Cannot get input layer fields');
+        
+      // Remove geometry fields. We're building it with the clipping
+      fields = _.without(fields,'the_geom_webmercator','the_geom');
+
+      _this._fields[attr] = fields;
+
+      if (_this._fields.input && _this._fields.overlay){
+        // Both layer fetches. Do the merge
+
+        if (_this._fields['input'].indexOf('cartodb_id')!= -1 && _this._fields['overlay'].indexOf('cartodb_id')!= -1){
+          // CartoDB id is at both layers
+          // Let's remove it from the overlay.
+          var index = _this._fields['overlay'].indexOf('cartodb_id');
+          _this._fields['overlay'].splice(index, 1);
+        }
+
+        // Chose a cartodb_id. Input layer takes precendence over overlay
+        var common_fields = _.intersection(_this._fields['input'],_this._fields['overlay']);
+        var input_fields = _this._fields['input'];
+        var overlay_fields = _.difference(_this._fields['overlay'],_this._fields['input']);
+
+        input_fields = _.map(input_fields,function(f){
+          return 'a.' + f;
+        });
+
+        overlay_fields = _.map(overlay_fields,function(f){
+          return 'b.' + f;
+        });
+
+        overlay_fields = overlay_fields.concat(_.map(common_fields,function(f){
+          return 'b.' + f + ' as ' + f + '_2'
+        }));
+
+        //var res = input_fields.concat(overlay_fields);
+        var res = input_fields;
+        cb(res.join(','));
+      }
+
+    });
+  },
+
+  mergeFieldsForQuery: function(cb){
+    this._fields = {'input' : null, 'left' : null};
+    this._getFields('input',cb);
+    this._getFields('overlay',cb);
+  },
+
+  getFieldsForQuery: function(attr,cb){
+    this._geoVizModel.getSublayersFields(this.model.get(attr), function(fields,err){
+      if (err)
+        throw Error('Cannot get layer fields '+ err);
+      
+      var prefix = attr=='input' ? 'a.' : 'b.';
+      // Remove geometry fields. We're building it with the clipping
+      fields = _.without(fields,'the_geom_webmercator','the_geom');
+      fields = _.map(fields,function(f){ return prefix + f});
+
+      cb(fields.join(','));
+    });
   }
 
 });
 
 App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
   initialize: function(options) { 
-    _.bindAll(this,'_onSublayersFields');
-    this._outputType = false;
+    _.bindAll(this,'_runClip');
     this._title = 'Clip';
     App.View.Tool.Overlay.prototype.initialize.apply(this,[options]);
   },
 
   run: function(cb){
     this._runCB = cb;
-    this._geoVizModel.getSublayersFields(this.model.get('input'),this._onSublayersFields);
+    this.getFieldsForQuery('input',this._runClip);
   },
 
-  _onSublayersFields: function(fields,err){
-    if (err)
-      throw Error('Cannot get layer fields '+ err);
+  _runClip: function(queryFields){
 
     var inputlayer = this._geoVizModel.findSublayer(this.model.get('input'));
     var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
     
-    // Remove geometry fields. We're building it with the clipping
-    fields = _.without(fields,'the_geom_webmercator','the_geom');
-    fields = _.map(fields,function(f){ return 'a.'+ f});
-
 
     // TODO Extract from geometry collections: http://postgis.refractions.net/documentation/manual-2.1SVN/ST_CollectionExtract.html
-
     var q = [
       " WITH a as ({{{input_query}}}), b as ({{{overlay_query}}}),",
       " r as (",
@@ -136,7 +197,7 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
     q = Mustache.render(q.join(' '),{
           input_query: inputlayer.options.sql, 
           overlay_query: overlaylayer.options.sql,
-          fields: fields.join(',')
+          fields: queryFields
         });
 
     var newLayer = JSON.parse(JSON.stringify(inputlayer));
@@ -144,6 +205,7 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
     newLayer.options.cartocss = "#overlay{ polygon-fill: #FF6600;polygon-opacity: 0.7;line-color: #FFF;line-width: 0.5;line-opacity: 1;}";
     newLayer.options.layer_name = this.model.get('name');
     newLayer.options.geometrytype = inputlayer.geometrytype;
+    console.log(newLayer);
     this._runCB(newLayer);
 
   },
@@ -157,82 +219,32 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
 App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
 
   initialize: function(options) { 
-    this._outputType = false;
+    _.bindAll(this,'_intersectRun');
     this._title = 'Intersection';
-    this._fields = { 'input' : null , 'overlay' : null};
     App.View.Tool.Overlay.prototype.initialize.apply(this,[options]);
   },
 
   run: function(cb){
     this._runCB = cb;
-    this._getFields('input');
-    this._getFields('overlay');
+    this.mergeFieldsForQuery(this._intersectRun);
   },
 
-  _getFields: function(attr){
-    var _this = this;
-    this._geoVizModel.getSublayersFields(this.model.get(attr),function(fields){
-      if (!fields)
-          throw new Error('Cannot get input layer fields');
-        
-      // Remove geometry fields. We're building it with the clipping
-      fields = _.without(fields,'the_geom_webmercator','the_geom');
-
-      _this._fields[attr] = fields;
-
-      if (_this._fields.input && _this._fields.overlay)
-        _this._onSublayersFields();
-
-    });
-  },
-
-  _mergeFieldsForQuery: function(){
-    if (this._fields['input'].indexOf('cartodb_id')!= -1 && this._fields['overlay'].indexOf('cartodb_id')!= -1){
-      // CartoDB id is at both layers
-      // Let's remove it from the overlay.
-      var index = this._fields['overlay'].indexOf('cartodb_id');
-      this._fields['overlay'].splice(index, 1);
-    }
-
-    // Chose a cartodb_id. Input layer takes precendence over overlay
-    var common_fields = _.intersection(this._fields['input'],this._fields['overlay']);
-    var input_fields = _.difference(this._fields['input'],this._fields['overlay']);
-    var overlay_fields = _.difference(this._fields['overlay'],this._fields['input']);
-
-    input_fields = _.map(input_fields,function(f){
-      return 'a.' + f;
-    });
-
-    input_fields = input_fields.concat(_.map(common_fields,function(f){
-      return 'a.' + f + ' as ' + f + '_1';
-    }));
-
-    overlay_fields = _.map(overlay_fields,function(f){
-      return 'b.' + f;
-    });
-
-    overlay_fields = overlay_fields.concat(_.map(common_fields,function(f){
-      return 'b.' + f + ' as ' + f + '_2'
-    }));
-
-    //var res = input_fields.concat(overlay_fields);
-    var res = input_fields;
-    return res.join(',');
-
-  },
-
-  _onSublayersFields: function(){
+  _intersectRun: function(queryFields){
     
-    var queryFields = this._mergeFieldsForQuery();
-
     var inputlayer = this._geoVizModel.findSublayer(this.model.get('input'));
     var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
 
+    var outputgeomtype = Utils.getPostgisMultiType(inputlayer.geometrytype);
+
+    // TODO Extract from geometry collections: http://postgis.refractions.net/documentation/manual-2.1SVN/ST_CollectionExtract.html
     var q = [
-      ' WITH a as ({{{input_query}}}), b as ({{{overlay_query}}})',
-      'SELECT distinct {{{fields}}},st_intersection(a.the_geom_webmercator,b.the_geom_webmercator) as the_geom_webmercator',
-        ' FROM a,b ',
-        ' WHERE st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)'];
+      " WITH a as ({{{input_query}}}), b as ({{{overlay_query}}}),",
+      " r as (",
+        "SELECT distinct {{fields}},st_multi(st_intersection(a.the_geom_webmercator,b.the_geom_webmercator)) as the_geom_webmercator",
+        " FROM a,b ",
+        " WHERE st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)",
+      ")",
+      " select * from r where st_geometrytype(the_geom_webmercator) ='" +  outputgeomtype + "'"];
 
     q = Mustache.render(q.join(' '),{
           input_query: inputlayer.options.sql, 
@@ -244,8 +256,63 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
     newLayer.options.sql = q;
     newLayer.options.cartocss = "#overlay{ polygon-fill: #FF6600;polygon-opacity: 0.7;line-color: #FFF;line-width: 0.5;line-opacity: 1;}";
     newLayer.options.layer_name = this.model.get('name');
+    newLayer.options.geometrytype = outputgeomtype;
     this._runCB(newLayer);
-
   }
-
 });
+
+App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
+  initialize: function(options) { 
+    _.bindAll(this,'_runErase');
+    this._title = 'Erase';
+    App.View.Tool.Overlay.prototype.initialize.apply(this,[options]);
+  },
+
+  run: function(cb){
+    this._runCB = cb;
+    this.getFieldsForQuery('input',this._runErase);
+  },
+
+  _runErase: function(fields,err){
+    if (err)
+      throw Error('Cannot get layer fields '+ err);
+
+    var inputlayer = this._geoVizModel.findSublayer(this.model.get('input'));
+    var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
+
+    var outputgeomtype = Utils.getPostgisMultiType(inputlayer.geometrytype);
+
+    // TODO Extract from geometry collections: http://postgis.refractions.net/documentation/manual-2.1SVN/ST_CollectionExtract.html
+    var q = [
+      " WITH a as ({{{input_query}}}), b as ({{{overlay_query}}}),",
+      " diff as (",
+        "SELECT distinct {{fields}},ST_Multi(ST_Difference(a.the_geom_webmercator,b.the_geom_webmercator)) as the_geom_webmercator",
+        " FROM a,b ",
+        " WHERE st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)",
+      "),",
+      " nodiff as (",
+        "SELECT distinct {{fields}},ST_Multi(a.the_geom_webmercator) as the_geom_webmercator",
+        " FROM a,b ",
+        " WHERE not st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)",
+      ")",
+      "SELECT * from diff ",
+      "UNION ALL",
+      "select * from nodiff",
+        "where st_geometrytype(the_geom_webmercator) ='" +  outputgeomtype + "'"];
+
+    q = Mustache.render(q.join(' '),{
+          input_query: inputlayer.options.sql, 
+          overlay_query: overlaylayer.options.sql,
+          fields: fields.join(',')
+        });
+
+    var newLayer = JSON.parse(JSON.stringify(inputlayer));
+    newLayer.options.sql = q;
+    newLayer.options.cartocss = "#overlay{ polygon-fill: #FF6600;polygon-opacity: 0.7;line-color: #FFF;line-width: 0.5;line-opacity: 1;}";
+    newLayer.options.layer_name = this.model.get('name');
+    newLayer.options.geometrytype = outputgeomtype;
+    this._runCB(newLayer);
+  }
+});
+
+

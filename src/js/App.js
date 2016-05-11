@@ -178,19 +178,18 @@ App.loading = function(){
 
 App.ini = function(){
 
-
   this.$main = $('main');
   this.router = new App.Router();
   
   this._userModel = new App.Model.UserLocalStorage();
-  this._userModel.on('ready',function(){
-    Backbone.history.start({pushState: true});  
+  this._userModel.fetch({
+    'success' : function(){
+      Backbone.history.start({pushState: true});  
+    }
   });
-
   
 }
 
 App.getUserModel = function(){
-  
   return this._userModel;
 }
