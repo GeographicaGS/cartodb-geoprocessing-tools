@@ -17,7 +17,8 @@ App.View.Tool.Overlay = Backbone.View.extend({
   events: {
     'click a.cancel': '_cancelTool',
     'click a.run': '_runTool',
-    'change [name]' : '_updateModel'
+    'change [name]' : '_updateModel',
+    'keyup input[type="text"]' : '_updateModel',
   },
 
   onClose: function(){
@@ -78,6 +79,8 @@ App.View.Tool.Overlay = Backbone.View.extend({
       $select.html('<option value="' + overlaylayers[i].gid + '">' + overlaylayers[i].options.layer_name + '</option>');  
     }
   
+    this.model.set('overlay',$select.val());
+
     return this;
   },
 
