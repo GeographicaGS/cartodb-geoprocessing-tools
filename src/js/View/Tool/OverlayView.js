@@ -55,7 +55,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
 
     var $run = $(e.target).closest('a');
 
-    if ($run.hasClass('disabled')|| $run.hasClass('loading'))
+    if ($run.hasClass('disabled')|| $run.hasClass('running'))
       return;
       
     $run.addClass('running');
@@ -205,6 +205,7 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
     newLayer.options.cartocss = "#overlay{ polygon-fill: #FF6600;polygon-opacity: 0.7;line-color: #FFF;line-width: 0.5;line-opacity: 1;}";
     newLayer.options.layer_name = this.model.get('name');
     newLayer.options.geometrytype = inputlayer.geometrytype;
+    console.log(newLayer);
     this._runCB(newLayer);
 
   },
