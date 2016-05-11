@@ -22,7 +22,7 @@ App.View.Tool.Buffer = Backbone.View.extend({
   },
 
   render: function(){
-    this.$el.html(this._template({title: this._title}));
+    this.$el.html(this._template({}));
     return this;
   }
 
