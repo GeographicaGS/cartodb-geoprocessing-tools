@@ -99,11 +99,6 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
     this.stopListening();
   },
 
-  // _sublayerGeometrytype: function(l){
-  //   if (l.gid == this.model.get('gid'))
-  //     this.model.set('geometrytype',l.geometrytype);
-  // },
-
   _toggleSubView: function(e){
     e.preventDefault();
 
@@ -197,17 +192,35 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
   className: 'wizard',
 
   initialize: function(options) {
+    _.bindAll(this,'_onLayerFields');
     this._geoVizModel = options.geoVizModel;
-    this.listenTo(this.model,'change:geometrytype',this.render);
     
   },
+
+  // events: {
+  //   'change [name]' : '_onChangeField'
+  // },
 
   onClose: function(){
     this.stopListening();
   },
 
+  _onLayerFields: function(fields){
+    var html = _.map(fields,function(f){
+      return '<option value="' + f +'">' + f + '</option>';
+    });
+
+    this.$('select[name="text-field"]').append(html);
+  },
+
   render: function(){
-    this.$el.html(this._template({m: this.model.toJSON()}));
+    this.$el.html(this._template({
+      m: this.model.toJSON(),
+      comp_ops: ['multiply','screen','overlay','darken']
+    }));
+
+    this._geoVizModel.getSublayersFields(this.model.get('gid'),this._onLayerFields);
+
     return this;
   }
 
@@ -223,7 +236,7 @@ App.View.GroupLayerPanelLayerCartoCSS = Backbone.View.extend({
   },
 
   events: {
-    'click input[type="button"]' : '_update'
+    'click .button.apply' : '_update'
   },
 
   onClose: function(){

@@ -14,8 +14,17 @@
     width: 320px;
   }
 
+
   &.statistical {
     transform: translateX(314px);
+
+  &.intersection {
+    transform: translateX(162px);
+    width: 320px;
+  }
+
+  &.erase {
+    transform: translateX(116px);
     width: 320px;
   }
 
@@ -99,30 +108,64 @@
 
     input[type=text] {
       background-color: @grey05;
+    }
 
-      .placeholder {
-        color: @grey50;
-        font-style: italic;
+    .placeholder {
+      color: @grey50;
+      font-style: italic;
+    }
+
+    ::-webkit-input-placeholder {
+      .placeholder;
+    }
+
+    ::-moz-placeholder {
+      .placeholder;
+    }
+
+    :-ms-input-placeholder {
+      .placeholder;
+    }
+
+    :-ms-input-placeholder {
+      .placeholder;
+    }
+
+    [placeholder]:-ms-input-placeholder {
+      .placeholder;
+    }
+  }
+
+  .button {
+    overflow: hidden;
+
+    &.run {
+      position: relative;
+      transition: opacity .25s ease-in-out;
+
+      .loadingbar {
+        display: block;
+        opacity: 0.00001;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        visibility: hidden;
+        opacity: .000001;
+        z-index: 1;
+        transform: translate(-50%, -50%) scale(10);
+        transition: visibility 0s linear 0.25s, opacity .25s ease-in-out, transform .25s ease-in-out;
       }
 
-      ::-webkit-input-placeholder {
-        .placeholder
-      }
-
-      ::-moz-placeholder {
-        .placeholder
-      }
-
-      :-ms-input-placeholder {
-        .placeholder
-      }
-
-      :-ms-input-placeholder {
-        .placeholder
-      }
-
-      [placeholder]:-ms-input-placeholder {
-        .placeholder
+      &.running {
+        span {
+          opacity: .00001;
+        }
+        .loadingbar {
+          transform: translate(-50%, -50%) scale(1);
+          visibility: visible;
+          opacity: 1;
+          transition-delay: 0s;
+        }
       }
     }
     

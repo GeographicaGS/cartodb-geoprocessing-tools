@@ -46,6 +46,7 @@ deps.JS = [
   srcJS + 'View/ReportView.js',
   // Tool Views
   srcJS + 'View/Tool/OverlayView.js',
+  srcJS + 'View/Tool/BufferView.js',
 
   // Router
   srcJS + 'Router.js',

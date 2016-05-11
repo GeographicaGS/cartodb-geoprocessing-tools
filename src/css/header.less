@@ -102,13 +102,6 @@ header {
         }
       }
 
-      .checking{
-        &:before{
-          content:'Checking...';
-          display:block;
-        }
-      }
-
       .co_api_key {
         .help {
           float:right;
@@ -239,6 +232,12 @@ header {
         &.issue .co_api_key p{
           display: block;
           color: @waiting;
+        }
+
+        &.checking {
+          .toggle.enabled:before {
+            content: "Checking...";
+          }
         }
       }
 

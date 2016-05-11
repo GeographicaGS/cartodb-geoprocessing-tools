@@ -27,30 +27,38 @@ App.View.MapToolbar = Backbone.View.extend({
   },
 
   _openTool: function(e){
+    this.$('.buttons .selected').removeClass('selected');
+
     var $li = $(e.target).closest('li'),
       type = $li.attr('data-tool'),
       cn;
 
     if (type == 'clip'){
-      cn = 'Clip';
+      cn = 'OverlayClip';
     }
     else if (type == 'intersection'){
-      cn = 'Intersection';
+      cn = 'OverlayIntersection';
+    }
+    else if (type == 'erase'){
+      cn = 'OverlayErase';
+    }
+    else if (type == 'buffer'){
+      cn = 'Buffer';
     }
     else if (type == 'statistical'){
-      cn = 'Statistical';
+      cn = 'OverlayStatistical';
     }
     else{
       throw new Error('Unsupported tool type: '+ type);
     }
 
-    var fn = App.View.Tool['Overlay' + cn];
+    var fn = App.View.Tool[cn];
     if (this._tool)
       this._tool.close();
 
     this._tool = new fn({
       geoVizModel: this.model,
-      reportView: cn == 'Statistical' ? this.reportView: null
+      reportView: cn == 'OverlayStatistical' ? this.reportView: null
     });
 
     this.$('.toolholder').html(this._tool.render().$el).show().get(0).className = "toolholder " + type;
@@ -60,7 +68,7 @@ App.View.MapToolbar = Backbone.View.extend({
 
   _closeTool: function(){
     this.$('.toolholder').hide();
-    this.$selectedToolBtn.removeClass('selected');
+    this.$('.buttons .selected').removeClass('selected');
     if (this._tool){
       this._tool.close();
       this._tool = null;

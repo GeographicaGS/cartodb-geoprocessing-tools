@@ -34,6 +34,7 @@
 
       &:hover {
         border-color: @blue_medium;
+        background-position: center;
       }
     }
 
@@ -48,6 +49,11 @@
       border-radius: 0 0 2px 2px;
     }
   }
+
+  .cartodb-zoom {
+    left: -2px;
+  }
+
   .cartodb-tiles-loader{
     position: fixed !important;
     top: 300px;
@@ -311,8 +317,11 @@
     padding: 8px 10px;
     border-radius: 2px;
     .font(bold);
+    visibility: visible;
+    opacity: 1;
 
     transition: background-color .10s ease-in-out, opacity .10s ease-in-out;
+    transition-delay: 0s;
 
     img {
       vertical-align: middle;
@@ -338,6 +347,13 @@
       &:hover {
         background-color: @blue_light;
       }
+    }
+
+    &.hidden {
+      visibility: hidden;
+      opacity: .00001;
+
+      transition: visibility 0s linear .25s, opacity .18s ease-in-out;
     }
 
     & + .button {
