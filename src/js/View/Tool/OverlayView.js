@@ -60,11 +60,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
       
     $run.addClass('running');
 
-    var _this = this;
-    this.run(function(newLayer){
-      this._geoVizModel.addSublayer(newLayer);
-      App.events.trigger('tool:close');
-    });
+    this.run();
 
   },  
 
@@ -162,6 +158,48 @@ App.View.Tool.Overlay = Backbone.View.extend({
 
       cb(fields.join(','));
     });
+  },
+
+  _getInfoWindowTemplate: function(){
+    return '"<div class="cartodb-popup v2"><a href="#close" class="cartodb-popup-close-button close">x</a> <div class="cartodb-popup-content-wrapper"> <div class="cartodb-popup-content"> {{#content.fields}} {{#title}}<h4>{{title}}</h4>{{/title}} {{#value}} <p {{#type}}class="{{ type }}"{{/type}}>{{{ value }}}</p> {{/value}} {{^value}} <p class="empty">null</p> {{/value}} {{/content.fields}} </div> </div> <div class="cartodb-popup-tip-container"></div> </div>"';
+  },
+
+  _getInfoWindowFields: function(sqlFields){
+    
+    var fields = _.map(sqlFields.split(","),function(f){
+      var index = f.indexOf('.');
+      if (index!=-1)
+        return f.substring(index+1);
+      else
+        return f;
+    });
+
+    return _.map(fields,function(f,i){
+      return {
+        name: f,
+        position: i+1,
+        title: true
+      }
+    });
+
+  },
+
+  createLayer: function(){
+    var newLayer = JSON.parse(JSON.stringify(this._geoVizModel.findSublayer(this.model.get('input'))));
+    newLayer.options.sql = this.model.get('sql');
+    newLayer.options.cartocss = "#overlay{ polygon-fill: #FF6600;polygon-opacity: 0.7;line-color: #FFF;line-width: 0.5;line-opacity: 1;}";
+    newLayer.options.layer_name = this.model.get('name');
+    newLayer.options.geometrytype = this.model.get('geometrytype');
+    newLayer.visible = true;
+
+    var ifields = this.model.get('infowindow_fields')
+    if (ifields){
+      newLayer.infowindow.fields = this._getInfoWindowFields(ifields);
+      newLayer.infowindow.template = this._getInfoWindowTemplate();
+    }
+
+    this._geoVizModel.addSublayer(newLayer);
+    App.events.trigger('tool:close');
   }
 
 });
@@ -174,7 +212,6 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
   },
 
   run: function(cb){
-    this._runCB = cb;
     this.getFieldsForQuery('input',this._runClip);
   },
 
@@ -182,8 +219,9 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
 
     var inputlayer = this._geoVizModel.findSublayer(this.model.get('input'));
     var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
-    
 
+    this.model.set('geometrytype',Utils.getPostgisMultiType(inputlayer.geometrytype));
+    
     // TODO Extract from geometry collections: http://postgis.refractions.net/documentation/manual-2.1SVN/ST_CollectionExtract.html
     var q = [
       " WITH a as ({{{input_query}}}), b as ({{{overlay_query}}}),",
@@ -192,7 +230,7 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
         " FROM a,b ",
         " WHERE st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)",
       ")",
-      " select * from r where st_geometrytype(the_geom_webmercator) ='" +  Utils.getPostgisMultiType(inputlayer.geometrytype) + "'"];
+      " select * from r where st_geometrytype(the_geom_webmercator) ='" + this.model.get('geometrytype') + "'"];
 
     q = Mustache.render(q.join(' '),{
           input_query: inputlayer.options.sql, 
@@ -200,13 +238,9 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
           fields: queryFields
         });
 
-    var newLayer = JSON.parse(JSON.stringify(inputlayer));
-    newLayer.options.sql = q;
-    newLayer.options.cartocss = "#overlay{ polygon-fill: #FF6600;polygon-opacity: 0.7;line-color: #FFF;line-width: 0.5;line-opacity: 1;}";
-    newLayer.options.layer_name = this.model.get('name');
-    newLayer.options.geometrytype = inputlayer.geometrytype;
-    console.log(newLayer);
-    this._runCB(newLayer);
+    this.model.set('sql',q);
+
+    this.createLayer();
 
   },
 
@@ -225,7 +259,6 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
   },
 
   run: function(cb){
-    this._runCB = cb;
     this.mergeFieldsForQuery(this._intersectRun);
   },
 
@@ -251,13 +284,13 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
           overlay_query: overlaylayer.options.sql,
           fields: queryFields
         });
+    
+    this.model.set({
+      'infowindow_fields': queryFields,
+      'sql' : q
+    });
 
-    var newLayer = JSON.parse(JSON.stringify(inputlayer));
-    newLayer.options.sql = q;
-    newLayer.options.cartocss = "#overlay{ polygon-fill: #FF6600;polygon-opacity: 0.7;line-color: #FFF;line-width: 0.5;line-opacity: 1;}";
-    newLayer.options.layer_name = this.model.get('name');
-    newLayer.options.geometrytype = outputgeomtype;
-    this._runCB(newLayer);
+    this.createLayer();
   }
 });
 
@@ -269,7 +302,6 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
   },
 
   run: function(cb){
-    this._runCB = cb;
     this.getFieldsForQuery('input',this._runErase);
   },
 
@@ -306,12 +338,11 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
           fields: fields.join(',')
         });
 
-    var newLayer = JSON.parse(JSON.stringify(inputlayer));
-    newLayer.options.sql = q;
-    newLayer.options.cartocss = "#overlay{ polygon-fill: #FF6600;polygon-opacity: 0.7;line-color: #FFF;line-width: 0.5;line-opacity: 1;}";
-    newLayer.options.layer_name = this.model.get('name');
-    newLayer.options.geometrytype = outputgeomtype;
-    this._runCB(newLayer);
+    this.model.set({
+      'sql' : q
+    });
+
+    this.createLayer();
   }
 });
 
