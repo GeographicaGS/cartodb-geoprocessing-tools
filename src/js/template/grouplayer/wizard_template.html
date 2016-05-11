@@ -4,27 +4,27 @@
   <ul>
     <li>
       <label>Polygon Fill</label>
-      <input type="color" name="polygon-fill" value="<%= polygon-fill%>" />
-      <input type="number" name="polygon-opacity" class="opacity" step="0.1" min="0.0" max="1.0" value="<%= polygon-opacity %>"/>
+      <input type="color" name="polygon_fill" value="<%= cartocss.polygon_fill%>" />
+      <input type="number" name="polygon_opacity" class="opacity" step="0.1" min="0.0" max="1.0" value="<%= cartocss.polygon_opacity %>"/>
     </li>
     <li>
       <label>Polygon Stroke</label>
-      <input type="number" name="line-width" value="" step="1" min="0" value="<%= line-width %>" />
-      <input type="color" name="line-color" value="<%= line-color %>" />
-      <input type="number" name="line-opacity" class="opacity" step="0.1" min="0.0" max="1.0" value="<%= line-opacity %>" />
+      <input type="number" name="line_width" value="" step="1" min="0" value="<%= cartocss.line_width %>" />
+      <input type="color" name="line_color" value="<%= cartocss.line_color %>" />
+      <input type="number" name="line_opacity" class="opacity" step="0.1" min="0.0" max="1.0" value="<%= cartocss.line_opacity %>" />
     </li>
     <li>
       <label>Composite operation</label>
-      <select name="polygon-comp-op">
+      <select name="polygon_comp_op">
         <option value="">None</option>
         <% _.each(comp_ops,function(op){ %>
-        <option value="<%= op%>" <%= comp_op == op ? ' selected' : '' %>><%= op %></option>
+        <option value="<%= op%>" <%= cartocss.comp_op == op ? ' selected' : '' %>><%= op %></option>
         <% }); %>
       </select>
     </li>
-    <li>
+    <li style="display: none">
       <label>Label text</label>
-      <select name="text-field">
+      <select name="text_field">
         <option value="">None</option>
       </select>
     </li>
@@ -33,22 +33,22 @@
   <ul>
    <li>
       <label>Line Stroke</label>
-      <input type="number" name="line-width" value="<%= line-width %>" step="1" min="0" />
-      <input type="color" name="line-color" value="<%= line-color %>" />
-      <input type="number" name="line-opacity" class="opacity" step="0.1" min="0.0" max="1.0" value="<%= line-opacity %>" />
+      <input type="number" name="line_width" value="<%= cartocss.line_width %>" step="1" min="0" />
+      <input type="color" name="line_color" value="<%= cartocss.line_color %>" />
+      <input type="number" name="line_opacity" class="opacity" step="0.1" min="0.0" max="1.0" value="<%= cartocss.line_opacity %>" />
     </li>
     <li>
       <label>Composite operation</label>
-      <select name="line-comp-op">
+      <select name="line_comp_op">
         <option value="">None</option>
         <% _.each(comp_ops,function(op){ %>
-        <option value="<%= op%>" <%= comp_op == op ? ' selected' : '' %>><%= op %></option>
+        <option value="<%= op%>" <%= cartocss.line_comp_op == op ? ' selected' : '' %>><%= op %></option>
         <% }); %>
       </select>
     </li>
-    <li>
+    <li style="display: none">
       <label>Label text</label>
-      <select name="text-field">
+      <select name="text_field">
         <option value="">None</option>
       </select>
     </li>
@@ -57,27 +57,27 @@
    <ul>
     <li>
       <label>Marker Fill</label>
-      <input type="number" name="marker-width" step="1" min="0" value="<%=marker-width%>" />
-      <input type="color" name="marker-fill" value="<%= marker-fill %>" />
-      <input type="number" name="marker-fill-opacity" class="opacity" step="0.1" min="0.0" max="1.0" value="<%=marker-fill-opacity%>" />
+      <input type="number" name="marker_width" step="1" min="0" value="<%= cartocss.marker_width%>" />
+      <input type="color" name="marker_fill" value="<%= cartocss.marker_fill %>" />
+      <input type="number" name="marker_fill_opacity" class="opacity" step="0.1" min="0.0" max="1.0" value="<%=cartocss.marker_fill_opacity%>" />
     </li>
     <li>
       <label>Marker Stroke</label>
-      <input type="number" name="marker-line-width" step="1" min="0" value="<%= marker-line-width %>"/>
-      <input type="color" name="marker-line-color" value="<%= marker-line-color %> " />
-      <input type="number" name="marker-line-opacity" class="opacity" value="" step="0.1" min="0.0" max="1.0" value="<%= marker-line-opacity %>" />
+      <input type="number" name="marker_line_width" step="1" min="0" value="<%= cartocss.marker_line_width %>"/>
+      <input type="color" name="marker_line_color" value="<%= cartocss.marker_line_color %> " />
+      <input type="number" name="marker_line_opacity" class="opacity" value="" step="0.1" min="0.0" max="1.0" value="<%= cartocss.marker_line_opacity %>" />
     </li>
     <li>
       <label>Composite operation</label>
-      <select name="marker-comp-op">
+      <select name="marker_comp_op">
         <% _.each(comp_ops,function(op){ %>
-        <option value="<%= op%>" <%= comp_op == op ? ' selected' : '' %>><%= op %></option>
+        <option value="<%= op%>" <%= cartocss.marker_comp_op == op ? ' selected' : '' %>><%= op %></option>
         <% }); %>
       </select>
     </li>
-    <li>
+    <li style="display: none">
       <label>Label text</label>
-      <select name="text-field">
+      <select name="text_field">
         <option value="">None</option>
       </select>
     </li>

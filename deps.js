@@ -25,6 +25,7 @@ deps.JS = [
   srcJS + 'Model/VizModel.js',
   srcJS + 'Model/CartoVizModel.js',
   srcJS + 'Model/GeoVizModel.js',
+  srcJS + 'Model/WizardModel.js',
 
   // Collections
   srcJS + 'Collection/MapCollection.js',

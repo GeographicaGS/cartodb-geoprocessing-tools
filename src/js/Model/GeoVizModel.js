@@ -145,18 +145,26 @@ App.Model.GeoViz = App.Model.Viz.extend({
 
   getSublayersByGeometryType: function(geomtypeshort){
 
-    return _.filter(this.getSublayers(), function(l){
+    var l = _.filter(this.getSublayers(), function(l){
       
       if (typeof geomtypeshort == 'string')
         geomtypeshort = [geomtypeshort];
       
+      var filter = true;
       for (var i in geomtypeshort){
-        if (l.geometrytype && l.geometrytype.toLowerCase().indexOf(geomtypeshort[i])!=-1)
-          return true;
+        if (l.geometrytype && l.geometrytype.toLowerCase().indexOf(geomtypeshort[i])!=-1){
+          return false;
+          filter = false;
+          break;
+
+        }
       }
-      return false;
+
+      return true;
+      return filter;
 
     });
+    return l;
   },
 
 

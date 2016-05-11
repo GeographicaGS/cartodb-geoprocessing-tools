@@ -181,13 +181,15 @@ App.ini = function(){
   this.$main = $('main');
   this.router = new App.Router();
   
+  var _this = this;
   this._userModel = new App.Model.UserLocalStorage();
   this._userModel.fetch({
-    'success' : function(){
-      Backbone.history.start({pushState: true});  
+    'success' : function(a,b){
+      _this._userModel.validateAndCreate(function(){
+        Backbone.history.start({pushState: true});    
+      });
     }
   });
-  
 }
 
 App.getUserModel = function(){
