@@ -136,7 +136,7 @@ App.View.UserAutosave = Backbone.View.extend({
   },
 
   render: function(){
-    this.$el.html(this._template({account: this._account}));
+    this.$el.html(this._template({account: this._account, api_key_url: App.Config.get_api_key_url(this._account)}));
     this._render();
     return this;
   }
