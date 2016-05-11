@@ -10,8 +10,9 @@ App.Model.Wizard.CartoCSS = Backbone.Model.extend({
   //   var res = JSON.stringify(m);
   //   return '#overlay' +  res.replace(/_/g, '-').replace(/,/g,';\n');
   // }
+
   toCartoCSS: function(){
-    
+
     var m = this.toJSON();
     var resp = [];
     for (var i in m){
@@ -23,6 +24,16 @@ App.Model.Wizard.CartoCSS = Backbone.Model.extend({
     }
 
     return '#overlay{\n' +  resp.join('\n') + '\n}';
+  },
+
+  loadCartoCSS: function(cartoCSSString){
+    var re = /([\w-]+):\s([#A-Za-z0-9-.]*)/g;
+    while((result = re.exec(cartoCSSString)) !== null) {
+      var property = result[1].replace(/-/g, '_');
+      if(this.get(property)){
+        this.set(property, result[2]);
+      }
+    }
   }
 });
 
@@ -71,7 +82,7 @@ App.Model.Wizard.getModelInstance = function(geometrytype){
     return new App.Model.Wizard.CartoCSSPoint();
   }
   else{
-    return new App.Model.Wizard.CartoCSSLine(); 
+    return new App.Model.Wizard.CartoCSSLine();
   }
 
 }
