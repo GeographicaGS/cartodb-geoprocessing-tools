@@ -6,7 +6,7 @@ App.Model.Report = Backbone.Model.extend({
   
   sync: function(method, model, options){
 
-  	sql = new cartodb.SQL({ user: this.get('account') });
+  	var sql = new cartodb.SQL({ user: this.get('account') });
   	var q = 'WITH a as (' + this.get('layer_sql') + ') SELECT ';
   	_.each(this.get('fields'),function(field) {
   		var name = field.name;
