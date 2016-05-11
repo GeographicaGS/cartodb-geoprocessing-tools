@@ -76,9 +76,11 @@ App.View.Tool.Overlay = Backbone.View.extend({
     overlaylayers = _.without(overlaylayers,input);
 
     var $select = this.$('select[name="overlay"]');
+    var html = '';
     for (var i in overlaylayers){
-      $select.html('<option value="' + overlaylayers[i].gid + '">' + overlaylayers[i].options.layer_name + '</option>');  
+      html += '<option value="' + overlaylayers[i].gid + '">' + overlaylayers[i].options.layer_name + '</option>';  
     }
+    $select.html(html);
   
     this.model.set('overlay',$select.val());
 
@@ -217,7 +219,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
   createLayer: function(){
     var newLayer = JSON.parse(JSON.stringify(this._geoVizModel.findSublayer(this.model.get('input'))));
     newLayer.options.sql = this.model.get('sql');
-    newLayer.options.cartocss = "#overlay{ polygon-fill: #FF6600;polygon-opacity: 0.7;line-color: #FFF;line-width: 0.5;line-opacity: 1;}";
+    newLayer.options.cartocss = App.Model.Wizard.getModelInstance(this.model.get('geometrytype')).toCartoCSS();
     newLayer.options.layer_name = this.model.get('name');
     newLayer.options.geometrytype = this.model.get('geometrytype');
     newLayer.visible = true;

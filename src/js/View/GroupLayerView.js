@@ -195,17 +195,8 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
     _.bindAll(this,'_onLayerFields');
     this._geoVizModel = options.geoVizModel;
 
-    var geometrytype = this.model.get('geometrytype');
-    if (geometrytype=='ST_MultiPolygon' || geometrytype=='ST_Polygon'){
-      this.cartocssModel = new App.Model.Wizard.CartoCSSPolygon();
-    }
-    else if (geometrytype=='ST_Point' || geometrytype=='ST_MultiPoint'){
-      this.cartocssModel = new App.Model.Wizard.CartoCSSPoint();
-    }
-    else{
-      this.cartocssModel = new App.Model.Wizard.CartoCSSLine(); 
-    }
-
+    this.cartocssModel = App.Model.Wizard.getModelInstance(this.model.get('geometrytype'));
+    
     this.listenTo(this.cartocssModel,'change',this._onChangeCartoCSSField);
     
 

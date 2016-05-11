@@ -150,19 +150,11 @@ App.Model.GeoViz = App.Model.Viz.extend({
       if (typeof geomtypeshort == 'string')
         geomtypeshort = [geomtypeshort];
       
-      var filter = true;
       for (var i in geomtypeshort){
-        if (l.geometrytype && l.geometrytype.toLowerCase().indexOf(geomtypeshort[i])!=-1){
-          return false;
-          filter = false;
-          break;
-
-        }
+        if (l.geometrytype && l.geometrytype.toLowerCase().indexOf(geomtypeshort[i])!=-1)
+          return true;
       }
-
-      return true;
-      return filter;
-
+      return false;
     });
     return l;
   },
