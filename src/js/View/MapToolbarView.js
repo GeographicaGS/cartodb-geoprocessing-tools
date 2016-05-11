@@ -105,6 +105,11 @@ App.View.MapToolbar = Backbone.View.extend({
       this._closeTool();
     });
 
+    this.listenTo(this.reportView, 'open_statistical', function(){
+      if(!this._tool || !this._tool._title == 'Statistical report')
+        this.$('[data-tool=statistical]').trigger('click');
+    });
+
     return this;
   }
 
