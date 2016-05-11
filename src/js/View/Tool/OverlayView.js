@@ -395,6 +395,9 @@ App.View.Tool.OverlayStatistical = App.View.Tool.Overlay.extend({
     'click a.remove': '_removeField',
     'click a.run': '_runTool',
     'click a.cancel': '_cancelTool',
+    'change [name]' : '_checkFields',
+    'change select' : '_checkFields',
+    'click input[type="checkbox"]' : '_checkFields',
   },
 
   _updateField:function(e){
@@ -429,11 +432,13 @@ App.View.Tool.OverlayStatistical = App.View.Tool.Overlay.extend({
                                   +'  <a href="#" class="remove"></a>'
                                   +'  <div class="options"></div>'
                                   +'</div>');
+    this._checkFields();
   },
 
   _removeField:function(e){
     e.preventDefault();
     $(e.currentTarget).closest('.wraper_field').remove();
+    this._checkFields();
   },
 
   _fieldChange:function(e){
@@ -445,23 +450,47 @@ App.View.Tool.OverlayStatistical = App.View.Tool.Overlay.extend({
   },
 
   _runTool: function(cb){
-    // var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
-    var reportModel = new App.Model.Report({account: this.model.get('account')});
-    reportModel.set('name',  this.$('#output-name').val());
-    reportModel.set('layer', this.$('[name="input"] option:selected').text());
-    reportModel.set('layer_sql', this._geoVizModel.findSublayer(this.$('[name="input"]').val()).options.sql);
-    reportModel.set('fields',[]);
-    _.each(this.$('.field_list .wraper_field'),function(f) {
-      var json = {'name':$(f).find('[name="field"]').val(), 'operations':[]};
-      _.each($(f).find('input:checked'),function(i) {
-        json.operations.push($(i).val());
+    if(!this.$('.run').hasClass('disabled')){
+      var reportModel = new App.Model.Report({account: this.model.get('account')});
+      reportModel.set('name',  this.$('#output-name').val());
+      reportModel.set('layer', this.$('[name="input"] option:selected').text());
+      reportModel.set('layer_sql', this._geoVizModel.findSublayer(this.$('[name="input"]').val()).options.sql);
+      reportModel.set('fields',[]);
+      _.each(this.$('.field_list .wraper_field'),function(f) {
+        var json = {'name':$(f).find('[name="field"]').val(), 'operations':[]};
+        _.each($(f).find('input:checked'),function(i) {
+          json.operations.push($(i).val());
+        });
+        reportModel.get('fields').push(json)
       });
-      reportModel.get('fields').push(json)
+
+      this.reportView.reportCollection.add(reportModel);
+      this._geoVizModel.set('reports',this.reportView.reportCollection.toJSON());
+      this._geoVizModel.save();
+    }
+  },
+
+  _checkFields:function(){
+    var enable = true;
+    if(this.$('#output-name').val() == '')
+      enable = false;
+
+    if(this.$('select[name=input]') == 'Choose field...')
+      enable = false;
+
+    var fields = this.$('.wraper_field');
+    _.each(fields,function(f) {
+      if($(f).find('select[name=field]').val() == 'Choose field...')
+        enable = false;
+      if($(f).find('.options').length == 0 ||  $(f).find('.options input[type=checkbox]:checked').length == 0)
+        enable = false;
     });
 
-    this.reportView.reportCollection.add(reportModel);
-    this._geoVizModel.set('reports',this.reportView.reportCollection.toJSON());
-    this._geoVizModel.save();
+    if(enable)
+      this.$('.run').removeClass('disabled');
+    else
+      this.$('.run').addClass('disabled');
+
   },
 
   render: function(){

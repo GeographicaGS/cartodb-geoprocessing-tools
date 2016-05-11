@@ -23,6 +23,7 @@ App.View.Report = Backbone.View.extend({
     'click .viewport .confirm_remove' : '_removeReport',
     'click .title' : '_toggleReportList',
     'click .report_popup li' : '_selectReport',
+    'click .no_reports a' : 'show_statistical',
   },
 
   onClose: function(){
@@ -112,6 +113,11 @@ App.View.Report = Backbone.View.extend({
   	this.$('.viewport .toggle ').removeClass('hide');
   	this.$('.viewport span ').removeClass('hide');
   	this.$('.viewport .remove_block').removeClass('activated');
-  }
+  },
+
+  show_statistical:function(e){
+    e.preventDefault();
+    this.trigger('open_statistical');
+  },
 
 });
