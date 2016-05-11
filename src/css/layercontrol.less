@@ -149,6 +149,15 @@
             transition: max-height .3s ease-in-out, opacity .3s ease-in-out;
           }
 
+          .actions {
+            display: flex;
+
+            .button {
+              white-space: nowrap;
+              flex: 0 0 auto;
+            }
+          }
+
           &.sql, &.cartocss, &.wizard {
             padding: 20px 20px 10px;
 
@@ -169,15 +178,8 @@
           }
 
           &.cartocss {
-
             &:before {
               transform: translateX(-112px);
-            }
-            .cartolayer{
-              .button.apply{
-                display: none;
-              }
-
             }
           }
 
@@ -232,7 +234,6 @@
           }
 
           .button {
-            float: right;
             margin-top: 10px;
 
             &.notfilled {
@@ -240,6 +241,15 @@
 
               &:hover {
                 color: fade(@white, 80%);
+              }
+            }
+
+            &.apply {
+              background-color: @green;
+              color: @grey90;
+
+              &:hover {
+                background-color: lighten(@green, 10%);
               }
             }
           }

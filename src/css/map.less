@@ -304,8 +304,11 @@
     padding: 8px 10px;
     border-radius: 2px;
     .font(bold);
+    visibility: visible;
+    opacity: 1;
 
     transition: background-color .10s ease-in-out, opacity .10s ease-in-out;
+    transition-delay: 0s;
 
     img {
       vertical-align: middle;
@@ -331,6 +334,13 @@
       &:hover {
         background-color: @blue_light;
       }
+    }
+
+    &.hidden {
+      visibility: hidden;
+      opacity: .00001;
+
+      transition: visibility 0s linear .25s, opacity .18s ease-in-out;
     }
 
     & + .button {
