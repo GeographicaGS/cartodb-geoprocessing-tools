@@ -86,7 +86,7 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
   initialize: function(options) {
     this._geoVizModel = options.geoVizModel;
     this.listenTo(this.model,'change:visible',this._renderUpdateButton);
-    //this.listenTo(this._geoVizModel,'sublayer:set:geometrytype',this._sublayerGeometrytype);
+    this.listenTo(this._geoVizModel,'sublayer:change:cartocss',this._sublayerUpdateCartoCSS);
   },
 
   events: {
@@ -99,6 +99,11 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
     this.stopListening();
   },
 
+  _sublayerUpdateCartoCSS: function(l){
+    if (l.gid == this.model.get('gid')){
+      this.model.set(l);
+    }
+  },
   _toggleSubView: function(e){
     e.preventDefault();
 
@@ -196,6 +201,8 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
     this._geoVizModel = options.geoVizModel;
 
     this.cartocssModel = App.Model.Wizard.getModelInstance(this.model.get('geometrytype'));
+
+    this.cartocssModel.loadCartoCSS(this.model.get('options').cartocss);
     
     this.listenTo(this.cartocssModel,'change',this._onChangeCartoCSSField);
     
@@ -217,14 +224,16 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
   _onChangeCartoCSSField:function(){
     var cartocss = this.cartocssModel.toCartoCSS();
 
-    if (this._cartoCSSTimeout)
-      clearTimeout(this._cartoCSSTimeout);
+    this._geoVizModel.updateSubLayerCartoCSS(this.model.get('gid'),cartocss);
 
-    var _this = this;
-    this._cartoCSSTimeout = setTimeout(function(){
-      clearTimeout(_this._cartoCSSTimeout);
-      _this._geoVizModel.updateSubLayerCartoCSS(_this.model.get('id'),cartocss);
-    },500);
+    // if (this._cartoCSSTimeout)
+    //   clearTimeout(this._cartoCSSTimeout);
+
+    // var _this = this;
+    // this._cartoCSSTimeout = setTimeout(function(){
+    //   clearTimeout(_this._cartoCSSTimeout);
+    //   _this._geoVizModel.updateSubLayerCartoCSS(_this.model.get('gid'),cartocss);
+    // },500);
 
   },
 
