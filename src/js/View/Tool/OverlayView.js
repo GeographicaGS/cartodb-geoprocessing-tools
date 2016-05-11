@@ -295,7 +295,7 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
     var inputlayer = this._geoVizModel.findSublayer(this.model.get('input'));
     var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
 
-    var outputgeomtype = App.Utils.getPostgisMultiType(inputlayer.geometrytype);
+    this.model.set('geometrytype',App.Utils.getPostgisMultiType(inputlayer.geometrytype));
 
     // TODO Extract from geometry collections: http://postgis.refractions.net/documentation/manual-2.1SVN/ST_CollectionExtract.html
     var q = [
@@ -305,7 +305,7 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
         " FROM a,b ",
         " WHERE st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)",
       ")",
-      " select * from r where st_geometrytype(the_geom_webmercator) ='" +  outputgeomtype + "'"];
+      " select * from r where st_geometrytype(the_geom_webmercator) ='" +  this.model.get('geometrytype') + "'"];
 
     q = Mustache.render(q.join(' '),{
           input_query: inputlayer.options.sql, 
@@ -333,14 +333,14 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
     this.getFieldsForQuery('input',this._runErase);
   },
 
-  _runErase: function(fields,err){
+  _runErase: function(queryFields,err){
     if (err)
       throw Error('Cannot get layer fields '+ err);
 
     var inputlayer = this._geoVizModel.findSublayer(this.model.get('input'));
     var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
 
-    var outputgeomtype = App.Utils.getPostgisMultiType(inputlayer.geometrytype);
+    this.model.set('geometrytype',App.Utils.getPostgisMultiType(inputlayer.geometrytype));
 
     // TODO Extract from geometry collections: http://postgis.refractions.net/documentation/manual-2.1SVN/ST_CollectionExtract.html
     var q = [
@@ -358,12 +358,12 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
       "SELECT * from diff ",
       "UNION ALL",
       "select * from nodiff",
-        "where st_geometrytype(the_geom_webmercator) ='" +  outputgeomtype + "'"];
+        "where st_geometrytype(the_geom_webmercator) ='" +  this.model.get('geometrytype') + "'"];
 
     q = Mustache.render(q.join(' '),{
           input_query: inputlayer.options.sql, 
           overlay_query: overlaylayer.options.sql,
-          fields: fields.join(',')
+          fields: queryFields
         });
 
     this.model.set({
