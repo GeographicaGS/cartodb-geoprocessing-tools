@@ -1,0 +1,21 @@
+.left-sidebar{
+	position: absolute;
+	height: 100%;
+	z-index: 2;
+	width: 0;
+	transition: width .25s;
+	background-color: @grey10;
+	visibility: hidden;
+	&.activated{
+		width: 342px;
+		visibility: visible;
+		div{
+			transition-delay: .25s;
+			opacity: 1;
+		}
+	}
+	div{
+		transition: opacity .1s;
+		opacity: 0;
+	}
+}

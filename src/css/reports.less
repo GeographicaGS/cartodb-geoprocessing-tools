@@ -1,0 +1,205 @@
+#reports{
+	display: flex;
+	&.center{
+		align-items: center;
+		height: 100%;
+	}
+	.no_reports{
+		width: 100%;
+		text-align: center;
+		span{
+			display: block;
+			font-size: 18px;
+			line-height: 18px;
+			color:@grey50;
+			font-style: italic;
+			margin-bottom: 10px;
+		}
+		a{
+			font-size: 14px;
+			line-height: 18px;
+			color:@blue_light;
+			&:before{
+				content: url('/img/SGV_tool-stat.svg');
+				position: relative;
+				top: 8px;
+				margin-right: 3px;
+			}
+		}
+	}
+
+	.report{
+		background-color: @white;
+		padding:10px;
+		border: 1px solid @grey20;
+		border-radius: 2px;
+		width: 100%;
+		margin: 10px;
+		padding: 20px;
+		position: relative;
+		h3{
+			font-weight: 400;
+			color:@blue_light;
+			font-size: 18px;
+			line-height: 20px;
+			cursor: pointer;
+			span{
+				color:@grey50;
+				font-size: 12px;
+				float: right;
+			}
+		}
+		h4{
+			font-weight: 400;
+			color:@grey50;
+			text-transform: uppercase;
+			font-size: 11px;
+			line-height: 16px;
+			margin-bottom: 14px;
+		}
+		.viewport{
+			background-color: @blue_more_lighter;
+			margin: 0 -20px;
+			padding: 0 20px;
+			height: 36px;
+			border-top: 1px solid @grey20;
+			span{
+				font-size: 12px;
+				line-height: 36px;
+				color:@grey50;
+				&.enabled{
+					color:@blue_light;
+				}
+			}
+			.toggle{
+				display: inline-block;
+				margin-right: 10px;
+				top:2px;
+				cursor: pointer;
+			}
+			.remove{
+				background-image: url(/img/SGV_icon-delete.svg);
+    		background-color: @grey10;
+    		background-repeat: no-repeat;
+				background-size: 16px;
+				display: inline-block;
+				width: 20px;
+				height: 20px;
+				border-radius: 100%;
+				background-position: center;
+				position: relative;
+				top: 7px;
+				float: right;
+			}
+
+			.remove_block{
+				display: inline-block;
+				width: 100%;
+  			text-align: right;
+				opacity: 0;
+				overflow: hidden;
+		    transition: none;
+				&.activated{
+					transition:opacity .25s;
+					opacity: 1;
+					overflow: visible;
+				}
+				a{
+					font-size: 14px;
+			    line-height: 36px;
+			    font-weight: 700;
+			    &.cancel_remove{
+						color:@blue_light;
+						margin-right: 20px;
+			    }
+			    &.confirm_remove{
+						color:@red_main;
+			    }
+				}
+			}
+		}
+		.field{
+			margin-top: 16px;
+			&:after{
+				content: '';
+				display: block;
+				width: ~"calc(100% + 40px)";
+				height: 1px;
+				background-color: @grey20;
+				margin: 0 -20px;
+			}
+			&.end{
+				&:after{
+					display: none;
+				}
+				.measure{
+					&:last-of-type{
+						.value{
+							margin-bottom: 0;
+						}
+					}
+				}
+			}
+
+			h4{
+				font-weight: 400;
+				font-size: 18px;
+				line-height: 24px;
+				color:@grey75;
+				text-transform: capitalize;
+		    width: 280px;
+			}
+			.measure{
+				.title{
+					font-size: 14px;
+					color:@grey50;
+					text-transform: capitalize;
+					&:before{
+						content: url('/img/SGV_icon-branch.svg');
+						position: relative;
+						bottom: 2px;
+						margin-right: 6px;
+					}
+				}
+				.value{
+					display: block;
+					font-weight: 300;
+					font-size: 30px;
+					line-height: 30px;
+					margin-left:11px;
+					margin-bottom: 16px; 
+					color:@grey75;
+				}
+			}
+		}
+		.report_popup{
+			background-color: @white;
+			border: 1px solid @grey20;
+			border-radius: 2px;
+			position: absolute;
+			top: 41px;
+			min-width: 238px;
+			visibility: hidden;
+			opacity: 0;
+			transition:opacity .25s;
+			&.activated{
+				visibility: visible;
+				opacity: 1;
+			}
+			li{
+				cursor: pointer;
+				font-size: 14px;
+				line-height: 49px;
+				border-bottom: 1px solid @grey20;
+				padding: 0 20px;
+				color: @blue_light;
+				&:last-of-type{
+					border-bottom: none;
+				}
+				&.selected{
+					background-color: @grey05;
+				}
+			}
+		}
+	}
+}
