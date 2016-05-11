@@ -30,19 +30,22 @@ App.View.MapToolbar = Backbone.View.extend({
       cn;
 
     if (type == 'clip'){
-      cn = 'Clip';
+      cn = 'OverlayClip';
     }
     else if (type == 'intersection'){
-      cn = 'Intersection';
+      cn = 'OverlayIntersection';
     }
-     else if (type == 'erase'){
-      cn = 'Erase';
+    else if (type == 'erase'){
+      cn = 'OverlayErase';
+    }
+    else if (type == 'buffer'){
+      cn = 'Buffer';
     }
     else{
       throw new Error('Unsupported tool type: '+ type);
     }
 
-    var fn = App.View.Tool['Overlay' + cn];
+    var fn = App.View.Tool[cn];
     if (this._tool)
       this._tool.close();
 
