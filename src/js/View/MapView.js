@@ -10,7 +10,8 @@ App.View.Map = Backbone.View.extend({
 
     var m = new Backbone.Model({
       section: 'map',
-      account : this.model.get('account')
+      account : this.model.get('account'),
+      title: 'Loading...'
     });
     this.header = new App.View.Header({model: m});
     this.footer = new App.View.Footer();
@@ -95,12 +96,16 @@ App.View.Map = Backbone.View.extend({
   },
 
   _render: function(){
+    if(this._geoVizModel.get('title')){
+      this.header.updateTitle(this._geoVizModel.get('title'));
+    }
     this.toolbar = new App.View.MapToolbar({
       el: this.$('.toolbar'),
       model: this._geoVizModel,
       map: this.map
     });
     this.toolbar.render();
+    this.$map.addClass('wToolbar');
   },
 
   render: function(){
@@ -115,7 +120,7 @@ App.View.Map = Backbone.View.extend({
     this.footer.render({classes: ''});
 
     this.$map = this.$('.map');
-    this.$map.css('width','100%').css('height', (this.$el.parent().height() - 64) + "px"); // TODO: parameterize or calculate hardcoded toolbar height value (64px)
+    this.$map.css('width','100%').css('height', this.$el.parent().height() + "px"); // TODO: parameterize or calculate hardcoded toolbar height value (64px)
 
 
     var url = 'http://alasarr.cartodb.com/api/v2/viz/d1e1bf50-1675-11e6-a016-0e3ff518bd15/viz.json';

@@ -36,7 +36,7 @@ App.View.Header = Backbone.View.extend({
 
   render: function(){
     this.$el.html(this._template({title: this.model.get('title')}));
-
+    this.$title = this.$('h1');
     this.userControl.setElement(this.$('.user'));
     this.userControl.render();
 
@@ -46,6 +46,10 @@ App.View.Header = Backbone.View.extend({
   goBack: function(e) {
     e.preventDefault();
     window.history.back();
-  }
+  },
+
+  updateTitle: function(newTitle){
+    this.$title.html(newTitle);
+  },
 
 });

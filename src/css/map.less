@@ -1,11 +1,15 @@
 .map{
   flex: 1 1 100%;
-  height: calc(~'100% - ' @mapToolbarHeight);
+  max-height: calc(~'100vh - ' @headerHeight + @footerHeight);
 
   z-index: 1;
 
   &.leaflet-container {
     background-color: @white;
+  }
+
+  &.wToolbar {
+    max-height: calc(~'100vh - ' @headerHeight + @footerHeight + @mapToolbarHeight);
   }
 
   .cartodb-zoom, .leaflet-control-zoom {
@@ -210,6 +214,10 @@
     position: relative;
     // z-index: 106;
 
+    &:empty {
+      display: none;
+    }
+
 		.buttons {
 			flex: 1 1 auto;
 			height: 100%;
@@ -288,7 +296,7 @@
 			top: 80px;
 			left: 18px;
 			z-index: 2;
-      
+
       transition: transform .25s;
       &.translated{
         transform: translateX(350px);
