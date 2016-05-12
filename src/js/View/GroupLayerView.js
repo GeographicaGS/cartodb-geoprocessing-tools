@@ -224,16 +224,16 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
   _onChangeCartoCSSField:function(){
     var cartocss = this.cartocssModel.toCartoCSS();
 
-    this._geoVizModel.updateSubLayerCartoCSS(this.model.get('gid'),cartocss);
+    //this._geoVizModel.updateSubLayerCartoCSS(this.model.get('gid'),cartocss);
 
-    // if (this._cartoCSSTimeout)
-    //   clearTimeout(this._cartoCSSTimeout);
+    if (this._cartoCSSTimeout)
+      clearTimeout(this._cartoCSSTimeout);
 
-    // var _this = this;
-    // this._cartoCSSTimeout = setTimeout(function(){
-    //   clearTimeout(_this._cartoCSSTimeout);
-    //   _this._geoVizModel.updateSubLayerCartoCSS(_this.model.get('gid'),cartocss);
-    // },500);
+    var _this = this;
+    this._cartoCSSTimeout = setTimeout(function(){
+      clearTimeout(_this._cartoCSSTimeout);
+      _this._geoVizModel.updateSubLayerCartoCSS(_this.model.get('gid'),cartocss);
+    },500);
 
   },
 

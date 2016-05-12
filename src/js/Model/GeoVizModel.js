@@ -104,6 +104,7 @@ App.Model.GeoViz = App.Model.Viz.extend({
 
   _saveAndTrigger: function(){
     this.save();
+    this.set('updated_at',new Date().getTime());
     this.trigger('change');
   },
 
