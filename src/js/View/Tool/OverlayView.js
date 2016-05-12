@@ -380,29 +380,21 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
 
     this.model.set('geometrytype',App.Utils.getPostgisMultiType(inputlayer.geometrytype));
 
-    // TODO Extract from geometry collections: http://postgis.refractions.net/documentation/manual-2.1SVN/ST_CollectionExtract.html
     var q = [
-      " WITH a as ({{{input_query}}}), b as ({{{overlay_query}}}),",
-      " diff as (",
-        "SELECT distinct {{fields}},ST_Multi(ST_Difference(a.the_geom_webmercator,b.the_geom_webmercator)) as the_geom_webmercator",
-        " FROM a,b ",
-        " WHERE st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)",
-      "),",
-      " nodiff as (",
-        "SELECT distinct {{fields}},ST_Multi(a.the_geom_webmercator) as the_geom_webmercator",
-        " FROM a,b ",
-        " WHERE not st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)",
-      "),",
-      "r as (SELECT * from diff ",
-      "UNION ALL",
-      "select * from nodiff)",
-      "select {{cartodb_id}},{{fields2}},",
-        " CASE WHEN st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' then ST_CollectionExtract(the_geom_webmercator,{{collection_extract}})",
-        " ELSE the_geom_webmercator",
-        " END as the_geom_webmercator",
-      "FROM r ",
-      "WHERE st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' OR",
-        "st_geometrytype(the_geom_webmercator) ='" +  this.model.get('geometrytype') + "'"];
+      " WITH a as ({{{input_query}}}), pre_b as ({{{overlay_query}}}),",
+        "b as (select st_union(the_geom_webmercator) as the_geom_webmercator from pre_b),",
+        "r as (",
+          "SELECT distinct {{fields}},ST_Multi(ST_Difference(a.the_geom_webmercator,b.the_geom_webmercator)) as the_geom_webmercator",
+          " FROM a,b ",
+          " WHERE st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)",
+        ")",
+        "select {{cartodb_id}},{{fields2}},",
+          " CASE WHEN st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' then ST_CollectionExtract(the_geom_webmercator,{{collection_extract}})",
+          " ELSE the_geom_webmercator",
+          " END as the_geom_webmercator",
+        "FROM r ",
+        "WHERE st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' OR",
+          "st_geometrytype(the_geom_webmercator) ='" +  this.model.get('geometrytype') + "'"];
 
     q = Mustache.render(q.join(' '),{
         cartodb_id: this.getCartoDBID(),
