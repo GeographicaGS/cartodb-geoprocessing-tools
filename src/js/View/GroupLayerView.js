@@ -185,6 +185,8 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
       this.$('a[data-el="wizard"]').addClass('disabled');
     }
 
+
+
     this._renderUpdateButton();
     return this;
   }
@@ -258,6 +260,7 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
     }));
 
     this._geoVizModel.getSublayersFields(this.model.get('gid'),this._onLayerFields);
+    
 
     return this;
   }
@@ -271,6 +274,7 @@ App.View.GroupLayerPanelLayerCartoCSS = Backbone.View.extend({
 
   initialize: function(options) {
     this._geoVizModel = options.geoVizModel;
+    _.bindAll(this,'_showClipTooltip');
   },
 
   events: {
@@ -279,14 +283,29 @@ App.View.GroupLayerPanelLayerCartoCSS = Backbone.View.extend({
 
   onClose: function(){
     this.stopListening();
+    this._clipboard.destroy();
   },
 
   render: function(){
     this.$el.html(this._template({m: this.model.toJSON()}));
     if (!this.model.get('geolayer'))
       this.$el.addClass('cartolayer');
+
+    this._clipboard = new Clipboard('.button.copy');
+    this._clipboard.on('success', this._showClipTooltip);
     
     return this;
+  },
+
+  _showClipTooltip: function(e){
+    var $btn = this.$('.button.copy');
+    $btn.addClass('tooltip');
+    
+    setTimeout(function(){
+      $btn.removeClass('tooltip');
+    },1000);
+
+    e.clearSelection();
   },
 
   _update: function(e){
@@ -308,16 +327,32 @@ App.View.GroupLayerPanelLayerSQL = Backbone.View.extend({
   className: 'sql',
 
   initialize: function(options) {
-
+    _.bindAll(this,'_showClipTooltip');
   },
 
   onClose: function(){
     this.stopListening();
+    this._clipboard.destroy();
+  },
+
+  _showClipTooltip: function(e){
+    var $btn = this.$('.button.copy');
+    $btn.addClass('tooltip');
+    
+    setTimeout(function(){
+      $btn.removeClass('tooltip');
+    },1000);
+
+    e.clearSelection();
   },
 
   render: function(){
 
-    this.$el.html(this._template(this.model.toJSON().options));
+    this.$el.html(this._template(this.model.toJSON()));
+
+    this._clipboard = new Clipboard('.button.copy');
+    this._clipboard.on('success', this._showClipTooltip);
+
     return this;
   }
 
