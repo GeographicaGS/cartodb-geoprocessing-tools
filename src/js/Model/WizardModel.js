@@ -27,13 +27,14 @@ App.Model.Wizard.CartoCSS = Backbone.Model.extend({
   },
 
   loadCartoCSS: function(cartoCSSString){
-    // var re = /([\w-]+):\s?([#A-Za-z0-9-.]*)/g;
     var re = new RegExp("([\\w-]+):\\s?([#A-Za-z0-9-.]*)", "g");
-    while((result = re.exec(cartoCSSString)) !== null) {
+    var result = re.exec(cartoCSSString);
+    while(result !== null) {
       var property = result[1].replace(/-/g, '_');
       if(this.get(property)){
         this.set(property, result[2]);
       }
+      result = re.exec(cartoCSSString)
     }
   }
 });
