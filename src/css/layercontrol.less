@@ -365,43 +365,68 @@
 
         // Fix tooltips
         &:first-child {
-          .subviewcontrol.tooltip {
-            &:not(.disabled):hover {
-        			&:before {
-        				bottom: auto;
-        				top: calc(~'100% + 8px - 6px');
-        				border-color: fade(@grey80,90%) transparent;
-        				border-width: 0 6px 6px 6px;
-        			}
+          .subviewcontrol {
+            &.tooltip {
+              &:not(.disabled):hover {
+          			&:before {
+          				bottom: auto;
+          				top: calc(~'100% + 8px - 6px');
+          				border-color: fade(@grey80,90%) transparent;
+          				border-width: 0 6px 6px 6px;
+          			}
 
-        			&:after {
-        				bottom: auto;
-        				top: calc(~'100% + 8px');
-        			}
-        		}
+          			&:after {
+          				bottom: auto;
+          				top: calc(~'100% + 8px');
+          			}
+          		}
+            }
           }
         }
 
-        &:last-child {
-          .subviewcontrol.tooltip {
-            &:not(.disabled):hover {
-        			&:before {
-        				bottom: auto;
-                top: 50%;
-                left: -10px;
-                transform: translateY(-50%);
-        				border-color: transparent transparent transparent fade(@grey80,90%);
-        				border-width: 6px 0 6px 6px;
-        			}
+        &:first-child:last-child {
+          .subviewcontrol {
+            &.tooltip {
+              &:not(.disabled):hover {
+          			&:before {
+          				bottom: auto;
+                  top: 50%;
+                  left: -10px;
+                  transform: translateY(-50%);
+          				border-color: transparent transparent transparent fade(@grey80,90%);
+          				border-width: 6px 0 6px 6px;
+          			}
 
-        			&:after {
-                bottom: auto;
-                top: 50%;
-                left: auto;
-                right: calc(~'100% + 10px');
-                transform: translateY(-50%);
-        			}
-        		}
+          			&:after {
+                  bottom: auto;
+                  top: 50%;
+                  left: auto;
+                  right: calc(~'100% + 10px');
+                  transform: translateY(-50%);
+          			}
+          		}
+            }
+          }
+        }
+
+        .remove.tooltip {
+          &:not(.disabled):hover {
+            &:before {
+              bottom: auto;
+              top: 50%;
+              left: -10px;
+              transform: translateY(-50%);
+              border-color: transparent transparent transparent fade(@grey80,90%);
+              border-width: 6px 0 6px 6px;
+            }
+
+            &:after {
+              bottom: auto;
+              top: 50%;
+              left: auto;
+              right: calc(~'100% + 10px');
+              transform: translateY(-50%);
+            }
           }
         }
       }
