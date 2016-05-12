@@ -80,16 +80,17 @@ App.showView = function(view,opts) {
   opts = _.defaults(opts || {},{'renderMode': 'before'});
 
   if (opts.renderMode=='before'){
-    view.render();  
+    view.render();
     this.$main.html(view.el);
+    if (oldView)
+      oldView.close();
   }
   else if (opts.renderMode=='after'){
+    if (oldView)
+      oldView.close();
     this.$main.html(view.el);
-    view.render(); 
+    view.render();
   }
-
-  if (oldView)
-    oldView.close();
 
   this.scrollTop();
 };
@@ -180,13 +181,13 @@ App.ini = function(){
 
   this.$main = $('main');
   this.router = new App.Router();
-  
+
   var _this = this;
   this._userModel = new App.Model.UserLocalStorage();
   this._userModel.fetch({
     'success' : function(a,b){
       _this._userModel.validateAndCreate(function(){
-        Backbone.history.start({pushState: true});    
+        Backbone.history.start({pushState: true});
       });
     }
   });
