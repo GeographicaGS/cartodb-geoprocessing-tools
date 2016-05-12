@@ -210,3 +210,8 @@ App.functionToString = function(f){
 App.getUserModel = function(){
   return this._userModel;
 }
+
+App.resetUserModel = function(){
+  this._userModel.destroy();
+  this._userModel = new App.Model.UserLocalStorage();
+}

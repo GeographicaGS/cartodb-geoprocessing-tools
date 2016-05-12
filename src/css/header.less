@@ -131,7 +131,7 @@ header {
         }
       }
 
-      p.help {
+      p.help, span.help {
         display: block;
         color: @grey35;
         font-size: 14px;
@@ -146,6 +146,57 @@ header {
           vertical-align: bottom;
           position: relative;
           top: 2px;
+        }
+      }
+
+      .separator {
+        margin-top: 10px;
+        border-top: 1px solid @grey10;
+        padding-top: 10px;
+
+        p.help, span.help {
+          display: inline;
+          margin-left: 5px;
+        }
+      }
+
+      .co_api_key{
+        p{
+          display: none;
+          margin-bottom: 5px;
+        }
+
+        input[type=text] {
+          width: 100%;
+          padding: 8px;
+          border: 1px solid @grey50;
+          border-radius: 2px;
+          background-color: @grey05;
+        }
+
+        .placeholder {
+          color: @grey50;
+          font-style: italic;
+        }
+
+        ::-webkit-input-placeholder {
+          .placeholder
+        }
+
+        ::-moz-placeholder {
+          .placeholder
+        }
+
+        :-ms-input-placeholder {
+          .placeholder
+        }
+
+        :-ms-input-placeholder {
+          .placeholder
+        }
+
+        [placeholder]:-ms-input-placeholder {
+          .placeholder
         }
       }
 
@@ -165,46 +216,6 @@ header {
             font-style: italic;
             text-align: right;
           }
-        }
-
-        .co_api_key{
-          p{
-            display: none;
-            margin-bottom: 5px;
-          }
-
-          input[type=text] {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid @grey50;
-            border-radius: 2px;
-            background-color: @grey05;
-          }
-
-          .placeholder {
-  					color: @grey50;
-  					font-style: italic;
-  				}
-
-  				::-webkit-input-placeholder {
-  					.placeholder
-  				}
-
-  				::-moz-placeholder {
-  					.placeholder
-  				}
-
-  				:-ms-input-placeholder {
-  					.placeholder
-  				}
-
-  				:-ms-input-placeholder {
-  				 	.placeholder
-  				}
-
-  				[placeholder]:-ms-input-placeholder {
-  					.placeholder
-  				}
         }
       }
 

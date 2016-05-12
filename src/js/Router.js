@@ -6,6 +6,7 @@ App.Router = Backbone.Router.extend({
 
   routes: {
       '' : 'home',
+      'login': 'home',
       '(:account)/map_list' : 'map_list',
       '(:account)/map/(:viz)' : 'map',
       'notfound' : 'notfound',
