@@ -1,8 +1,9 @@
-<textarea <%= m.geolayer ? '' : 'disabled'%>>
+
+<textarea <%= m.geolayer ? '' : 'disabled'%> id="copy_<%= m.gid %>">
 <%= m.options.cartocss %>
 </textarea>
 <div class="actions">
-  <a class="button copy" href="#">Copy CartoCSS</a>
+  <a class="button copy" data-title="Copied" data-clipboard-target="#copy_<%= m.gid %>" >Copy CartoCSS</a>
   <div class="spacer"></div>
   <a class="button apply" href="#">Apply style <img src="/img/SGV_icon-check-gray.svg"></a>
 </div>
