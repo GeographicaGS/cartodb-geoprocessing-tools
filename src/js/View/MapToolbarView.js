@@ -14,12 +14,16 @@ App.View.MapToolbar = Backbone.View.extend({
   },
 
   events: {
-    'click li[data-tool]' : '_openTool'
+    'click li[data-tool]' : '_openTool',
+    'click .map_extra_controls .tooltip' : '_openReportList'
   },
 
   onClose: function(){
     this.stopListening();
     this._closeTool();
+
+    if(this.reportView)
+      this.reportView.close();
   },
 
   _openTool: function(e){
@@ -41,6 +45,9 @@ App.View.MapToolbar = Backbone.View.extend({
     else if (type == 'buffer'){
       cn = 'Buffer';
     }
+    else if (type == 'statistical'){
+      cn = 'OverlayStatistical';
+    }
     else{
       throw new Error('Unsupported tool type: '+ type);
     }
@@ -51,6 +58,7 @@ App.View.MapToolbar = Backbone.View.extend({
 
     this._tool = new fn({
       geoVizModel: this.model,
+      reportView: cn == 'OverlayStatistical' ? this.reportView: null
     });
 
     this.$('.toolholder').html(this._tool.render().$el).show().get(0).className = "toolholder " + type;
@@ -67,6 +75,13 @@ App.View.MapToolbar = Backbone.View.extend({
     }
   },
 
+  _openReportList:function(e){
+    $(e.currentTarget).toggleClass('selected');
+    $(e.currentTarget).closest('.map_extra_controls').toggleClass('translated');
+    $('.cartodb-zoom').toggleClass('translated');
+    $('.left-sidebar').toggleClass('activated');
+  },
+
   render: function(){
     this.$el.html(this._template());
     // this.layersControl.setElement(this.$('.layers_control'));
@@ -78,6 +93,22 @@ App.View.MapToolbar = Backbone.View.extend({
       map: this._map
     });
     this.groupLayer.render();
+
+    this.reportView = new App.View.Report({'map':this._map, geoVizModel: this.model});
+    this.reportView.setElement($('.left-sidebar'));
+    this.reportView.render();
+    this.listenTo(this.reportView.reportCollection,'add', function(){
+      this.$('.map_extra_controls .tooltip').addClass('selected');
+      this.$('.map_extra_controls .tooltip').closest('.map_extra_controls').addClass('translated');
+      $('.cartodb-zoom').addClass('translated');
+      $('.left-sidebar').addClass('activated');
+      this._closeTool();
+    });
+
+    this.listenTo(this.reportView, 'open_statistical', function(){
+      if(!this._tool || !this._tool._title == 'Statistical report')
+        this.$('[data-tool=statistical]').trigger('click');
+    });
 
     return this;
   }

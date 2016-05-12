@@ -90,6 +90,7 @@ App.View.Map = Backbone.View.extend({
       this._geoVizModel.save();
 
     this._geoVizModel.calculateSublayersGeometryTypes(this._render);
+    this.map.fitBounds(this._geoVizModel.get('bounds'));
 
   },
 
@@ -121,36 +122,6 @@ App.View.Map = Backbone.View.extend({
     cartodb.createVis('map', url)
       .done(this._onCreatedVIS);
 
-
-    // var mapOptions = {
-    //   zoom: 5,
-    //   center: [43, 0]
-    // };
-    // this.map = new L.Map('map', mapOptions);
-
-    // this._cartoVizModel = new App.Model.CartoViz({
-    //   id: this.model.get('viz'),
-    //   account: this.model.get('account')
-    // });
-
-    // this._geoVizModel = new App.Model.GeoViz({
-    //   id: this.model.get('viz'),
-    //   account: this.model.get('account')
-    // });
-
-    // // Everything start after fetching models.
-    // this._nfetches = 0;
-
-    // this._cartoVizModel.fetch({
-    //   success: this._onFetchVizModel
-    // });
-
-    // this._geoVizModel.fetch({
-    //   success: this._onFetchVizModel
-    // });
-
-    // $(window).on('resize', this.resizeMap);
-
     return this;
   },
 
@@ -158,6 +129,7 @@ App.View.Map = Backbone.View.extend({
 
     this.map = vis.getNativeMap();
     this.vis = vis;
+
     // We only use the vis for the CartoDB loading control
     // for (var i in layers){
     //   layers[i].hide();

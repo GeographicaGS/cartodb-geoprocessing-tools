@@ -1,0 +1,30 @@
+<h3 class="title"><%=report.get('name')%><span> <strong><%=reports.length%></strong> reports</span></h3>
+<h4><%=report.get('layer')%></h4>
+<div class="viewport">
+	<div class="toggle <%=report.get('geom') ? 'enabled':''%>"></div>
+	<span>Viewport data</span>
+	<a href="#" class="remove"></a>
+	<div class="remove_block">
+		<a href="#" class="cancel_remove">Cancel</a>
+		<a href="#" class="confirm_remove">Delete full report</a>
+	</div>
+</div>
+<%_.each(report.get('fields'),function(f,i){%>
+<div class="field <%= i == report.get('fields').length - 1 ? 'end':''%>">
+	<h4 class="ellipsis"><%=f.name%></h4>
+	<%_.each(f.operations,function(p){%>
+	<div class="measure">
+		<span class="title"><%=App.functionToString(p)%></span>
+		<span class="value"><%=App.nbf(report.get(f.name + '_' + p))%></span>
+	</div>
+	<%});%>
+</div>
+<%});%>
+
+<div class="report_popup">
+	<ul>
+		<%_.each(reports,function(r,i){%>
+			<li index="<%=i%>" class="<%=r.name == report.get('name') ? 'selected':'' %>"><%=r.name%></li>
+		<%});%>
+	</ul>
+</div>

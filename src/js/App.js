@@ -192,6 +192,20 @@ App.ini = function(){
   });
 }
 
+App.functionToString = function(f){
+  if(f == 'sum'){
+    return 'Sum';
+  }else if(f == 'min'){
+    return 'Minimum';
+  }else if(f == 'max'){
+    return 'Maximum'
+  }else if(f == 'avg'){
+    return 'Average'
+  }
+
+  return '';
+}
+
 App.getUserModel = function(){
   return this._userModel;
 }
