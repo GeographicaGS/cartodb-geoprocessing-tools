@@ -13,6 +13,7 @@ App.View.Header = Backbone.View.extend({
       this._template = _.template( $('#map_header_template').html() );
     }else if(section == 'maplist'){
       this._template = _.template( $('#maplist_header_template').html() );
+      this.model.set('title', this.model.get('account'));
     }
 
     if (!this.model.get('title'))
