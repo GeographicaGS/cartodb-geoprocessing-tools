@@ -1,1 +1,55 @@
-buffer_template.html
+<div class="header">
+  <h3>Buffer</h3>
+  <div class="actions">
+  <a href='#' class='button notfilled cancel'>Cancel</a>
+  <a href='#' class='run button disabled'>
+    <div class="loadingbar">
+      <div class='loading-ico'>
+        <svg viewBox="-10 -10 220 220">
+          <path d="M200,100 C200,44.771525 155.228475,0 100,0 C44.771525,0 0,44.771525 0,100 C0,155.228475 44.771525,200 100,200 C155.228475,200 200,155.228475 200,100 Z" stroke-dashoffset="0">
+          </path>
+        </svg>
+      </div>
+    </div>
+    <span>Run <img src="/img/SGV_icon-check-white.svg"></span>
+  </a>
+  </div>
+</div>
+<div class="content">
+  <ol>
+    <li>
+      <p class="title">Layer containing features to buffer</p>
+      <select name='input'>
+        <option>Choose layer...</option>
+      </select>
+      <p class="middle">
+        <img src="/img/SGV_icon-addfeature.svg" />
+        <span>or add feature</span>
+        <a href="#" class="toolbutton tooltip bottom" data-title="Draw a point">
+          <img src="/img/SGV_tool-draw-point.svg">
+        </a>
+        <a href="#" class="toolbutton tooltip bottom" data-title="Draw a line">
+          <img src="/img/SGV_tool-draw-line.svg">
+        </a>
+      </p>
+    </li>
+    <li>
+      <p class="title">Buffer size</p>
+      <div class="optselector">
+        <input type="radio" name="buffer_size" value="distance" data-title="Distance" checked />
+        <input type="radio" name="buffer_size" value="field" data-title="Field" />
+      </div>
+      <div class="size_input">
+        <input type="number" step="0.5" min="0" value="2" />
+        <select name='input'>
+          <option>Kilometers</option>
+        </select>
+      </div>
+    </li>
+    <li>
+      <p class="title">Result Layer</p>
+      <div>
+        <label for="output-name">Name</label>
+        <input type="text" id="output-name" name='name' placeholder='Write a layer name' />
+      </div>
+    </li>
