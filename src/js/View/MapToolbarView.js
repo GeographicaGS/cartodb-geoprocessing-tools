@@ -42,6 +42,9 @@ App.View.MapToolbar = Backbone.View.extend({
     else if (type == 'erase'){
       cn = 'OverlayErase';
     }
+    else if (type == 'union'){
+      cn = 'OverlayUnion';
+    }
     else if (type == 'buffer'){
       cn = 'Buffer';
     }

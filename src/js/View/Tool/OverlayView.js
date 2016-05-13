@@ -168,8 +168,8 @@ App.View.Tool.Overlay = Backbone.View.extend({
           return 'b.' + f + ' as ' + f + '_2'
         }));
 
-        //var res = input_fields.concat(overlay_fields);
-        var res = input_fields;
+        var res = input_fields.concat(overlay_fields);
+        //var res = input_fields;
         cb(res.join(','));
       }
 
@@ -348,9 +348,82 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
         });
     
     this.model.set({
-      'infowindow_fields': queryFields,
+      //'infowindow_fields': queryFields,
       'sql' : q
     });
+
+    this.createLayer();
+  }
+});
+
+App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
+
+  initialize: function(options) { 
+    App.View.Tool.Overlay.prototype.initialize.apply(this,[options]);
+    _.bindAll(this,'_unionRun');
+    this._title = 'Union';
+    this._titleOverlay = 'Union Layer';
+  },
+
+  run: function(cb){
+    this.mergeFieldsForQuery(this._unionRun);
+  },
+
+  _unionRun: function(queryFields){
+    
+    var inputlayer = this._geoVizModel.findSublayer(this.model.get('input'));
+    var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
+
+    var geometrytype = App.Utils.getPostgisMultiType(inputlayer.geometrytype);
+    this.model.set('geometrytype',geometrytype);
+
+    if (geometrytype.toLowerCase().indexOf('polygon')){
+      // Polygon layer
+      var q = [
+        'with a as ({{{input_query}}}),',
+          'b as ({{{overlay_query}}}),',
+          // Convert from multipolygon to polygon
+          'ap as (',
+            'select *,(st_dump(the_geom_webmercator)).geom from a',
+          '),',
+          'bp as (',
+            'select *,(st_dump(the_geom_webmercator)).geom from b',
+          '),',
+          'all_lines as (',
+            'select St_ExteriorRing(geom) as geom from ap',
+            'union all',
+            'select St_ExteriorRing(geom) as geom from bp',
+          '),',
+          'noded_lines as (',
+            'select st_union(geom) as geom from all_lines',
+          '),',
+          'new_polys as (',
+            'select ROW_NUMBER() OVER () AS gid,geom,st_pointonsurface(geom) as pip',
+              'from st_dump((',
+                'select st_polygonize(geom) as geom from noded_lines',
+              '))',
+          ')',
+          'select {{cartodb_id}}, {{fields}}, p.geom as the_geom_webmercator',
+              'from new_polys p',
+              'left join ap a on St_Within(p.pip, a.geom)',
+              'left join bp b on St_Within(p.pip, b.geom)'];
+
+        q = Mustache.render(q.join(' '),{
+          cartodb_id: this.getCartoDBID(),
+          input_query: inputlayer.options.sql, 
+          overlay_query: overlaylayer.options.sql,
+          fields: queryFields
+        });
+
+        this.model.set({
+          //'infowindow_fields': queryFields,
+          'sql' : q
+        });
+
+    }
+    else{
+      throw new Error('Union: unsupported '+ geometrytype);
+    }    
 
     this.createLayer();
   }
