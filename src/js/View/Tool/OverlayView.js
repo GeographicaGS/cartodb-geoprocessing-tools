@@ -3,7 +3,7 @@
 App.View.Tool.Overlay = Backbone.View.extend({
   _template: _.template( $('#tool-overlay_template').html() ),
 
-  initialize: function(options) { 
+  initialize: function(options) {
     this._geoVizModel = options.geoVizModel;
     this.model = new Backbone.Model({
       'input': null,
@@ -35,13 +35,13 @@ App.View.Tool.Overlay = Backbone.View.extend({
 
     var m = this.model.toJSON(),
       $run = this.$('.run');
-    
+
     for (var o in m)
       if (!m[o])
         return $run.addClass('disabled');
 
     return $run.removeClass('disabled');
-    
+
   },
 
   _updateModel: function(e){
@@ -58,7 +58,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
 
     var input = this._geoVizModel.findSublayer(this.model.get('input'));
 
-    if (!input) 
+    if (!input)
       return;
 
     var gtypes = [];
@@ -71,7 +71,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
     else if (input.geometrytype=='ST_MultiPoint' || input.geometrytype=='ST_Point'){
       gtypes = ['polygon','line','point'];
     }
-    
+
     var overlaylayers = this._geoVizModel.getSublayersByGeometryType(gtypes);
     // Remove input layers
     overlaylayers = _.without(overlaylayers,input);
@@ -79,10 +79,10 @@ App.View.Tool.Overlay = Backbone.View.extend({
     var $select = this.$('select[name="overlay"]');
     var html = '';
     for (var i in overlaylayers){
-      html += '<option value="' + overlaylayers[i].gid + '">' + overlaylayers[i].options.layer_name + '</option>';  
+      html += '<option value="' + overlaylayers[i].gid + '">' + overlaylayers[i].options.layer_name + '</option>';
     }
     $select.html(html);
-  
+
     this.model.set('overlay',$select.val());
 
     return this;
@@ -95,12 +95,12 @@ App.View.Tool.Overlay = Backbone.View.extend({
 
     if ($run.hasClass('disabled')|| $run.hasClass('running'))
       return;
-      
+
     $run.addClass('running');
 
     this.run();
 
-  },  
+  },
 
   getOverlayLayers: function(){
     return this._geoVizModel.getSublayers();
@@ -117,12 +117,12 @@ App.View.Tool.Overlay = Backbone.View.extend({
   render: function(){
 
     this.$el.html(this._template({title: this._title,title_overlay: this._titleOverlay}));
-    
+
     // Fill input layer combo
     var inputLayers = this.getInputLayers();
     var $select = this.$('select[name="input"]');
     for (var i in inputLayers){
-      $select.append('<option value="' + inputLayers[i].gid + '">' + inputLayers[i].options.layer_name + '</option>');  
+      $select.append('<option value="' + inputLayers[i].gid + '">' + inputLayers[i].options.layer_name + '</option>');
     }
 
     // Fill overlay layers combo
@@ -136,7 +136,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
     this._geoVizModel.getSublayersFields(this.model.get(attr),function(fields){
       if (!fields)
           throw new Error('Cannot get input layer fields');
-        
+
       // Remove geometry fields. We're building it with the clipping
       fields = _.without(fields,'the_geom_webmercator','the_geom','cartodb_id');
 
@@ -186,7 +186,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
     this._geoVizModel.getSublayersFields(this.model.get(attr), function(fields,err){
       if (err)
         throw Error('Cannot get layer fields '+ err);
-      
+
       var prefix = attr=='input' ? 'a.' : 'b.';
       // Remove geometry fields. We're building it with the clipping
       fields = _.without(fields,'the_geom_webmercator','the_geom','cartodb_id');
@@ -211,14 +211,14 @@ App.View.Tool.Overlay = Backbone.View.extend({
   },
 
   _getInfoWindowFields: function(sqlFields){
-    
-    var fields = _.map(sqlFields.split(","),function(f){
-      var index = f.indexOf('.');
-      if (index!=-1)
-        return f.substring(index+1);
-      else
-        return f;
-    });
+    var fields = [];
+    var re = new RegExp("(?!\\w+\\s[as])(?!as)([A-Za-z])\\w+","g");
+    var result = re.exec(sqlFields);
+    while(result !== null) {
+      fields.push(result[0]);
+      result = re.exec(sqlFields)
+    }
+
 
     return _.map(fields,function(f,i){
       return {
@@ -251,7 +251,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
 });
 
 App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
-  initialize: function(options) { 
+  initialize: function(options) {
     App.View.Tool.Overlay.prototype.initialize.apply(this,[options]);
     _.bindAll(this,'_runClip');
     this._title = 'Clip';
@@ -287,7 +287,7 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
 
     q = Mustache.render(q.join(' '),{
           cartodb_id: this.getCartoDBID(),
-          input_query: inputlayer.options.sql, 
+          input_query: inputlayer.options.sql,
           overlay_query: overlaylayer.options.sql,
           fields: queryFields,
           fields2: this.fieldsRemoveTablePrefix(queryFields),
@@ -304,7 +304,7 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
 
 App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
 
-  initialize: function(options) { 
+  initialize: function(options) {
     App.View.Tool.Overlay.prototype.initialize.apply(this,[options]);
     _.bindAll(this,'_intersectRun');
     this._title = 'Intersection';
@@ -316,7 +316,7 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
   },
 
   _intersectRun: function(queryFields){
-    
+
     var inputlayer = this._geoVizModel.findSublayer(this.model.get('input'));
     var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
 
@@ -340,13 +340,13 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
 
     q = Mustache.render(q.join(' '),{
           cartodb_id: this.getCartoDBID(),
-          input_query: inputlayer.options.sql, 
+          input_query: inputlayer.options.sql,
           overlay_query: overlaylayer.options.sql,
           fields: queryFields,
           fields2: this.fieldsRemoveTablePrefix(queryFields),
           collection_extract: App.Utils.getConstantGeometryType(this.model.get('geometrytype'))
         });
-    
+
     this.model.set({
       'infowindow_fields': queryFields,
       'sql' : q
@@ -357,14 +357,14 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
 });
 
 App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
-  initialize: function(options) { 
+  initialize: function(options) {
 
     App.View.Tool.Overlay.prototype.initialize.apply(this,[options]);
 
     _.bindAll(this,'_runErase');
     this._title = 'Erase';
     this._titleOverlay = 'Erase Layer';
-    
+
   },
 
   run: function(cb){
@@ -398,7 +398,7 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
 
     q = Mustache.render(q.join(' '),{
         cartodb_id: this.getCartoDBID(),
-        input_query: inputlayer.options.sql, 
+        input_query: inputlayer.options.sql,
         overlay_query: overlaylayer.options.sql,
         fields: queryFields,
         fields2: this.fieldsRemoveTablePrefix(queryFields),
@@ -417,7 +417,7 @@ App.View.Tool.OverlayStatistical = App.View.Tool.Overlay.extend({
   _template: _.template( $('#tool-overlay_statistical_template').html() ),
   _template_field_options: _.template( $('#tool-overlay_statistical_field_options').html() ),
 
-  initialize: function(options) { 
+  initialize: function(options) {
     // _.bindAll(this,'_onSublayersFields');
     this._outputType = false;
     this._title = 'Statistical report';
@@ -451,7 +451,7 @@ App.View.Tool.OverlayStatistical = App.View.Tool.Overlay.extend({
       _.each(fields, function(f) {
         if(f!='cartodb_id' && f!='the_geom' && f!='the_geom_webmercator'){
           _this.currentFields.push(f);
-          $select.append('<option value="' + f + '">' + f + '</option>');  
+          $select.append('<option value="' + f + '">' + f + '</option>');
         }
       });
     });
@@ -535,13 +535,13 @@ App.View.Tool.OverlayStatistical = App.View.Tool.Overlay.extend({
   render: function(){
 
     this.$el.html(this._template({title: this._title}));
-    
+
     // Fill input layer combo
     var inputLayers = this.getInputLayers();
     var $select = this.$('select[name="input"]');
     for (var i in inputLayers){
       if(!inputLayers[i].geoLayer)
-        $select.append('<option value="' + inputLayers[i].gid + '">' + inputLayers[i].options.layer_name + '</option>');  
+        $select.append('<option value="' + inputLayers[i].gid + '">' + inputLayers[i].options.layer_name + '</option>');
     }
 
     return this;
