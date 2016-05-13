@@ -217,19 +217,24 @@
             color: @white;
             font-family: courier, monospace;
             font-weight: 600;
-            margin-bottom: 10px;
+            max-height: 420px;
+            padding: 10px;
+            border: 1px solid @grey75;
+            border-radius: 2px;
+            overflow-y: auto;
           }
 
           textarea {
             width: 100%;
             height: 400px;
             padding: 10px;
+            margin-bottom: -3px; // Fix
             background-color: @grey55;
             color: @white;
             border: 1px solid @grey75;
             border-radius: 2px;
             font-family: courier, monospace;
-            font-weight: 600;
+            font-weight: 400;
             resize: none;
           }
 
@@ -246,7 +251,7 @@
 
             &.apply {
               background-color: @green;
-              color: @grey90;
+              color: @white;
 
               &:hover {
                 background-color: lighten(@green, 10%);
@@ -360,20 +365,68 @@
 
         // Fix tooltips
         &:first-child {
-          .tooltip {
-            &:not(.disabled):hover {
-        			&:before {
-        				bottom: auto;
-        				top: calc(~'100% + 8px - 6px');
-        				border-color: fade(@grey80,90%) transparent;
-        				border-width: 0 6px 6px 6px;
-        			}
+          .subviewcontrol {
+            &.tooltip {
+              &:not(.disabled):hover {
+          			&:before {
+          				bottom: auto;
+          				top: calc(~'100% + 8px - 6px');
+          				border-color: fade(@grey80,90%) transparent;
+          				border-width: 0 6px 6px 6px;
+          			}
 
-        			&:after {
-        				bottom: auto;
-        				top: calc(~'100% + 8px');
-        			}
-        		}
+          			&:after {
+          				bottom: auto;
+          				top: calc(~'100% + 8px');
+          			}
+          		}
+            }
+          }
+        }
+
+        &:first-child:last-child {
+          .subviewcontrol {
+            &.tooltip {
+              &:not(.disabled):hover {
+          			&:before {
+          				bottom: auto;
+                  top: 50%;
+                  left: -10px;
+                  transform: translateY(-50%);
+          				border-color: transparent transparent transparent fade(@grey80,90%);
+          				border-width: 6px 0 6px 6px;
+          			}
+
+          			&:after {
+                  bottom: auto;
+                  top: 50%;
+                  left: auto;
+                  right: calc(~'100% + 10px');
+                  transform: translateY(-50%);
+          			}
+          		}
+            }
+          }
+        }
+
+        .remove.tooltip {
+          &:not(.disabled):hover {
+            &:before {
+              bottom: auto;
+              top: 50%;
+              left: -10px;
+              transform: translateY(-50%);
+              border-color: transparent transparent transparent fade(@grey80,90%);
+              border-width: 6px 0 6px 6px;
+            }
+
+            &:after {
+              bottom: auto;
+              top: 50%;
+              left: auto;
+              right: calc(~'100% + 10px');
+              transform: translateY(-50%);
+            }
           }
         }
       }
