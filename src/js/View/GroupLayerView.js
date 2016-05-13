@@ -400,9 +400,9 @@ App.View.GroupLayerMap = Backbone.View.extend({
       m = new App.Model.GeoViz(vizjson),
       invisibleLayers = m.getInvisibleLayers();
 
-    for (var i in invisibleLayers){
-      invisibleLayers[i].infowindow = null;
-    }
+    // for (var i in invisibleLayers){
+    //   invisibleLayers[i].infowindow = null;
+    // }
 
 
     $('.cartodb-tiles-loader').animate({opacity: 1}, 400);

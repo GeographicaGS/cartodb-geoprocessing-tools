@@ -31,8 +31,7 @@ App.View.MapToolbar = Backbone.View.extend({
 
     var $li = $(e.target).closest('li'),
       type = $li.attr('data-tool'),
-      cn,
-      isOverlay = true;
+      cn;
 
     if (type == 'clip'){
       cn = 'OverlayClip';
