@@ -268,44 +268,47 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
 
     this.model.set('geometrytype',App.Utils.getPostgisMultiType(inputlayer.geometrytype));
 
-    // var q = [
-    //   " WITH a as ({{{input_query}}}), b as ({{{overlay_query}}}),",
-    //   "  as (",
-    //     "SELECT distinct {{fields}},",
-    //     "st_multi(st_intersection(a.the_geom_webmercator,b.the_geom_webmercator)) as the_geom_webmercator",
-    //     " FROM a,b ",
-    //     " WHERE a.the_geom_webmercator && b.the_geom_webmercator AND st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)",
-    //   ") ",
-    //   " select {{cartodb_id}},{{fields2}},",
-    //     " CASE WHEN st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' then ST_CollectionExtract(the_geom_webmercator,{{collection_extract}})",
-    //     " ELSE the_geom_webmercator",
-    //     " END as the_geom_webmercator",
-    //   "from r where ",
-    //     "st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' OR ",
-    //     "st_geometrytype(the_geom_webmercator)='" + this.model.get('geometrytype') + "'"];
-
     var q = [
-      "WITH a as ({{{input_query}}}), b as ({{{overlay_query}}}),",
-      "clip as ( ",
-        "SELECT distinct st_multi(st_intersection(a.the_geom_webmercator,b.the_geom_webmercator)) as the_geom_webmercator",
-        "FROM a,b",
-        "WHERE a.the_geom_webmercator && b.the_geom_webmercator AND st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)",
+      " WITH a as ({{{input_query}}}), b as ({{{overlay_query}}}),",
+      "bu as (",
+        "select st_union(the_geom_webmercator) as the_geom_webmercator from b",
       "),",
-      "clean_clip as (",
-          "SELECT CASE WHEN st_geometrytype(the_geom_webmercator)='ST_GeometryCollection'",
-            " THEN ST_CollectionExtract(the_geom_webmercator,{{collection_extract}})",
-            " ELSE the_geom_webmercator",
-            " END as the_geom_webmercator", 
-        "FROM clip",
-          "WHERE st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' OR ",
-            "st_geometrytype(the_geom_webmercator)='" + this.model.get('geometrytype') + "'",
-      "),",
-      "clip_union as (",
-        "select st_union(the_geom_webmercator) as the_geom_webmercator from clean_clip",
-      ")",
-      "select ROW_NUMBER() OVER () AS cartodb_id, {{fields}},c.the_geom_webmercator",
-      "from clip_union c",
-      "left join a ON st_within(st_pointonsurface(a.the_geom_webmercator),c.the_geom_webmercator)"];
+      " r as (",
+        "SELECT distinct {{fields}},",
+        "st_multi(st_intersection(a.the_geom_webmercator,bu.the_geom_webmercator)) as the_geom_webmercator",
+        " FROM a,bu ",
+        " WHERE a.the_geom_webmercator && bu.the_geom_webmercator AND st_intersects(a.the_geom_webmercator,bu.the_geom_webmercator)",
+      ") ",
+      " select {{cartodb_id}},{{fields2}},",
+        " CASE WHEN st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' then ST_CollectionExtract(the_geom_webmercator,{{collection_extract}})",
+        " ELSE the_geom_webmercator",
+        " END as the_geom_webmercator",
+      "from r where ",
+        "st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' OR ",
+        "st_geometrytype(the_geom_webmercator)='" + this.model.get('geometrytype') + "'"];
+
+   // var q = [
+      // "WITH a as ({{{input_query}}}), b as ({{{overlay_query}}}),",
+      // "clip as ( ",
+      //   "SELECT distinct st_multi(st_intersection(a.the_geom_webmercator,b.the_geom_webmercator)) as the_geom_webmercator",
+      //   "FROM a,b",
+      //   "WHERE a.the_geom_webmercator && b.the_geom_webmercator AND st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)",
+      // "),",
+      // "clean_clip as (",
+      //     "SELECT CASE WHEN st_geometrytype(the_geom_webmercator)='ST_GeometryCollection'",
+      //       " THEN ST_CollectionExtract(the_geom_webmercator,{{collection_extract}})",
+      //       " ELSE the_geom_webmercator",
+      //       " END as the_geom_webmercator", 
+      //   "FROM clip",
+      //     "WHERE st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' OR ",
+      //       "st_geometrytype(the_geom_webmercator)='" + this.model.get('geometrytype') + "'",
+      // "),",
+      // "clip_union as (",
+      //   "select st_union(the_geom_webmercator) as the_geom_webmercator from clean_clip",
+      // ")",
+      // "select ROW_NUMBER() OVER () AS cartodb_id, {{fields}},c.the_geom_webmercator",
+      // "from clip_union c",
+      // "left join a ON st_within(st_pointonsurface(a.the_geom_webmercator),c.the_geom_webmercator)"];
 
     var fields2 = this.fieldsRemoveTablePrefix(queryFields);
 
@@ -314,13 +317,13 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
           input_query: inputlayer.options.sql,
           overlay_query: overlaylayer.options.sql,
           fields: queryFields,
-          //fields2: fields2,
+          fields2: fields2,
           collection_extract: App.Utils.getConstantGeometryType(this.model.get('geometrytype'))
         });
 
     this.model.set({
       'sql':q,
-      //'infowindow_fields': queryFields,
+      'infowindow_fields': fields2,
     });
 
     this.createLayer();
