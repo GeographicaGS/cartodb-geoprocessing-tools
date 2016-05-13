@@ -375,6 +375,7 @@ App.View.GroupLayerMap = Backbone.View.extend({
 
   _onLayerDone: function(layer){
     this._layer = layer;
+    layer.setInteraction(true);
     layer.on("load", function() {
       $('.cartodb-tiles-loader').animate({opacity: 0}, 400);
     });
@@ -386,17 +387,27 @@ App.View.GroupLayerMap = Backbone.View.extend({
 
     if (this._layer){
       this._layer.hide();
+      //this._layer.clear();
+      $('.cartodb-infowindow').remove();
       this._map.removeLayer(this._layer);
+      //this._layer = null;
     }
 
     // A Clone is mandatory because createLayer changes the object received.
     // Doesn't work. Clone does a shallow copy
     // var vizjson = this.model.clone().toJSON();
-    var vizjson = JSON.parse(JSON.stringify(this.model.toJSON()));
+    var vizjson = JSON.parse(JSON.stringify(this.model.toJSON())),
+      m = new App.Model.GeoViz(vizjson),
+      invisibleLayers = m.getInvisibleLayers();
+
+    for (var i in invisibleLayers){
+      invisibleLayers[i].infowindow = null;
+    }
+
 
     $('.cartodb-tiles-loader').animate({opacity: 1}, 400);
 
-    cartodb.createLayer(this._map, vizjson)
+    cartodb.createLayer(this._map, m.toJSON())
       .addTo(this._map)
       .on('done',this._onLayerDone)
       .on('error', function(err) {
