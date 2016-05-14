@@ -25,5 +25,17 @@ App.Utils = {
     else{
       throw new Error('Not found constant for geometry type '+ type);
     }
+  },
+
+  getBaseGeometryType: function(sttype){
+   if (sttype=='ST_MultiPolygon' || sttype=='ST_Polygon'){
+     return 'polygon';
+    }
+    else if (sttype=='ST_MultiLineString' || sttype=='ST_LineString'){
+      return 'line';
+    }
+    else if (sttype=='ST_MultiPoint' || sttype=='ST_Point'){
+      return 'point';
+    }  
   }
 }

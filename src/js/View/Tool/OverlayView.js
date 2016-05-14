@@ -4,15 +4,20 @@ App.View.Tool.Overlay = Backbone.View.extend({
   _template: _.template( $('#tool-overlay_template').html() ),
 
   initialize: function(options) {
-    this._geoVizModel = options.geoVizModel;
+    
     this.model = new Backbone.Model({
       'input': null,
       'overlay': null,
       'name':null
     });
+    this._geoVizModel = options.geoVizModel;
     this._titleOverlay = 'Overlay layer';
+    this._mergetype = 'hierarchical_up'
+
     this.listenTo(this.model,'change',this._updateModelUI);
     this.listenTo(this.model,'change:input',this._renderOverlaySelect);
+
+
   },
 
   events: {
@@ -54,6 +59,29 @@ App.View.Tool.Overlay = Backbone.View.extend({
     return this;
   },
 
+  getOverlayLayerTypes: function(input){
+    var gtypes;
+    if (this._mergetype == 'hierarchical_up'){
+      if (input.geometrytype=='ST_MultiPolygon' || input.geometrytype=='ST_Polygon'){
+        gtypes = ['polygon'];
+      }
+      else if (input.geometrytype=='ST_MultiLineString' || input.geometrytype=='ST_LineString'){
+        gtypes = ['polygon','line'];
+      }
+      else if (input.geometrytype=='ST_MultiPoint' || input.geometrytype=='ST_Point'){
+        gtypes = ['polygon','line','point'];
+      }  
+    }
+    else if (this._mergetype == 'sametype'){  
+      gtypes = [App.Utils.getBaseGeometryType(input.geometrytype)];
+    }
+    else{
+      throw new Error('Unsupported mergetype ' + this._mergetype);
+    }
+
+    return gtypes;
+  },
+
   _renderOverlaySelect: function(){
 
     var input = this._geoVizModel.findSublayer(this.model.get('input'));
@@ -61,16 +89,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
     if (!input)
       return;
 
-    var gtypes = [];
-    if (input.geometrytype=='ST_MultiPolygon' || input.geometrytype=='ST_Polygon'){
-      gtypes = ['polygon'];
-    }
-    else if (input.geometrytype=='ST_MultiLineString' || input.geometrytype=='ST_LineString'){
-      gtypes = ['polygon','line'];
-    }
-    else if (input.geometrytype=='ST_MultiPoint' || input.geometrytype=='ST_Point'){
-      gtypes = ['polygon','line','point'];
-    }
+    var gtypes = this.getOverlayLayerTypes(input);
 
     var overlaylayers = this._geoVizModel.getSublayersByGeometryType(gtypes);
     // Remove input layers
@@ -393,6 +412,7 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
     _.bindAll(this,'_unionRun');
     this._title = 'Union';
     this._titleOverlay = 'Union Layer';
+    this._mergetype = 'sametype';
   },
 
   run: function(cb){

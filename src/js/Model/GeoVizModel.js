@@ -333,6 +333,51 @@ App.Model.GeoViz = App.Model.Viz.extend({
 
   },
 
+  getSublayersFields2: function(sublayerid,cb){
+    var sub = this.findSublayer(sublayerid);
+    if (!sub){
+      return cb(null,new Error('Sublayer with id \'' + sublayerid + '\' not found'));
+    }
+
+    var sql = new cartodb.SQL({ user: this.get('account') });
+    var q = ' SELECT * FROM ({{{q}}}) as s LIMIT 1';
+
+    sql.execute(q,{q: sub.options.sql})
+      .done(function(data) {
+        cb(data.fields)
+      })
+      .error(function(errors) {
+        cb(null,errors)
+      });
+  },
+
+  // Fields must be the output of getSublayersFields2
+  filterFieldsByType: function(fields,type){
+    var r = _.pick(fields, function(value, key, object) {
+      return value.type == type;
+    });
+    return _.allKeys(r);
+  },
+
+  getSublayersFieldsByType: function(sublayerid,type,cb){
+    var sub = this.findSublayer(sublayerid);
+    if (!sub){
+      return cb(null,new Error('Sublayer with id \'' + sublayerid + '\' not found'));
+    }
+
+    var sql = new cartodb.SQL({ user: this.get('account') });
+    var q = ' SELECT * FROM ({{{q}}}) as s LIMIT 1';
+    var _this = this;
+    sql.execute(q,{q: sub.options.sql})
+      .done(function(data) {
+        var r = _this.filterFieldsByType(data.fields,type);
+        cb(r);
+      })
+      .error(function(errors) {
+        cb(null,errors)
+      });
+  },
+
   _guid: function guid() {
     function s4() {
       return Math.floor((1 + Math.random()) * 0x10000)

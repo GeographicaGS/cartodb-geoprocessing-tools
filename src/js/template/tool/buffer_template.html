@@ -19,10 +19,13 @@
   <ol>
     <li>
       <p class="title">Layer containing features to buffer</p>
-      <select name='input'>
+      <select name='input' class="modelattr">
         <option>Choose layer...</option>
+        <% _.each(inputLayers,function(l){ %>
+          <option value="<%= l.gid %>" <%=l.gid==m.input ? 'selected' : ''%>> <%= l.options.layer_name %></option>
+        <% }); %>
       </select>
-      <p class="middle">
+      <p class="middle" style="display: none">
         <img src="/img/SGV_icon-addfeature.svg" />
         <span>or add feature</span>
         <a href="#" class="toolbutton tooltip bottom" data-title="Draw a point">
@@ -36,20 +39,33 @@
     <li>
       <p class="title">Buffer size</p>
       <div class="optselector">
-        <input type="radio" name="buffer_size" value="distance" data-title="Distance" checked />
-        <input type="radio" name="buffer_size" value="field" data-title="Field" />
+        <input class="modelattr" type="radio" name="type" value="input" data-title="Distance" <%= m.type=='input' ? 'checked' : '' %>/>
+        <input class="modelattr" type="radio" name="type" value="field" data-title="Field" <%= m.type=='field' ? 'checked' : '' %> />
       </div>
-      <div class="size_input">
-        <input type="number" step="0.5" min="0" value="2" />
-        <select name='input'>
-          <option>Kilometers</option>
+      <div class="size_input <%= m.type=='input' ? '' : 'hide' %>" data-type="input">
+        <input class="modelattr keyup" name="type_input" type="number" step="100" min="0" value="<%=m.type_input%>" />
+        <select class="modelattr" name='unit'>
+          <option value="m" <%= m.unit == 'm' ? 'selected' : '' %>>Meters</option>
+          <option value="km" <%= m.unit == 'km' ? 'selected' : '' %>>Kilometers</option>
         </select>
+      </div>
+      <div class="size_input <%= m.type=='field' ? '' : 'hide' %>" data-type="field">
+        <select class="modelattr" name='type_field'>
+          <option>Select a field</option>
+        </select>
+      </div>
+    </li>
+    <li>
+      <p class="title">Options</p>
+      <div>
+        <input type="checkbox" class="modelattr" value="<%= m.disolve ? 'true' : 'false' %>" name="disolve" <%= m.disolve ? 'checked' : '' %>/>
+        <label>Disolve results</label>
       </div>
     </li>
     <li>
       <p class="title">Result Layer</p>
       <div>
         <label for="output-name">Name</label>
-        <input type="text" id="output-name" name='name' placeholder='Write a layer name' />
+        <input class="modelattr keyup" type="text" id="output-name" name='name' placeholder='Write a layer name' value="<%= m.name%>" />
       </div>
     </li>
