@@ -3,6 +3,10 @@
 App.View.UserControl = Backbone.View.extend({
   _template: _.template( $('#usercontrol_template').html() ),
 
+  events: {
+    'click .save-status' : '_toggleAutoSave'
+  },
+
   initialize: function(options) {
     this._account = options.account;
     this.listenTo(this.model,'change',this._renderSaveStatus);
@@ -11,10 +15,6 @@ App.View.UserControl = Backbone.View.extend({
   onClose: function(){
 
     this.stopListening();
-  },
-
-  events: {
-    'click .save-status' : '_toggleAutoSave'
   },
 
   _renderSaveStatus: function(){
@@ -67,7 +67,8 @@ App.View.UserAutosave = Backbone.View.extend({
 
   events: {
     'click .toggle' : '_changeStatus',
-    'keyup input' : '_updateAPIKeyTimer'
+    'keyup input' : '_updateAPIKeyTimer',
+    'click #closeSession': '_closeSession'
   },
 
   _render: function(){
@@ -136,9 +137,15 @@ App.View.UserAutosave = Backbone.View.extend({
   },
 
   render: function(){
-    this.$el.html(this._template({account: this._account}));
+    this.$el.html(this._template({account: this._account, api_key_url: App.Config.get_api_key_url(this._account)}));
     this._render();
     return this;
+  },
+
+  _closeSession: function(e) {
+    e.preventDefault();
+    App.resetUserModel();
+    App.router.navigate('login', {trigger: true});
   }
 
 });

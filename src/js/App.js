@@ -80,16 +80,17 @@ App.showView = function(view,opts) {
   opts = _.defaults(opts || {},{'renderMode': 'before'});
 
   if (opts.renderMode=='before'){
-    view.render();  
+    view.render();
     this.$main.html(view.el);
+    if (oldView)
+      oldView.close();
   }
   else if (opts.renderMode=='after'){
+    if (oldView)
+      oldView.close();
     this.$main.html(view.el);
-    view.render(); 
+    view.render();
   }
-
-  if (oldView)
-    oldView.close();
 
   this.scrollTop();
 };
@@ -178,19 +179,39 @@ App.loading = function(){
 
 App.ini = function(){
 
-
   this.$main = $('main');
   this.router = new App.Router();
-  
-  this._userModel = new App.Model.UserLocalStorage();
-  this._userModel.on('ready',function(){
-    Backbone.history.start({pushState: true});  
-  });
 
-  
+  var _this = this;
+  this._userModel = new App.Model.UserLocalStorage();
+  this._userModel.fetch({
+    'success' : function(a,b){
+      _this._userModel.validateAndCreate(function(){
+        Backbone.history.start({pushState: true});
+      });
+    }
+  });
+}
+
+App.functionToString = function(f){
+  if(f == 'sum'){
+    return 'Sum';
+  }else if(f == 'min'){
+    return 'Minimum';
+  }else if(f == 'max'){
+    return 'Maximum'
+  }else if(f == 'avg'){
+    return 'Average'
+  }
+
+  return '';
 }
 
 App.getUserModel = function(){
-  
   return this._userModel;
+}
+
+App.resetUserModel = function(){
+  this._userModel.destroy();
+  this._userModel = new App.Model.UserLocalStorage();
 }

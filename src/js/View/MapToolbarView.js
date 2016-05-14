@@ -14,35 +14,58 @@ App.View.MapToolbar = Backbone.View.extend({
   },
 
   events: {
-    'click li[data-tool]' : '_openTool'
+    'click li[data-tool]' : '_openTool',
+    'click .map_extra_controls .tooltip' : '_openReportList'
   },
 
   onClose: function(){
     this.stopListening();
     this._closeTool();
+
+    if(this.reportView)
+      this.reportView.close();
   },
 
   _openTool: function(e){
+    this.$('.buttons .selected').removeClass('selected');
+
     var $li = $(e.target).closest('li'),
       type = $li.attr('data-tool'),
       cn;
 
     if (type == 'clip'){
-      cn = 'Clip';
+      cn = 'OverlayClip';
     }
     else if (type == 'intersection'){
-      cn = 'Intersection';
+      cn = 'OverlayIntersection';
+    }
+    else if (type == 'erase'){
+      cn = 'OverlayErase';
+    }
+    else if (type == 'union'){
+      cn = 'OverlayUnion';
+    }
+    else if (type == 'buffer'){
+      cn = 'Buffer';
+    }
+    else if (type == 'statistical'){
+      cn = 'Statistical';
+    }
+    else if (type == 'measure'){
+      cn = 'Measure';
     }
     else{
       throw new Error('Unsupported tool type: '+ type);
     }
 
-    var fn = App.View.Tool['Overlay' + cn];
+    var fn = App.View.Tool[cn];
+    
     if (this._tool)
       this._tool.close();
 
     this._tool = new fn({
       geoVizModel: this.model,
+      reportView: cn == 'Statistical' ? this.reportView: null
     });
 
     this.$('.toolholder').html(this._tool.render().$el).show().get(0).className = "toolholder " + type;
@@ -52,11 +75,18 @@ App.View.MapToolbar = Backbone.View.extend({
 
   _closeTool: function(){
     this.$('.toolholder').hide();
-    this.$selectedToolBtn.removeClass('selected');
+    this.$('.buttons .selected').removeClass('selected');
     if (this._tool){
       this._tool.close();
       this._tool = null;
     }
+  },
+
+  _openReportList:function(e){
+    $(e.currentTarget).toggleClass('selected');
+    $(e.currentTarget).closest('.map_extra_controls').toggleClass('translated');
+    $('.cartodb-zoom').toggleClass('translated');
+    $('.left-sidebar').toggleClass('activated');
   },
 
   render: function(){
@@ -70,6 +100,22 @@ App.View.MapToolbar = Backbone.View.extend({
       map: this._map
     });
     this.groupLayer.render();
+
+    this.reportView = new App.View.Report({'map':this._map, geoVizModel: this.model});
+    this.reportView.setElement($('.left-sidebar'));
+    this.reportView.render();
+    this.listenTo(this.reportView.reportCollection,'add', function(){
+      this.$('.map_extra_controls .tooltip').addClass('selected');
+      this.$('.map_extra_controls .tooltip').closest('.map_extra_controls').addClass('translated');
+      $('.cartodb-zoom').addClass('translated');
+      $('.left-sidebar').addClass('activated');
+      this._closeTool();
+    });
+
+    this.listenTo(this.reportView, 'open_statistical', function(){
+      if(!this._tool || !this._tool._title == 'Statistical report')
+        this.$('[data-tool=statistical]').trigger('click');
+    });
 
     return this;
   }

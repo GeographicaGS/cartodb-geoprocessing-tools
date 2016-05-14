@@ -231,37 +231,41 @@ footer {
 
 .tooltip {
 	position: relative;
-	font-size: 12px;
 
-	&:hover:before{
-		content: "";
-		position: absolute;
-		left: calc(~'50% - 6px');
-		bottom: calc(~'100% + 8px - 6px');
-		border-style: solid;
-		border-color: fade(@grey80,90%) transparent;
-		border-width: 6px 6px 0 6px;
-		z-index: 1081;
-	}
+	&:not(.disabled):hover{
 
-	&:hover:after{
-		content: attr(title);
-		position: absolute;
-		left: 50%;
-		bottom: calc(~'100% + 8px');
-		transform: translateX(-50%);
-		display: flex;
-		align-items: center;
-		height: 20px;
-		padding: 5px 15px;
-		border-radius: 2px;
-		background-color: fade(@grey80,90%);
-		color: @white;
-		z-index: 1081;
+		&:before{
+			content: "";
+			position: absolute;
+			left: calc(~'50% - 6px');
+			bottom: calc(~'100% + 8px - 6px');
+			border-style: solid;
+			border-color: fade(@grey80,90%) transparent;
+			border-width: 6px 6px 0 6px;
+			z-index: 99999;
+		}
+
+		&:after{
+			content: attr(data-title);
+			position: absolute;
+			left: 50%;
+			bottom: calc(~'100% + 8px');
+			transform: translateX(-50%);
+			display: flex;
+			align-items: center;
+			height: 24px;
+			padding: 8px 10px;
+			border-radius: 2px;
+			background-color: fade(@grey80,90%);
+			color: @white;
+			font-size: 12px;
+			white-space: nowrap;
+			z-index: 99999;
+		}
 	}
 
 	&.bottom {
-		&:hover {
+		&:not(.disabled):hover {
 			&:before {
 				bottom: auto;
 				top: calc(~'100% + 8px - 6px');
@@ -277,6 +281,64 @@ footer {
 	}
 }
 
+.optselector {
+	display: flex;
+	align-items: stretch;
+	height: 30px;
+
+	input[type=radio] {
+		flex: 1 1 auto;
+		display: block;
+		height: 100%;
+
+		&:after {
+			content: attr(data-title);
+			position: relative;
+			left: -1px;
+			display: block;
+			padding: 5px;
+			border: 1px solid @grey35;
+			border-radius: 0;
+			text-align: center;
+			color: @grey60;
+			background: @white;
+		}
+
+		&:checked:after {
+			.font(bold);
+			color: @blue_light;
+			background: @blueish_white;
+			border-color: @blue_light;
+			z-index: 2;
+		}
+
+		&:first-of-type:after {
+			left: auto;
+			border-radius: 2px 0 0 2px;
+		}
+
+		&:last-of-type:after {
+			border-radius: 0 2px 2px 0;
+		}
+	}
+}
+
+.ellipsis{
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.spacer {
+	flex: 1 1 100%;
+}
+
+.middle {
+	display: flex;
+	align-items: center;
+}
+
+@import "src/css/leftsidebar.less";
 @import "src/css/scrollbars.less";
 @import "src/css/header.less";
 @import "src/css/login.less";
@@ -284,4 +346,6 @@ footer {
 @import "src/css/map.less";
 @import "src/css/layercontrol.less";
 @import "src/css/maptools.less";
+@import "src/css/reports.less";
+@import "src/css/measure.less";
 @import "src/css/animations.less";

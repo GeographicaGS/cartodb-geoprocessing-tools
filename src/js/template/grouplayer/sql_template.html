@@ -1,2 +1,4 @@
-<pre><%= sql %></pre>
-<a class="button copy" href="#">Copy query</a>
+<pre id="copy_<%= gid %>"><%= options.sql %></pre>
+<div class="actions">
+  <a class="button copy" data-title="Copied" data-clipboard-target="#copy_<%= gid %>" href="#">Copy query</a>
+</div>

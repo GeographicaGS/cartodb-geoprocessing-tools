@@ -14,6 +14,56 @@
     width: 320px;
   }
 
+  &.statistical {
+    transform: translateX(314px);
+    width: 318px;
+  }
+  &.intersection {
+    transform: translateX(162px);
+    width: 320px;
+  }
+
+  &.erase {
+    transform: translateX(116px);
+    width: 320px;
+  }
+
+
+  &.measure{
+    border: none;
+    background-color: transparent;
+    &:after{
+      display: none;
+    }
+  }
+
+  &.buffer {
+    transform: translateX(270px);
+    width: 320px;
+
+    .middle {
+      padding-top: 20px;
+
+      span, .toolbutton {
+        margin: 0 5px;
+      }
+    }
+
+    .size_input {
+      margin-top: 10px;
+      align-items: stretch;
+
+      & > * {
+        flex: 1 1 50%;
+      }
+
+      input {
+        width: 50%;
+        margin-right: 8px;
+      }
+    }
+  }
+
   .top_triangle(8px, 8px, 14px, @white, @grey20);
 
   .header {
@@ -66,7 +116,7 @@
 
     }
 
-    select, input[type=text] {
+    select, input[type=text], input[type="number"] {
       width: 100%;
       padding: 8px 10px;
       border: 1px solid @grey30;
@@ -88,32 +138,124 @@
       outline: none;
     }
 
-    input[type=text] {
+    select[name="field"]{
+      width: 242px;
+    }
+
+    input[type=text],input[type=number] {
       background-color: @grey05;
+    }
 
-      .placeholder {
-        color: @grey50;
-        font-style: italic;
+    .placeholder {
+      color: @grey50;
+      font-style: italic;
+    }
+
+    ::-webkit-input-placeholder {
+      .placeholder;
+    }
+
+    ::-moz-placeholder {
+      .placeholder;
+    }
+
+    :-ms-input-placeholder {
+      .placeholder;
+    }
+
+    :-ms-input-placeholder {
+      .placeholder;
+    }
+
+    [placeholder]:-ms-input-placeholder {
+      .placeholder;
+    }
+  }
+
+  .button {
+    overflow: hidden;
+
+    &.run {
+      position: relative;
+      transition: opacity .25s ease-in-out;
+
+      .loadingbar {
+        display: block;
+        opacity: 0.00001;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        visibility: hidden;
+        opacity: .000001;
+        z-index: 1;
+        transform: translate(-50%, -50%) scale(10);
+        transition: visibility 0s linear 0.25s, opacity .25s ease-in-out, transform .25s ease-in-out;
       }
 
-      ::-webkit-input-placeholder {
-        .placeholder
+      &.running {
+        span {
+          opacity: .00001;
+        }
+        .loadingbar {
+          transform: translate(-50%, -50%) scale(1);
+          visibility: visible;
+          opacity: 1;
+          transition-delay: 0s;
+        }
       }
+    }
+  }
 
-      ::-moz-placeholder {
-        .placeholder
+  .add, .remove{
+    background-repeat: no-repeat;
+    background-size: 16px;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+    background-position: center;
+    position: relative;
+    top: 7px;
+    left: 20px;
+  }
+  .add{
+    background-image: url('/img/SGV_icon-add.svg');
+    border: 1px solid @blue_light;
+  }
+
+  .remove{
+    background-image: url('/img/SGV_icon-delete.svg');
+    background-color: @grey10;
+  }
+
+  .options{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 5px;
+    .row_option{
+      display: flex;
+      width: 100%;
+      .column{
+        flex:1;
       }
-
-      :-ms-input-placeholder {
-        .placeholder
-      }
-
-      :-ms-input-placeholder {
-        .placeholder
-      }
-
-      [placeholder]:-ms-input-placeholder {
-        .placeholder
+    }
+    span{
+      font-size: 14px;
+      line-height: 24px;
+      margin-left: 10px;
+    }
+  }
+  .field_list{
+    .wraper_field{
+      display: block;
+      border-top: 1px solid @grey20;
+      padding-top: 20px;
+      margin-top: 20px;
+      &:first-of-type{
+        border: none;
+        padding-top:0;
+        margin-top: 0;
       }
     }
   }

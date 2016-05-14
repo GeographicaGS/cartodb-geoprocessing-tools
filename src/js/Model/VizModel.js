@@ -14,6 +14,10 @@ App.Model.Viz = Backbone.Model.extend({
 
   getSublayersIds: function(){
     return _.pluck(this.getSublayers(),'gid');
+  },
+
+  getInvisibleLayers: function(){
+    return _.where(this.getSublayers(),{visible: false});
   }
 
 });

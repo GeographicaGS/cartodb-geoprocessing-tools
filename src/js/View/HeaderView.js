@@ -2,10 +2,6 @@
 
 App.View.Header = Backbone.View.extend({
 
-  events: {
-    'click .back-btn': 'goBack'
-  },
-
   initialize: function(options) {
     var section = this.model.get('section');
 
@@ -13,6 +9,7 @@ App.View.Header = Backbone.View.extend({
       this._template = _.template( $('#map_header_template').html() );
     }else if(section == 'maplist'){
       this._template = _.template( $('#maplist_header_template').html() );
+      this.model.set('title', this.model.get('account'));
     }
 
     if (!this.model.get('title'))
@@ -34,17 +31,16 @@ App.View.Header = Backbone.View.extend({
   },
 
   render: function(){
-    this.$el.html(this._template({title: this.model.get('title')}));
-
+    this.$el.html(this._template({title: this.model.get('title'), account: this.model.get('account')}));
+    this.$title = this.$('h1');
     this.userControl.setElement(this.$('.user'));
     this.userControl.render();
 
     return this;
   },
 
-  goBack: function(e) {
-    e.preventDefault();
-    window.history.back();
-  }
+  updateTitle: function(newTitle){
+    this.$title.html(newTitle);
+  },
 
 });

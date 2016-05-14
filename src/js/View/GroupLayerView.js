@@ -86,7 +86,7 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
   initialize: function(options) {
     this._geoVizModel = options.geoVizModel;
     this.listenTo(this.model,'change:visible',this._renderUpdateButton);
-    //this.listenTo(this._geoVizModel,'sublayer:set:geometrytype',this._sublayerGeometrytype);
+    this.listenTo(this._geoVizModel,'sublayer:change:cartocss',this._sublayerUpdateCartoCSS);
   },
 
   events: {
@@ -99,11 +99,11 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
     this.stopListening();
   },
 
-  // _sublayerGeometrytype: function(l){
-  //   if (l.gid == this.model.get('gid'))
-  //     this.model.set('geometrytype',l.geometrytype);
-  // },
-
+  _sublayerUpdateCartoCSS: function(l){
+    if (l.gid == this.model.get('gid')){
+      this.model.set(l);
+    }
+  },
   _toggleSubView: function(e){
     e.preventDefault();
 
@@ -185,6 +185,8 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
       this.$('a[data-el="wizard"]').addClass('disabled');
     }
 
+
+
     this._renderUpdateButton();
     return this;
   }
@@ -197,17 +199,69 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
   className: 'wizard',
 
   initialize: function(options) {
+    _.bindAll(this,'_onLayerFields');
     this._geoVizModel = options.geoVizModel;
-    this.listenTo(this.model,'change:geometrytype',this.render);
+
+    this.cartocssModel = App.Model.Wizard.getModelInstance(this.model.get('geometrytype'));
+
+    this.cartocssModel.loadCartoCSS(this.model.get('options').cartocss);
     
+    this.listenTo(this.cartocssModel,'change',this._onChangeCartoCSSField);
+    
+
+  },
+
+  events: {
+    'change [name]' : '_onChangeFieldUI'
+  },
+
+  _onChangeFieldUI: function(e){
+    var $e = $(e.target),
+      name = $e.attr('name');
+
+    this.cartocssModel.set(name,$e.val().trim());
+
+  },
+
+  _onChangeCartoCSSField:function(){
+    var cartocss = this.cartocssModel.toCartoCSS();
+
+    //this._geoVizModel.updateSubLayerCartoCSS(this.model.get('gid'),cartocss);
+
+    if (this._cartoCSSTimeout)
+      clearTimeout(this._cartoCSSTimeout);
+
+    var _this = this;
+    this._cartoCSSTimeout = setTimeout(function(){
+      clearTimeout(_this._cartoCSSTimeout);
+      _this._geoVizModel.updateSubLayerCartoCSS(_this.model.get('gid'),cartocss);
+    },500);
+
   },
 
   onClose: function(){
     this.stopListening();
   },
 
+  _onLayerFields: function(fields){
+    var html = _.map(fields,function(f){
+      return '<option value="' + f +'">' + f + '</option>';
+    });
+
+    this.$('select[name="text-field"]').append(html);
+  },
+
   render: function(){
-    this.$el.html(this._template({m: this.model.toJSON()}));
+    
+    this.$el.html(this._template({
+      m: this.model.toJSON(),
+      comp_ops: ['multiply','screen','overlay','darken'],
+      cartocss: this.cartocssModel.toJSON()
+    }));
+
+    this._geoVizModel.getSublayersFields(this.model.get('gid'),this._onLayerFields);
+    
+
     return this;
   }
 
@@ -220,22 +274,38 @@ App.View.GroupLayerPanelLayerCartoCSS = Backbone.View.extend({
 
   initialize: function(options) {
     this._geoVizModel = options.geoVizModel;
+    _.bindAll(this,'_showClipTooltip');
   },
 
   events: {
-    'click input[type="button"]' : '_update'
+    'click .button.apply' : '_update'
   },
 
   onClose: function(){
     this.stopListening();
+    this._clipboard.destroy();
   },
 
   render: function(){
     this.$el.html(this._template({m: this.model.toJSON()}));
     if (!this.model.get('geolayer'))
       this.$el.addClass('cartolayer');
+
+    this._clipboard = new Clipboard('.button.copy');
+    this._clipboard.on('success', this._showClipTooltip);
     
     return this;
+  },
+
+  _showClipTooltip: function(e){
+    var $btn = this.$('.button.copy');
+    $btn.addClass('tooltip');
+    
+    setTimeout(function(){
+      $btn.removeClass('tooltip');
+    },1000);
+
+    e.clearSelection();
   },
 
   _update: function(e){
@@ -257,16 +327,32 @@ App.View.GroupLayerPanelLayerSQL = Backbone.View.extend({
   className: 'sql',
 
   initialize: function(options) {
-
+    _.bindAll(this,'_showClipTooltip');
   },
 
   onClose: function(){
     this.stopListening();
+    this._clipboard.destroy();
+  },
+
+  _showClipTooltip: function(e){
+    var $btn = this.$('.button.copy');
+    $btn.addClass('tooltip');
+    
+    setTimeout(function(){
+      $btn.removeClass('tooltip');
+    },1000);
+
+    e.clearSelection();
   },
 
   render: function(){
 
-    this.$el.html(this._template(this.model.toJSON().options));
+    this.$el.html(this._template(this.model.toJSON()));
+
+    this._clipboard = new Clipboard('.button.copy');
+    this._clipboard.on('success', this._showClipTooltip);
+
     return this;
   }
 
@@ -289,6 +375,7 @@ App.View.GroupLayerMap = Backbone.View.extend({
 
   _onLayerDone: function(layer){
     this._layer = layer;
+    layer.setInteraction(true);
     layer.on("load", function() {
       $('.cartodb-tiles-loader').animate({opacity: 0}, 400);
     });
@@ -300,17 +387,27 @@ App.View.GroupLayerMap = Backbone.View.extend({
 
     if (this._layer){
       this._layer.hide();
+      //this._layer.clear();
+      $('.cartodb-infowindow').remove();
       this._map.removeLayer(this._layer);
+      //this._layer = null;
     }
 
     // A Clone is mandatory because createLayer changes the object received.
     // Doesn't work. Clone does a shallow copy
     // var vizjson = this.model.clone().toJSON();
-    var vizjson = JSON.parse(JSON.stringify(this.model.toJSON()));
+    var vizjson = JSON.parse(JSON.stringify(this.model.toJSON())),
+      m = new App.Model.GeoViz(vizjson),
+      invisibleLayers = m.getInvisibleLayers();
+
+    // for (var i in invisibleLayers){
+    //   invisibleLayers[i].infowindow = null;
+    // }
+
 
     $('.cartodb-tiles-loader').animate({opacity: 1}, 400);
 
-    cartodb.createLayer(this._map, vizjson)
+    cartodb.createLayer(this._map, m.toJSON())
       .addTo(this._map)
       .on('done',this._onLayerDone)
       .on('error', function(err) {

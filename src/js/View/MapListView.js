@@ -21,6 +21,10 @@ App.View.MapList = Backbone.View.extend({
 
   onClose: function(){
     this.stopListening();
+    if (this.header)
+      this.header.remove();
+    if (this.footer)
+      this.footer.remove();
   },
 
   _onAccountChecked: function(st){

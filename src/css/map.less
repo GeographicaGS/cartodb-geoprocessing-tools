@@ -1,20 +1,31 @@
 .map{
   flex: 1 1 100%;
-  height: calc(~'100% - ' @mapToolbarHeight);
+  max-height: calc(~'100vh - ' @headerHeight + @footerHeight);
+
+  z-index: 1;
 
   &.leaflet-container {
     background-color: @white;
   }
 
+  &.wToolbar {
+    max-height: calc(~'100vh - ' @headerHeight + @footerHeight + @mapToolbarHeight);
+  }
+
   .cartodb-zoom, .leaflet-control-zoom {
     position: absolute;
-    left: 9px;
+    left: -1px;
     top: 62px;
     z-index: 2;
     width: auto;
     border: none;
     box-shadow: 0 0 0 4px rgba(100,100,100,.2);
     border-radius: 2px;
+
+    transition: transform .25s;
+    &.translated{
+      transform: translateX(350px);
+    }
 
     .zoom_in, .zoom_out, .leaflet-control-zoom-in, .leaflet-control-zoom-out {
       background-position: center;
@@ -27,6 +38,7 @@
 
       &:hover {
         border-color: @blue_medium;
+        background-position: center;
       }
     }
 
@@ -41,6 +53,11 @@
       border-radius: 0 0 2px 2px;
     }
   }
+
+  .cartodb-zoom {
+    left: -2px;
+  }
+
   .cartodb-tiles-loader{
     position: fixed !important;
     top: 300px;
@@ -197,6 +214,10 @@
     position: relative;
     // z-index: 106;
 
+    &:empty {
+      display: none;
+    }
+
 		.buttons {
 			flex: 1 1 auto;
 			height: 100%;
@@ -276,6 +297,11 @@
 			left: 18px;
 			z-index: 2;
 
+      transition: transform .25s;
+      &.translated{
+        transform: translateX(350px);
+      }
+
 			.buttons {
 				flex-direction: column;
 
@@ -289,6 +315,7 @@
 	.mapHolder {
 		display: flex;
 		height: 100%;
+    position: relative;
 	}
 
   .button {
@@ -298,8 +325,11 @@
     padding: 8px 10px;
     border-radius: 2px;
     .font(bold);
+    visibility: visible;
+    opacity: 1;
 
     transition: background-color .10s ease-in-out, opacity .10s ease-in-out;
+    transition-delay: 0s;
 
     img {
       vertical-align: middle;
@@ -327,8 +357,39 @@
       }
     }
 
+    &.hidden {
+      visibility: hidden;
+      opacity: .00001;
+
+      transition: visibility 0s linear .25s, opacity .18s ease-in-out;
+    }
+
     & + .button {
       margin-left: 10px;
+    }
+  }
+
+  .toolbutton {
+    display: inline-block;
+    
+    img {
+      padding: 1px;
+      background-color: @white;
+      border: 1px solid @blue_lighter;
+      border-radius: 2px;
+      cursor: pointer;
+
+      &:hover {
+        border-color: @blue_medium;
+      }
+    }
+
+    &.selected {
+      img {
+        padding: 0;
+        border-width: 2px;
+        border-color: @blue_medium;
+      }
     }
   }
 }

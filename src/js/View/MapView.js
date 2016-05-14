@@ -10,7 +10,8 @@ App.View.Map = Backbone.View.extend({
 
     var m = new Backbone.Model({
       section: 'map',
-      account : this.model.get('account')
+      account : this.model.get('account'),
+      title: 'Loading...'
     });
     this.header = new App.View.Header({model: m});
     this.footer = new App.View.Footer();
@@ -73,7 +74,7 @@ App.View.Map = Backbone.View.extend({
 
     // Remove all layers.
     for (var i in toremove){
-      geolayers[i].splice(toremove[i],1);
+      geolayers.splice(toremove[i],1);
     }
 
     // Copy layers from CartoViz which are not present at GeoViz. It happens when new layers are added at CartoDB editor
@@ -90,16 +91,21 @@ App.View.Map = Backbone.View.extend({
       this._geoVizModel.save();
 
     this._geoVizModel.calculateSublayersGeometryTypes(this._render);
+    this.map.fitBounds(this._geoVizModel.get('bounds'));
 
   },
 
   _render: function(){
+    if(this._geoVizModel.get('title')){
+      this.header.updateTitle(this._geoVizModel.get('title'));
+    }
     this.toolbar = new App.View.MapToolbar({
       el: this.$('.toolbar'),
       model: this._geoVizModel,
       map: this.map
     });
     this.toolbar.render();
+    this.$map.addClass('wToolbar');
   },
 
   render: function(){
@@ -114,42 +120,12 @@ App.View.Map = Backbone.View.extend({
     this.footer.render({classes: ''});
 
     this.$map = this.$('.map');
-    this.$map.css('width','100%').css('height', (this.$el.parent().height() - 64) + "px"); // TODO: parameterize or calculate hardcoded toolbar height value (64px)
+    this.$map.css('width','100%').css('height', this.$el.parent().height() + "px"); // TODO: parameterize or calculate hardcoded toolbar height value (64px)
 
 
     var url = 'http://alasarr.cartodb.com/api/v2/viz/d1e1bf50-1675-11e6-a016-0e3ff518bd15/viz.json';
     cartodb.createVis('map', url)
       .done(this._onCreatedVIS);
-
-
-    // var mapOptions = {
-    //   zoom: 5,
-    //   center: [43, 0]
-    // };
-    // this.map = new L.Map('map', mapOptions);
-
-    // this._cartoVizModel = new App.Model.CartoViz({
-    //   id: this.model.get('viz'),
-    //   account: this.model.get('account')
-    // });
-
-    // this._geoVizModel = new App.Model.GeoViz({
-    //   id: this.model.get('viz'),
-    //   account: this.model.get('account')
-    // });
-
-    // // Everything start after fetching models.
-    // this._nfetches = 0;
-
-    // this._cartoVizModel.fetch({
-    //   success: this._onFetchVizModel
-    // });
-
-    // this._geoVizModel.fetch({
-    //   success: this._onFetchVizModel
-    // });
-
-    // $(window).on('resize', this.resizeMap);
 
     return this;
   },
@@ -158,6 +134,7 @@ App.View.Map = Backbone.View.extend({
 
     this.map = vis.getNativeMap();
     this.vis = vis;
+
     // We only use the vis for the CartoDB loading control
     // for (var i in layers){
     //   layers[i].hide();

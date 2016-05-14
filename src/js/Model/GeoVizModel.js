@@ -104,7 +104,8 @@ App.Model.GeoViz = App.Model.Viz.extend({
 
   _saveAndTrigger: function(){
     this.save();
-    this.trigger('change');
+    this.set('updated_at',new Date().getTime());
+//    this.trigger('change');
   },
 
   setSublayerVisibility: function(sublayerid,visible){
@@ -141,11 +142,12 @@ App.Model.GeoViz = App.Model.Viz.extend({
     l.options.cartocss = cartocss;
 
     this._saveAndTrigger();
+    this.trigger('sublayer:change:cartocss',l);
   },
 
   getSublayersByGeometryType: function(geomtypeshort){
 
-    return _.filter(this.getSublayers(), function(l){
+    var l = _.filter(this.getSublayers(), function(l){
       
       if (typeof geomtypeshort == 'string')
         geomtypeshort = [geomtypeshort];
@@ -155,8 +157,8 @@ App.Model.GeoViz = App.Model.Viz.extend({
           return true;
       }
       return false;
-
     });
+    return l;
   },
 
 
@@ -329,6 +331,51 @@ App.Model.GeoViz = App.Model.Viz.extend({
         cb(null,errors)
       });
 
+  },
+
+  getSublayersFields2: function(sublayerid,cb){
+    var sub = this.findSublayer(sublayerid);
+    if (!sub){
+      return cb(null,new Error('Sublayer with id \'' + sublayerid + '\' not found'));
+    }
+
+    var sql = new cartodb.SQL({ user: this.get('account') });
+    var q = ' SELECT * FROM ({{{q}}}) as s LIMIT 1';
+
+    sql.execute(q,{q: sub.options.sql})
+      .done(function(data) {
+        cb(data.fields)
+      })
+      .error(function(errors) {
+        cb(null,errors)
+      });
+  },
+
+  // Fields must be the output of getSublayersFields2
+  filterFieldsByType: function(fields,type){
+    var r = _.pick(fields, function(value, key, object) {
+      return value.type == type;
+    });
+    return _.allKeys(r);
+  },
+
+  getSublayersFieldsByType: function(sublayerid,type,cb){
+    var sub = this.findSublayer(sublayerid);
+    if (!sub){
+      return cb(null,new Error('Sublayer with id \'' + sublayerid + '\' not found'));
+    }
+
+    var sql = new cartodb.SQL({ user: this.get('account') });
+    var q = ' SELECT * FROM ({{{q}}}) as s LIMIT 1';
+    var _this = this;
+    sql.execute(q,{q: sub.options.sql})
+      .done(function(data) {
+        var r = _this.filterFieldsByType(data.fields,type);
+        cb(r);
+      })
+      .error(function(errors) {
+        cb(null,errors)
+      });
   },
 
   _guid: function guid() {
