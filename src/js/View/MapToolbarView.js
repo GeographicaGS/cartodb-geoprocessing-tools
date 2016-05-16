@@ -33,10 +33,7 @@ App.View.MapToolbar = Backbone.View.extend({
       type = $li.attr('data-tool'),
       cn;
 
-    if (type == 'bookmarks'){
-      cn = 'Bookmarks';
-    }
-    else if (type == 'clip'){
+    if (type == 'clip'){
       cn = 'OverlayClip';
     }
     else if (type == 'intersection'){
@@ -57,6 +54,10 @@ App.View.MapToolbar = Backbone.View.extend({
     else if (type == 'measure'){
       cn = 'Measure';
     }
+    else if (type == 'bookmarks'){
+      cn = 'Bookmarks';
+      isOverlay = false;
+    }
     else{
       throw new Error('Unsupported tool type: '+ type);
     }
@@ -68,7 +69,8 @@ App.View.MapToolbar = Backbone.View.extend({
 
     this._tool = new fn({
       geoVizModel: this.model,
-      reportView: cn == 'Statistical' ? this.reportView: null
+      reportView: cn == 'Statistical' ? this.reportView: null,
+      map: (cn == 'Measure' || cn=='Bookmarks') ? this._map: null
     });
 
     this.$('.toolholder').html(this._tool.render().$el).show().get(0).className = "toolholder " + type;
