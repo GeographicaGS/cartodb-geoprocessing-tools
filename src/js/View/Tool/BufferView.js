@@ -29,12 +29,14 @@ App.View.Tool.Buffer = Backbone.View.extend({
   _updateModel: function(e){
     var $e = $(e.target),
       name = $e.attr('name'),
-      value = $.trim($e.val());
+      value;
 
-    if (value == 'true')
-      value = true;
-    else if (value == 'false')
-      value = false;
+    if ($e.attr("type")=="checkbox"){
+      value = $e.is(':checked');
+    }
+    else{
+      value = $.trim($e.val());
+    }
 
     this.model.set(name,value);
 

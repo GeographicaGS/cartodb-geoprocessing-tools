@@ -87,18 +87,21 @@ App.View.Map = Backbone.View.extend({
       }
     }
 
+    this._geoVizModel.set('title',this._cartoVizModel.get('title'));
+    this.header.updateTitle(this._geoVizModel.get('title'));
+
     if (this._user.get('autosave') && this._user.get('account')==this._geoVizModel.get('account'))
       this._geoVizModel.save();
 
+
     this._geoVizModel.calculateSublayersGeometryTypes(this._render);
+
     this.map.fitBounds(this._geoVizModel.get('bounds'));
 
   },
 
   _render: function(){
-    if(this._geoVizModel.get('title')){
-      this.header.updateTitle(this._geoVizModel.get('title'));
-    }
+   
     this.toolbar = new App.View.MapToolbar({
       el: this.$('.toolbar'),
       model: this._geoVizModel,
