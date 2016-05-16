@@ -15,6 +15,7 @@ App.View.Tool.Bookmarks = Backbone.View.extend({
   	'click .bookmarks_list li .remove': '_showRemoveBlock',
     'click .cancel_remove': '_cancelRemove',
     'click .confirm_remove': '_removeBookmark',
+    'click .close_error': '_closeError',
   },
 
   _showAddBlock:function(e){
@@ -42,7 +43,7 @@ App.View.Tool.Bookmarks = Backbone.View.extend({
   			this.render();
 
       }else{
-        this.$('.add_block').removeClass('activated');
+        this.$('.add_block').addClass('hide');
         this.$('.error_block').addClass('activated');
       }
   	}
@@ -83,6 +84,11 @@ App.View.Tool.Bookmarks = Backbone.View.extend({
       this._geoVizModel.save();
       this.render();
     }
+  },
+
+  _closeError:function(){
+    this.$('.add_block').removeClass('hide');
+    this.$('.error_block').removeClass('activated');
   },
 
   render: function(){
