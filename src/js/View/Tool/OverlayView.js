@@ -476,7 +476,7 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
           'b as ({{{overlay_query}}}),',
           'r as (',
             'select {{fields_a}},the_geom_webmercator from a',
-            ' union all',
+            ' union ',
             'select {{fields_b}},the_geom_webmercator from b',
           ')',
           ' select {{cartodb_id}},* from r'
