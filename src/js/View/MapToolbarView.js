@@ -33,7 +33,10 @@ App.View.MapToolbar = Backbone.View.extend({
       type = $li.attr('data-tool'),
       cn;
 
-    if (type == 'clip'){
+    if (type == 'bookmarks'){
+      cn = 'Bookmarks';
+    }
+    else if (type == 'clip'){
       cn = 'OverlayClip';
     }
     else if (type == 'intersection'){
@@ -59,7 +62,7 @@ App.View.MapToolbar = Backbone.View.extend({
     }
 
     var fn = App.View.Tool[cn];
-    
+
     if (this._tool)
       this._tool.close();
 

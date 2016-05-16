@@ -46,7 +46,7 @@ deps.JS = [
   srcJS + 'View/LayerControlView.js',
   srcJS + 'View/MapToolbarView.js',
   srcJS + 'View/MapView.js',
-  
+
   srcJS + 'View/ReportView.js',
   srcJS + 'View/Measure.js',
 
@@ -54,6 +54,7 @@ deps.JS = [
   srcJS + 'View/Tool/StatisticalView.js',
   srcJS + 'View/Tool/OverlayView.js',
   srcJS + 'View/Tool/BufferView.js',
+  srcJS + 'View/Tool/BookmarksView.js',
 
   // Router
   srcJS + 'Router.js',

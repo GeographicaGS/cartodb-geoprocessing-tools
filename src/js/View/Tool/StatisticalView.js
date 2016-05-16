@@ -2,7 +2,7 @@ App.View.Tool.Statistical = Backbone.View.extend({
   _template: _.template( $('#tool-statistical_template').html() ),
   _template_field_options: _.template( $('#tool-statistical_field_options').html() ),
 
-  initialize: function(options) { 
+  initialize: function(options) {
     this._outputType = false;
     this._title = 'Statistical report';
     App.View.Tool.Overlay.prototype.initialize.apply(this,[options]);
@@ -34,7 +34,7 @@ App.View.Tool.Statistical = Backbone.View.extend({
       _.each(fields, function(f) {
         if(f!='cartodb_id' && f!='the_geom' && f!='the_geom_webmercator'){
           _this.currentFields.push(f);
-          $select.append('<option value="' + f + '">' + f + '</option>');  
+          $select.append('<option value="' + f + '">' + f + '</option>');
         }
       });
     });
@@ -47,11 +47,13 @@ App.View.Tool.Statistical = Backbone.View.extend({
       options += '<option value="' + f + '">' + f + '</option>'
     });
     this.$('.field_list').append('<div class="wraper_field extra">'
+                                  +' <div>'
                                   +'  <select name="field">'
                                   +'    <option class="choose">Choose field...</option>'
                                   +     options
                                   +'  </select>'
                                   +'  <a href="#" class="remove"></a>'
+                                  +' </div>'
                                   +'  <div class="options"></div>'
                                   +'</div>');
     this._checkFields();
@@ -118,12 +120,12 @@ App.View.Tool.Statistical = Backbone.View.extend({
   render: function(){
 
     this.$el.html(this._template({title: this._title}));
-    
+
     var inputLayers = this._geoVizModel.getSublayers();;
     var $select = this.$('select[name="input"]');
     for (var i in inputLayers){
       if(!inputLayers[i].geoLayer)
-        $select.append('<option value="' + inputLayers[i].gid + '">' + inputLayers[i].options.layer_name + '</option>');  
+        $select.append('<option value="' + inputLayers[i].gid + '">' + inputLayers[i].options.layer_name + '</option>');
     }
 
     return this;

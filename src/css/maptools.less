@@ -2,41 +2,35 @@
   position:absolute;
   left:10px;
   top:60px;
+  max-height: calc(~'100vh - ' @headerHeight + @mapToolbarHeight + @footerHeight);
   background-color: @white;
   color: @grey75;
   border: 1px solid @grey20;
   box-shadow: 0 2px 8px 0 fade(@black, 10%);
   display: none;
   z-index: 1080;
+  overflow-y: hidden;
 
-  &.clip {
-    transform: translateX(207px);
+  &.bookmarks {
+    transform: translateX(7px);
     width: 320px;
   }
-
-  &.statistical {
-    transform: translateX(314px);
-    width: 318px;
+  &.union {
+    transform: translateX(70px);
+    width: 320px;
+  }
+  &.erase {
+    transform: translateX(116px);
+    width: 320px;
   }
   &.intersection {
     transform: translateX(162px);
     width: 320px;
   }
-
-  &.erase {
-    transform: translateX(116px);
+  &.clip {
+    transform: translateX(207px);
     width: 320px;
   }
-
-
-  &.measure{
-    border: none;
-    background-color: transparent;
-    &:after{
-      display: none;
-    }
-  }
-
   &.buffer {
     transform: translateX(270px);
     width: 320px;
@@ -63,6 +57,17 @@
       }
     }
   }
+  &.statistical {
+    transform: translateX(314px);
+    width: 318px;
+  }
+  &.measure{
+    border: none;
+    background-color: transparent;
+    &:after{
+      display: none;
+    }
+  }
 
   .top_triangle(8px, 8px, 14px, @white, @grey20);
 
@@ -84,6 +89,7 @@
   }
 
   .content {
+    overflow-y: auto;
     ol {
       list-style-position: inside;
 
@@ -138,9 +144,9 @@
       outline: none;
     }
 
-    select[name="field"]{
-      width: 242px;
-    }
+    // select[name="field"]{
+      // width: 242px;
+    // }
 
     input[type=text],input[type=number] {
       background-color: @grey05;
@@ -169,6 +175,12 @@
 
     [placeholder]:-ms-input-placeholder {
       .placeholder;
+    }
+
+    .notice {
+      color: @grey50;
+      .font(italic);
+      font-size: 14px;
     }
   }
 
@@ -207,24 +219,37 @@
   }
 
   .add, .remove{
-    background-repeat: no-repeat;
-    background-size: 16px;
     display: inline-block;
-    width: 20px;
-    height: 20px;
-    border-radius: 100%;
-    background-position: center;
-    position: relative;
-    top: 7px;
-    left: 20px;
-  }
-  .add{
-    background-image: url('/img/SGV_icon-add.svg');
-    border: 1px solid @blue_light;
+
+    &:empty {
+      margin-left: 15px;
+    }
+    &:after {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      padding: 2px;
+      border-radius: 100%;
+      vertical-align: middle;
+    }
+    &:not(:empty) {
+      margin-left: 8px;
+    }
   }
 
-  .remove{
-    background-image: url('/img/SGV_icon-delete.svg');
+  .add {
+    color: @blue_light;
+
+    &:after{
+      content: url('/img/SGV_icon-add.svg');
+      border: 1px solid @blue_light;
+    }
+  }
+
+  .remove:after{
+    content: url('/img/SGV_icon-delete.svg');
+    padding: 3px;
     background-color: @grey10;
   }
 
