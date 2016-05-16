@@ -1,6 +1,6 @@
 @import "src/css/lib/Pepa/reset.less";
 @import "src/css/lib/Pepa/base.less";
-
+@import "src/css/lib/leaflet.draw.less";
 @import "src/css/variables.less";
 
 .fontweight(@fweight){
@@ -9,7 +9,7 @@
 }
 
 .font(){
-  .fontweight(400);
+  .fontweight(400); 
 }
 
 .font(@style) when(@style=italic){
@@ -300,5 +300,6 @@ footer {
 @import "src/css/layercontrol.less";
 @import "src/css/maptools.less";
 @import "src/css/reports.less";
+@import "src/css/bookmark.less";
 @import "src/css/measure.less";
 @import "src/css/animations.less";

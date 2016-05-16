@@ -1,0 +1,150 @@
+#bookmark{
+	padding: 0 20px;
+
+	.not_bookmark{
+		line-height: 49px;
+		font-size: 14px;
+		color:@grey50;
+	}
+
+	.header_b{
+
+		&:after{
+			content: '';
+			width: ~ "calc(100% + 40px)";
+			height: 1px;
+			display: block;
+			background-color: @grey20;
+			margin-left: -20px;
+		}
+
+		h3{
+			font-size: 18px;
+			line-height: 49px;
+			font-weight: 400;
+
+			.add_b{
+				font-size: 14px;
+				color:@blue_light;
+				float: right;
+				opacity: 1;
+				transition: opacity .25s;
+				&.hiden{
+					opacity: 0;
+				}
+				&:after{
+					content: '';
+					background-image: url(/img/SGV_icon-add.svg);
+					background-repeat: no-repeat;
+					background-size: cover;
+					width: 20px;
+					height: 20px;
+					border: 1px solid @blue_light;
+					border-radius: 100%; 
+					display: inline-block;
+					margin-left: 8px;
+					position: relative;
+					top: 5px;
+				}
+			}
+		}
+	}
+	.add_block{
+		visibility: hidden;
+    height: 0;
+    padding: 0;
+    opacity: 0;
+    transition: height .25s, opacity .25s;
+		&.activated{
+			visibility: visible;
+			padding-bottom: 16px;
+			height: 46px;
+			opacity: 1;
+		}
+
+		input[type="text"]{
+			width: 154px;
+			height: 30px;
+			border: 1px solid @grey35;
+			border-radius: 1px;
+			font-size: 14px;
+			padding: 0 8px;
+		}
+		a{
+			font-size: 14px;
+			color:@blue_light;
+			position: relative;
+			top: 2px;
+			&.cancel_add{
+				margin-left: 6px;
+				&:after{
+					content:'\00B7';
+					margin: 0px 8px 0 10px;
+				}
+			}
+			&.save_b{
+				font-weight: 700;
+				&:after{
+					content: url(/img/SGV_icon-check_more_blue.svg);
+					position: relative;
+					top: 3px;
+					margin-left: 5px;
+				}
+			}
+		}
+	}
+	ul{
+		li{
+			line-height: 49px;
+			font-size: 14px;
+			cursor: pointer;
+			&:before{
+				content: url('/img/SGV_tool-bookmark.svg');
+				position: relative;
+				top: 8px;
+				margin-left: -9px;
+			}
+			&:after{
+				content: '';
+				width: ~ "calc(100% + 40px)";
+				height: 1px;
+				display: block;
+				background-color: @grey20;
+				margin-left: -20px;
+			}
+			&:last-of-type{
+				&:after{
+					display: none;
+				}
+			}
+			.remove{
+				float: right;
+				margin: 8px 20px;
+				position: relative;
+			}
+			
+			.remove_block{
+				display: inline-block;
+				float: right;
+  			text-align: right;
+				display: none;
+				&.activated{
+					display: block;
+				}
+				a{
+					font-size: 14px;
+			    line-height: 36px;
+			    font-weight: 700;
+			    &.cancel_remove{
+						color:@blue_light;
+						margin-right: 20px;
+			    }
+			    &.confirm_remove{
+						color:@red_main;
+			    }
+				}
+			}
+
+		}
+	}
+}

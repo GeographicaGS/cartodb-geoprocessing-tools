@@ -54,6 +54,10 @@ App.View.MapToolbar = Backbone.View.extend({
       cn = 'Measure';
       isOverlay = false;
     }
+    else if (type == 'bookmarks'){
+      cn = 'Bookmarks';
+      isOverlay = false;
+    }
     else{
       throw new Error('Unsupported tool type: '+ type);
     }
@@ -68,7 +72,8 @@ App.View.MapToolbar = Backbone.View.extend({
 
     this._tool = new fn({
       geoVizModel: this.model,
-      reportView: cn == 'Statistical' ? this.reportView: null
+      reportView: cn == 'Statistical' ? this.reportView: null,
+      map: (cn == 'Measure' || cn=='Bookmarks') ? this._map: null
     });
 
     this.$('.toolholder').html(this._tool.render().$el).show().get(0).className = "toolholder " + type;
