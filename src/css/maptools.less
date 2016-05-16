@@ -1,15 +1,20 @@
 .toolholder {
+  flex-direction: column;
   position:absolute;
   left:10px;
   top:60px;
-  max-height: calc(~'100vh - ' @headerHeight + @mapToolbarHeight + @footerHeight);
+  max-height: calc(~'100vh - ' @headerHeight + @mapToolbarHeight + @footerHeight + 16px);
   background-color: @white;
   color: @grey75;
   border: 1px solid @grey20;
+  border-radius: 2px;
   box-shadow: 0 2px 8px 0 fade(@black, 10%);
   display: none;
   z-index: 1080;
-  overflow-y: hidden;
+
+  &.shown {
+    display: flex;
+  }
 
   &.bookmarks {
     transform: translateX(7px);
@@ -71,10 +76,19 @@
 
   .top_triangle(8px, 8px, 14px, @white, @grey20);
 
+  // Fix
+  & > div {
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+  }
+
   .header {
     display: flex;
     align-items: center;
+    flex: 0 0 auto;
     padding: 8px;
+    border-bottom: 1px solid @grey20;
 
     h3 {
       flex: 1 1 auto;
@@ -90,12 +104,18 @@
 
   .content {
     overflow-y: auto;
+    flex: 1 1 auto;
+
     ol {
       list-style-position: inside;
 
       li {
         padding: 16px;
-        border-top: 1px solid @grey20;
+        border-bottom: 1px solid @grey20;
+
+        &:last-child {
+          border-bottom: none;
+        }
 
         p.title {
           display: inline-block;

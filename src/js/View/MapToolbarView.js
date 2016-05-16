@@ -76,7 +76,7 @@ App.View.MapToolbar = Backbone.View.extend({
 
       this._currentCn = cn;
 
-      this.$('.toolholder').html(this._tool.render().$el).show().get(0).className = "toolholder " + type;
+      this.$('.toolholder').html(this._tool.render().$el).get(0).className = "toolholder shown " + type;
       this.$selectedToolBtn = $(e.currentTarget);
       this.$selectedToolBtn.addClass('selected');
 

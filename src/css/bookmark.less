@@ -41,7 +41,7 @@
 					width: 20px;
 					height: 20px;
 					border: 1px solid @blue_light;
-					border-radius: 100%; 
+					border-radius: 100%;
 					display: inline-block;
 					margin-left: 8px;
 					position: relative;
@@ -114,13 +114,17 @@
 
 	ul{
 		li{
-			line-height: 49px;
 			font-size: 14px;
 			cursor: pointer;
+			display: flex;
+			align-items: center;
+			overflow-x: hidden;
+			padding: 8px 0;
+
 			&:before{
 				content: url('/img/SGV_tool-bookmark.svg');
 				position: relative;
-				top: 8px;
+				top: 1px;
 				margin-left: -9px;
 			}
 			&:after{
@@ -136,29 +140,33 @@
 					display: none;
 				}
 			}
-			.remove{
-				float: right;
-				margin: 8px 20px;
-				position: relative;
+			span {
+				flex: 1 1 auto;
 			}
-			
+
 			.remove_block{
 				display: inline-block;
-				float: right;
 				visibility: hidden;
 				width: 0;
   			height: 0;
   			opacity: 0;
+				overflow: hidden;
+				transform: translateX(100px);
+
+				transition: opacity 0.25s, transform .25s ease-in-out;;
+
 				&.activated{
 					width: inherit;
 					height: inherit;
 					visibility: visible;
 					opacity: 1;
-					transition: opacity 0.25s;
+
+					display: block;
+					transform: translateX(0px);
 				}
+
 				a{
 					font-size: 14px;
-			    line-height: 36px;
 			    font-weight: 700;
 			    &.cancel_remove{
 						color:@blue_light;
