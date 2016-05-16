@@ -126,10 +126,16 @@
 			.remove_block{
 				display: inline-block;
 				float: right;
-  			text-align: right;
-				display: none;
+				visibility: hidden;
+				width: 0;
+  			height: 0;
+  			opacity: 0;
 				&.activated{
-					display: block;
+					width: inherit;
+					height: inherit;
+					visibility: visible;
+					opacity: 1;
+					transition: opacity 0.25s;
 				}
 				a{
 					font-size: 14px;
@@ -137,7 +143,7 @@
 			    font-weight: 700;
 			    &.cancel_remove{
 						color:@blue_light;
-						margin-right: 20px;
+						margin-right: 10px;
 			    }
 			    &.confirm_remove{
 						color:@red_main;

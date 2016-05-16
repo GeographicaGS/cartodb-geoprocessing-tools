@@ -3,7 +3,8 @@ App.View.Bookmarks = Backbone.View.extend({
 
   initialize: function(options) { 
   	this._map = options.map;
-  	this.bookmarkCollection = new Backbone.Collection();
+    this._geoVizModel = options.geoVizModel;
+  	this.bookmarkCollection = new Backbone.Collection(this._geoVizModel.get('bookmarks'));
   },
 
   events: {
@@ -12,6 +13,8 @@ App.View.Bookmarks = Backbone.View.extend({
   	'click .save_b': '_saveBookmark',
   	'click .bookmarks_list li': '_loadBookMark',
   	'click .bookmarks_list li .remove': '_showRemoveBlock',
+    'click .cancel_remove': '_cancelRemove',
+    'click .confirm_remove': '_removeBookmark',
   },
 
   _showAddBlock:function(e){
@@ -27,18 +30,16 @@ App.View.Bookmarks = Backbone.View.extend({
   },
 
   _saveBookmark:function(e){
-  	// e.preventDefault();
-  	// var title = this.$('.add_block input[type=text]').val();
-  	// if(title != ''){
-  	// // 	var bound = $.map(this._map.getBounds().toBBoxString().split(','),function(value){
-   // //  		return parseFloat(value);
-			// // });
-			// // var model = new Backbone.Model({'title':title, 'bound':[[bound[1],bound[0]],[bound[3],bound[2]]]});
-			// var model = new Backbone.Model({'title':title, 'bound':this._map.getBounds()});
-			// this.bookmarkCollection.add(model);
-			// this.render();
-  	// }
-  	this._map.fitBounds(this._map.getBounds());
+  	e.preventDefault();
+  	var title = this.$('.add_block input[type=text]').val();
+  	if(title != ''){
+      var bound = this._map.getBounds();
+			var model = new Backbone.Model({'title':title, 'bound':[[bound._southWest.lat,bound._southWest.lng],[bound._northEast.lat,bound._northEast.lng]]});
+			this.bookmarkCollection.add(model);
+      this._geoVizModel.set('bookmarks',this.bookmarkCollection.toJSON());
+      this._geoVizModel.save();
+			this.render();
+  	}
   },
 
   _loadBookMark:function(e){
@@ -53,7 +54,29 @@ App.View.Bookmarks = Backbone.View.extend({
   _showRemoveBlock:function(e){
   	e.preventDefault();
   	e.stopPropagation();
-  	alert('a');
+    $(e.currentTarget).addClass('hide');
+    $(e.currentTarget).closest('li').find('.remove_block').addClass('activated');
+  },
+
+  _cancelRemove:function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    $(e.currentTarget).closest('.remove_block').removeClass('activated');
+    $(e.currentTarget).closest('li').find('.remove').removeClass('hide');
+  },
+
+  _removeBookmark:function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    var title = $(e.currentTarget).closest('li').attr('bookmark');
+    var models = this.bookmarkCollection.where({'title':title});
+    if(models.length > 0){
+      var model = models[0];
+      this.bookmarkCollection.remove(model);
+      this._geoVizModel.set('bookmarks',this.bookmarkCollection.toJSON());
+      this._geoVizModel.save();
+      this.render();
+    }
   },
 
   render: function(){
