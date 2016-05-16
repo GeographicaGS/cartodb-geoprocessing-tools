@@ -31,8 +31,7 @@ App.View.MapToolbar = Backbone.View.extend({
 
     var $li = $(e.target).closest('li'),
       type = $li.attr('data-tool'),
-      cn,
-      isOverlay = true;
+      cn;
 
     if (type == 'clip'){
       cn = 'OverlayClip';
@@ -43,16 +42,17 @@ App.View.MapToolbar = Backbone.View.extend({
     else if (type == 'erase'){
       cn = 'OverlayErase';
     }
+    else if (type == 'union'){
+      cn = 'OverlayUnion';
+    }
     else if (type == 'buffer'){
       cn = 'Buffer';
     }
     else if (type == 'statistical'){
       cn = 'Statistical';
-      isOverlay = false;
     }
     else if (type == 'measure'){
       cn = 'Measure';
-      isOverlay = false;
     }
     else if (type == 'bookmarks'){
       cn = 'Bookmarks';
@@ -62,11 +62,8 @@ App.View.MapToolbar = Backbone.View.extend({
       throw new Error('Unsupported tool type: '+ type);
     }
 
-    if(isOverlay)
-      var fn = App.View.Tool[cn];
-    else
-      var fn = App.View[cn];
-
+    var fn = App.View.Tool[cn];
+    
     if (this._tool)
       this._tool.close();
 

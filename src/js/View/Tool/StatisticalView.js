@@ -1,6 +1,6 @@
-App.View.Statistical = Backbone.View.extend({
-  _template: _.template( $('#statistical_template').html() ),
-  _template_field_options: _.template( $('#statistical_field_options').html() ),
+App.View.Tool.Statistical = Backbone.View.extend({
+  _template: _.template( $('#tool-statistical_template').html() ),
+  _template_field_options: _.template( $('#tool-statistical_field_options').html() ),
 
   initialize: function(options) { 
     this._outputType = false;

@@ -368,4 +368,28 @@
       margin-left: 10px;
     }
   }
+
+  .toolbutton {
+    display: inline-block;
+    
+    img {
+      padding: 1px;
+      background-color: @white;
+      border: 1px solid @blue_lighter;
+      border-radius: 2px;
+      cursor: pointer;
+
+      &:hover {
+        border-color: @blue_medium;
+      }
+    }
+
+    &.selected {
+      img {
+        padding: 0;
+        border-width: 2px;
+        border-color: @blue_medium;
+      }
+    }
+  }
 }

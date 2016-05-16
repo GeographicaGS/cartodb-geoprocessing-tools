@@ -6,6 +6,7 @@ App.Router = Backbone.Router.extend({
 
   routes: {
       '' : 'home',
+      'login': 'home',
       '(:account)/map_list' : 'map_list',
       '(:account)/map/(:viz)' : 'map',
       'notfound' : 'notfound',
@@ -30,9 +31,10 @@ App.Router = Backbone.Router.extend({
   },
 
   map_list: function(account){
-    App.showView(new App.View.MapList({
+    var v = new App.View.MapList({
       'model' : new App.Model.User({'account' : account})
-    }));
+    });
+    App.showView(v,{'renderMode': 'after'});
   },
 
   map: function(account,viz){

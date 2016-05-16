@@ -27,10 +27,9 @@ deps.JS = [
   srcJS + 'Model/VizModel.js',
   srcJS + 'Model/CartoVizModel.js',
   srcJS + 'Model/GeoVizModel.js',
-
   srcJS + 'Model/ReportModel.js',
   srcJS + 'Model/WizardModel.js',
-
+  srcJS + 'Model/BufferModel.js',
 
   // Collections
   srcJS + 'Collection/MapCollection.js',
@@ -48,11 +47,13 @@ deps.JS = [
   srcJS + 'View/LayerControlView.js',
   srcJS + 'View/MapToolbarView.js',
   srcJS + 'View/MapView.js',
-  srcJS + 'View/StatisticalView.js',
+  
   srcJS + 'View/ReportView.js',
   srcJS + 'View/BookmarksView.js',
   srcJS + 'View/Measure.js',
+
   // Tool Views
+  srcJS + 'View/Tool/StatisticalView.js',
   srcJS + 'View/Tool/OverlayView.js',
   srcJS + 'View/Tool/BufferView.js',
 
