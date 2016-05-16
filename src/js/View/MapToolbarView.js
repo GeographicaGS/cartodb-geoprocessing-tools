@@ -63,8 +63,10 @@ App.View.MapToolbar = Backbone.View.extend({
 
     var fn = App.View.Tool[cn];
 
-    if (this._tool)
+    if (this._tool){
       this._tool.close();
+      this.$('.toolholder').get(0).className = "toolholder";
+    }
 
     if(this._currentCn != cn){
 
@@ -86,7 +88,7 @@ App.View.MapToolbar = Backbone.View.extend({
   },
 
   _closeTool: function(){
-    this.$('.toolholder').hide();
+    this.$('.toolholder').get(0).className = "toolholder";
     this.$('.buttons .selected').removeClass('selected');
     this._currentCn = null;
     if (this._tool){
