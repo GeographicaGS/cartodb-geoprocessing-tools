@@ -107,9 +107,21 @@
 			}
 		}
 	}
-
+	
 	.error_block{
-		transition: height .15s, opacity .15s;
+		padding-top: 5px;
+		color:@red_main;
+		transition: height 0s, opacity .25s;
+		&.activated{
+			height: 51px;
+			a{
+				float: right;
+			}
+		}
+		a{
+			top:0;
+			font-weight: 700;
+		}
 	}
 
 	ul{
