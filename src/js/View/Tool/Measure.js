@@ -1,5 +1,4 @@
-App.View.Measure = Backbone.View.extend({
-  _template: _.template( $('#measure_template').html() ),
+App.View.Tool.Measure = Backbone.View.extend({
 
   initialize: function(options) { 
   	this._map = options.map;
@@ -12,7 +11,11 @@ App.View.Measure = Backbone.View.extend({
 		var drawControl = new L.Control.Draw({
 			draw: {
 				polyline: {
-					metric: true
+					metric: true,
+					shapeOptions: {
+						color: '#3b7eba',
+						weight:3
+					},
 				},
 			},
 			edit: {
@@ -24,7 +27,7 @@ App.View.Measure = Backbone.View.extend({
 			_this.drawnItems.addLayer(e.layer);
 		});
 
-		new L.Draw.Polyline(this._map, drawControl.options.polygon).enable()
+		new L.Draw.Polyline(this._map, drawControl.options.draw.polyline).enable()
 
   },
 
@@ -32,7 +35,7 @@ App.View.Measure = Backbone.View.extend({
   },
 
   render: function(){
-    this.$el.html(this._template());
+    // this.$el.html(this._template());
     return this;
   }
 
