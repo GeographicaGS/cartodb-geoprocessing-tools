@@ -56,7 +56,6 @@ App.View.MapToolbar = Backbone.View.extend({
     }
     else if (type == 'bookmarks'){
       cn = 'Bookmarks';
-      isOverlay = false;
     }
     else{
       throw new Error('Unsupported tool type: '+ type);
@@ -67,20 +66,29 @@ App.View.MapToolbar = Backbone.View.extend({
     if (this._tool)
       this._tool.close();
 
-    this._tool = new fn({
-      geoVizModel: this.model,
-      reportView: cn == 'Statistical' ? this.reportView: null,
-      map: (cn == 'Measure' || cn=='Bookmarks') ? this._map: null
-    });
+    if(this._currentCn != cn){
 
-    this.$('.toolholder').html(this._tool.render().$el).show().get(0).className = "toolholder " + type;
-    this.$selectedToolBtn = $(e.currentTarget);
-    this.$selectedToolBtn.addClass('selected');
+      this._tool = new fn({
+        geoVizModel: this.model,
+        reportView: cn == 'Statistical' ? this.reportView: null,
+        map: (cn == 'Measure' || cn=='Bookmarks') ? this._map: null
+      });
+
+      this._currentCn = cn;
+
+      this.$('.toolholder').html(this._tool.render().$el).show().get(0).className = "toolholder " + type;
+      this.$selectedToolBtn = $(e.currentTarget);
+      this.$selectedToolBtn.addClass('selected');
+
+    }else{
+      this._currentCn = null;
+    }
   },
 
   _closeTool: function(){
     this.$('.toolholder').hide();
     this.$('.buttons .selected').removeClass('selected');
+    this._currentCn = null;
     if (this._tool){
       this._tool.close();
       this._tool = null;

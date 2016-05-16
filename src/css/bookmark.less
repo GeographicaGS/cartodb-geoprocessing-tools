@@ -36,7 +36,8 @@
 					content: '';
 					background-image: url(/img/SGV_icon-add.svg);
 					background-repeat: no-repeat;
-					background-size: cover;
+					background-size: 14px;
+			    background-position: center;
 					width: 20px;
 					height: 20px;
 					border: 1px solid @blue_light;
@@ -49,7 +50,7 @@
 			}
 		}
 	}
-	.add_block{
+	.add_block, .error_block{
 		visibility: hidden;
     height: 0;
     padding: 0;
@@ -66,9 +67,22 @@
 			width: 154px;
 			height: 30px;
 			border: 1px solid @grey35;
-			border-radius: 1px;
+			border-radius: 2px;
 			font-size: 14px;
 			padding: 0 8px;
+			background-color: @grey05;
+			&::-webkit-input-placeholder {
+			   font-style: italic;
+			}
+			&:-moz-placeholder {
+			   font-style: italic;
+			}
+			&::-moz-placeholder {
+			   font-style: italic;
+			}
+			&:-ms-input-placeholder{
+			   font-style: italic;
+			}
 		}
 		a{
 			font-size: 14px;
@@ -143,7 +157,10 @@
 			    font-weight: 700;
 			    &.cancel_remove{
 						color:@blue_light;
-						margin-right: 10px;
+						&:after{
+							content: '\00B7';
+							margin: 0 8px 0 10px;
+						}
 			    }
 			    &.confirm_remove{
 						color:@red_main;
