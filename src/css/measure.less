@@ -43,3 +43,36 @@
 		}
 	}
 }
+
+.popup_measure{
+	h3.title{
+		font-weight: 400;
+		font-size: 12px;
+		line-height: 30px;
+		text-transform: uppercase;
+		color:@grey50;
+	}
+	p.value{
+		font-size: 24px;
+		line-height: 26px;
+		span{
+			font-size: 18px;
+		}
+	}
+	a.delete{
+		font-size: 14px;
+		color:@blue_light;
+		&:before{
+			content: '(';
+			margin-left: 10px;
+			margin-right: 3px;
+		}
+		&:after{
+			content: ')';
+			margin-left: 3px;
+		}
+		&:before, &:after{
+			color:@grey50;
+		}
+	}
+}
