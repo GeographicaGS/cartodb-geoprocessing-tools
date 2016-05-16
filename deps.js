@@ -12,6 +12,7 @@ deps.JS = [
   srcJS + 'lib/underscore-1.8.2.js',
   srcJS + 'lib/backbone-1.1.2.js',
   srcJS + 'lib/clipboard.js',
+  srcJS + 'lib/leaflet.draw-src.js',
 
   // Namespace
   srcJS + 'Namespace.js',
@@ -54,6 +55,7 @@ deps.JS = [
   srcJS + 'View/Tool/StatisticalView.js',
   srcJS + 'View/Tool/OverlayView.js',
   srcJS + 'View/Tool/BufferView.js',
+  srcJS + 'View/Tool/BookmarksView.js',
 
   // Router
   srcJS + 'Router.js',
