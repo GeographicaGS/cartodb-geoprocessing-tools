@@ -509,6 +509,37 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
       this.model.set('geometrytype','ST_LineString');
 
     }
+    else if (gtl.indexOf('point')!= -1){
+
+      q = [
+      'with a as ({{{input_query}}}),',
+        'b as ({{{overlay_query}}}),',
+        //put all points together
+        'all_points as (',
+          'select (st_dump(the_geom_webmercator)).geom  from a',
+          'union',
+          'select (st_dump(the_geom_webmercator)).geom  from b ',
+        '),',
+        // Get attributes using left join + st_within
+        'attributes as (',
+          'select p.geom as the_geom_webmercator,{{fields}}',
+           'from all_points p',
+           'left join a on st_intersects(p.geom,a.the_geom_webmercator)',
+           'left join b on st_intersects(p.geom,b.the_geom_webmercator)',
+        ')',
+        // prepare the output, add a cartodb_id
+        'select {{cartodb_id}},* from attributes'];
+
+      q = Mustache.render(q.join(' '),{
+        cartodb_id: this.getCartoDBID(),
+        input_query: inputlayer.options.sql, 
+        overlay_query: overlaylayer.options.sql,
+        fields: queryFields
+      });
+
+      this.model.set('geometrytype','ST_Point');
+
+    }
     else{
       throw new Error('Union: unsupported '+ geometrytype);
     }    
