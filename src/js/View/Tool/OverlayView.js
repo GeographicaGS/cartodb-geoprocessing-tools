@@ -470,25 +470,43 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
       });
 
     }
-    else if (gtl.indexOf('line')!= -1 || gtl.indexOf('point')!= -1){
+    else if (gtl.indexOf('line')!= -1){
+
       q = [
-        'with a as ({{{input_query}}}),',
-          'b as ({{{overlay_query}}}),',
-          'r as (',
-            'select {{fields_a}},the_geom_webmercator from a',
-            ' union ',
-            'select {{fields_b}},the_geom_webmercator from b',
-          ')',
-          ' select {{cartodb_id}},* from r'
-      ];
+      'with a as ({{{input_query}}}),',
+        'b as ({{{overlay_query}}}),',
+        //put all lines together
+        'all_lines as (',
+          'select (st_dump(the_geom_webmercator)).geom  from a',
+          'union all',
+          'select (st_dump(the_geom_webmercator)).geom  from b ',
+        '),',
+        // Get noded lines. Avoid overlapping segments
+        'noded_lines as (',
+          'select st_union(geom) as geom from all_lines',
+        '),',
+        // Decompose back again
+        'non_intersect_lines as (',
+          'select distinct (st_dump(geom)).geom from noded_lines',
+        '),',
+        // Get attributes using left join + st_within
+        'lines_attributes as (',
+          'select l.geom as the_geom_webmercator,{{fields}}',
+           'from non_intersect_lines l',
+           'left join a on st_within(l.geom,a.the_geom_webmercator)',
+           'left join b on st_within(l.geom,b.the_geom_webmercator)',
+        ')',
+        // prepare the output, add a cartodb_id
+        'select {{cartodb_id}},* from lines_attributes'];
 
       q = Mustache.render(q.join(' '),{
         cartodb_id: this.getCartoDBID(),
         input_query: inputlayer.options.sql, 
         overlay_query: overlaylayer.options.sql,
-        fields_a: this.getFieldsUnion(queryFields,'a.'),
-        fields_b: this.getFieldsUnion(queryFields,'b.')
+        fields: queryFields
       });
+
+      this.model.set('geometrytype','ST_LineString');
 
     }
     else{
