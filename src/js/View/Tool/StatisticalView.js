@@ -22,6 +22,10 @@ App.View.Tool.Statistical = Backbone.View.extend({
     'click input[type="checkbox"]' : '_checkFields',
   },
 
+  onClose: function(){
+    this.stopListening();
+  },
+
   _updateField:function(e){
     var _this = this;
     var $select = this.$('select[name="field"]');

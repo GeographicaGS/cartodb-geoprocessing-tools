@@ -105,7 +105,8 @@ App.View.Map = Backbone.View.extend({
     this.toolbar = new App.View.MapToolbar({
       el: this.$('.toolbar'),
       model: this._geoVizModel,
-      map: this.map
+      map: this.map,
+      vis:this.vis
     });
     this.toolbar.render();
     this.$map.addClass('wToolbar');

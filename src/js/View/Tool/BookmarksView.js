@@ -18,6 +18,10 @@ App.View.Tool.Bookmarks = Backbone.View.extend({
     'click .close_error': '_closeError',
   },
 
+  onClose: function(){
+    this.stopListening();
+  },
+
   _showAddBlock:function(e){
   	e.preventDefault();
   	$(e.currentTarget).addClass('hiden');

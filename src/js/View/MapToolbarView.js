@@ -9,6 +9,9 @@ App.View.MapToolbar = Backbone.View.extend({
     if(options.map)
       this._map = options.map;
 
+    if(options.vis)
+      this._vis = options.vis;
+
     this.listenTo(App.events,'tool:close',this._closeTool)
     // this.layersControl = new App.View.LayerControl();
   },
@@ -68,12 +71,14 @@ App.View.MapToolbar = Backbone.View.extend({
       this.$('.toolholder').get(0).className = "toolholder";
     }
 
-    if(this._currentCn != cn){
+    if(this._currentCn != cn || (cn == 'Measure' && this._tool._type != $li.attr('type'))){
 
       this._tool = new fn({
         geoVizModel: this.model,
         reportView: cn == 'Statistical' ? this.reportView: null,
-        map: (cn == 'Measure' || cn=='Bookmarks') ? this._map: null
+        map: (cn == 'Measure' || cn=='Bookmarks') ? this._map: null,
+        vis: (cn == 'Measure') ? this._vis: null,
+        type: (cn == 'Measure') ? $li.attr('type'): null
       });
 
       this._currentCn = cn;
