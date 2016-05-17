@@ -96,9 +96,7 @@ App.View.Tool.Measure = Backbone.View.extend({
     		value;
     if(type == "polygon"){
     	aux = L.GeometryUtil.readableArea(L.GeometryUtil.geodesicArea(layer._latlngs),true).split(' ');
-        // var area = L.GeometryUtil.readableArea(L.GeometryUtil.geodesicArea(layer._latlngs),true);
-        // $(infowindow.el).find(".value").html(area.replace("&sup2;","<sup>2</sup>"));
-        // $(infowindow.el).find("h4").text(App.tr('SUPERFICIE TOTAL'))
+      $(infowindow.el).find('h3').text('total area');
     }else{
         value = 0;
         var prevLatlng;
@@ -109,11 +107,11 @@ App.View.Tool.Measure = Backbone.View.extend({
             prevLatlng = layer._latlngs[i];
         }
         aux = L.GeometryUtil.readableDistance(value,true).split(' ');
-        // $(infowindow.el).find("h4").text(App.tr('DISTANCIA TOTAL'))
+        $(infowindow.el).find('h3').text('total distance')
     }
     value = App.nbf(aux[0])
     var measure = aux[1];
-    $(infowindow.el).find(".value").html(value + ' <span>' + measure + (type=='polygon' ? '<sup>2</sup>' : '') + '</span>');
+    $(infowindow.el).find(".value").html(value + ' <span>' + measure  + '</span>');
 
     var center = layer.getBounds().getCenter();
     this._infoWindows[layer._leaflet_id].setLatLng([center.lat,center.lng])
