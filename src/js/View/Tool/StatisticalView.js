@@ -35,7 +35,7 @@ App.View.Tool.Statistical = Backbone.View.extend({
     this.$('.wraper_field.extra').remove();
     this.$('.wraper_field .options').children().remove();
 
-    this._geoVizModel.getSublayersFields($(e.currentTarget).val(),function(fields,errors){
+    this._geoVizModel.getSublayersFieldsByType($(e.currentTarget).val(), 'number', function(fields,errors){
       _this.currentFields = [];
       _.each(fields, function(f) {
         if(f!='cartodb_id' && f!='the_geom' && f!='the_geom_webmercator'){

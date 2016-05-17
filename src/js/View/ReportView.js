@@ -53,13 +53,14 @@ App.View.Report = Backbone.View.extend({
     		model.set('geom',null);
 
     	model.fetch({
-    		success:this._onFetchModel
+    		success:this._onFetchModel,
+        error:this._onFetchModel
     	});
     }
   },
 
-  _onFetchModel: function(data){
-  	this.$('.report').html(this._template_fields({'report':data, 'reports':this.reportCollection.toJSON()}));
+  _onFetchModel: function(data,result){
+  	this.$('.report').html(this._template_fields({'report':data, 'errors':result.errors, 'reports':this.reportCollection.toJSON()}));
   },
 
   _toggleViewport:function(e){

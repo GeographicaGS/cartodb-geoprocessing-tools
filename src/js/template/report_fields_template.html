@@ -9,17 +9,24 @@
 		<a href="#" class="confirm_remove">Delete full report</a>
 	</div>
 </div>
-<%_.each(report.get('fields'),function(f,i){%>
-<div class="field <%= i == report.get('fields').length - 1 ? 'end':''%>">
-	<h4 class="ellipsis"><%=f.name%></h4>
-	<%_.each(f.operations,function(p){%>
-	<div class="measure">
-		<span class="title"><%=App.functionToString(p)%></span>
-		<span class="value"><%=App.nbf(report.get(f.name + '_' + p))%></span>
+<%if(!errors){%>
+	<%_.each(report.get('fields'),function(f,i){%>
+	<div class="field <%= i == report.get('fields').length - 1 ? 'end':''%>">
+		<h4 class="ellipsis"><%=f.name%></h4>
+		<%_.each(f.operations,function(p){%>
+		<div class="measure">
+			<span class="title"><%=App.functionToString(p)%></span>
+			<span class="value"><%=App.nbf(report.get(f.name + '_' + p))%></span>
+		</div>
+		<%});%>
 	</div>
 	<%});%>
-</div>
-<%});%>
+
+<%}else{%>
+	<%_.each(errors,function(e){%>
+		<p class="error"><%=e%></p>
+	<%});%>
+<%}%>
 
 <div class="report_popup">
 	<ul>
