@@ -405,6 +405,7 @@ App.Model.GeoViz = App.Model.Viz.extend({
     layerdef.gid = this.getUUID();
     this.trigger('addSublayer',layerdef);
     this.save();
+    //this._saveAndTrigger();
     //this.guessSublayerGeometryType(layerdef.gid);
   },
 

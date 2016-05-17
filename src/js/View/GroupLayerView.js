@@ -16,18 +16,18 @@ App.View.GroupLayer = Backbone.View.extend({
   },
 
   render: function(){
-    var layers = _.find(this.model.get('layers'), function(l){ return l.type=='layergroup'}).options.layer_definition.layers;
-    var visible = _.filter(layers, function(l){return l.visible});
-
-    this.$el.html(this._template({total: layers.length, visible: visible.length}));
+    
+    this.$el.html(this._template());
 
     this.$panel = this.$('.panel');
     this.$togglePanelBtn = this.$('.togglePanel');
     this._panelView = new App.View.GroupLayerPanel({el: this.$panel, model : this.model});
     this._mapView = new App.View.GroupLayerMap({model : this.model, map: this._map});
+    this._counterView = new App.View.GroupLayerCounter({model: this.model, el: this.$('.title')});
 
     this._panelView.render();
     this._mapView.render();
+    this._counterView.render();
 
     return this;
   },
@@ -37,6 +37,23 @@ App.View.GroupLayer = Backbone.View.extend({
     this.$togglePanelBtn.toggleClass('selected');
   }
 
+});
+
+App.View.GroupLayerCounter = Backbone.View.extend({
+  initialize: function(options){
+    this.listenTo(this.model,'change',this.render);
+    this.listenTo(this.model,'addSublayer',this.render);
+  },
+  onClose: function(){
+    this.stopListening();
+  },
+  render: function(){
+    var layers = this.model.getSublayers(),
+      visible = _.filter(layers, function(l){return l.visible});
+
+    this.$el.html('Layers <span>(' + visible.length + '/' + layers.length + ')</span>');
+    return this;
+  }
 });
 
 App.View.GroupLayerPanel = Backbone.View.extend({
