@@ -72,7 +72,6 @@ App.View.Tool.Measure = Backbone.View.extend({
   	this._drawTool.disable();
   	_.each(this._infoWindows, function(info) {
   		info.remove();
-  		delete info;
   	});
 
     this.stopListening();
