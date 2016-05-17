@@ -18,7 +18,7 @@ App.View.Tool.Statistical = Backbone.View.extend({
     'click a.remove': '_removeField',
     'click a.run': '_runTool',
     'click a.cancel': '_cancelTool',
-    'change [name]' : '_checkFields',
+    'keyup [name]' : '_checkFields',
     'change select' : '_checkFields',
     'click input[type="checkbox"]' : '_checkFields',
     'click .button.notfilled.cancel' : '_closeTool',
