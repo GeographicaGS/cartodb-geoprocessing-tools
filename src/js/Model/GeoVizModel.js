@@ -416,4 +416,10 @@ App.Model.GeoViz = App.Model.Viz.extend({
   //   Backbone.Model.prototype.save.apply(this, [attributes,options]);
   // } 
 
+  setSublayers: function(sublayers){
+    var layergroup = _.find(this.get('layers'), function(l){ return l.type=='layergroup'});
+    layergroup.options.layer_definition.layers = sublayers;
+    this._saveAndTrigger();
+  }
+
 });
