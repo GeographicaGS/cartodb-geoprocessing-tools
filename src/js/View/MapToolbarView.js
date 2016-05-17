@@ -65,9 +65,11 @@ App.View.MapToolbar = Backbone.View.extend({
     }
 
     var fn = App.View.Tool[cn];
-    
-    if (this._tool)
+
+    if (this._tool){
       this._tool.close();
+      this.$('.toolholder').get(0).className = "toolholder";
+    }
 
     if(this._currentCn != cn || (cn == 'Measure' && this._tool._type != $li.attr('type'))){
 
@@ -81,7 +83,7 @@ App.View.MapToolbar = Backbone.View.extend({
 
       this._currentCn = cn;
 
-      this.$('.toolholder').html(this._tool.render().$el).show().get(0).className = "toolholder " + type;
+      this.$('.toolholder').html(this._tool.render().$el).get(0).className = "toolholder shown " + type;
       this.$selectedToolBtn = $(e.currentTarget);
       this.$selectedToolBtn.addClass('selected');
 
@@ -91,7 +93,7 @@ App.View.MapToolbar = Backbone.View.extend({
   },
 
   _closeTool: function(){
-    this.$('.toolholder').hide();
+    this.$('.toolholder').get(0).className = "toolholder";
     this.$('.buttons .selected').removeClass('selected');
     this._currentCn = null;
     if (this._tool){

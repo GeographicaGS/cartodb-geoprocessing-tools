@@ -1,17 +1,10 @@
 <div id="bookmark">
-	<div class="header">
-		<h3>Bookmarks</h3>
-		<div class="actions">
-			<a href="#" class="add">Add</a>
-		</div>
+	<div class="header_b">
+		<h3>Bookmarks <a href="#" class="add_b">Add</a></h3>
 		<div class="add_block">
 			<input type="text" placeholder="Write Bookmark Title">
 			<a href="#" class="cancel_add">Cancel</a>
 			<a href="#" class="save_b">Save</a>
-		</div>
-		<div class="error_block">
-			<span>This name is already in use</span>
-			<a class="close_error" href="#">ok</a>
 		</div>
 	</div>
 	<%if(bookmarks.length == 0){%>
@@ -20,11 +13,11 @@
 	<ul class="bookmarks_list">
 		<%_.each(bookmarks,function(b){%>
 		<li bookmark="<%=b.title%>">
-			<span><%=b.title%></span>
+			<%=b.title%>
 			<a href="#" class="remove"></a>
 			<div class="remove_block">
 				<a href="#" class="cancel_remove">Cancel</a>
-				<a href="#" class="confirm_remove">Delete</a>
+				<a href="#" class="confirm_remove">Delete full report</a>
 			</div>
 		</li>
 		<%})%>

@@ -1,5 +1,5 @@
 #bookmark{
-	padding: 0 20px;
+	overflow-x: hidden;
 
 	.not_bookmark{
 		line-height: 49px;
@@ -7,64 +7,34 @@
 		color:@grey50;
 	}
 
-	.header_b{
-
-		&:after{
-			content: '';
-			width: ~ "calc(100% + 40px)";
-			height: 1px;
-			display: block;
-			background-color: @grey20;
-			margin-left: -20px;
-		}
-
-		h3{
-			font-size: 18px;
-			line-height: 49px;
-			font-weight: 400;
-
-			.add_b{
-				font-size: 14px;
-				color:@blue_light;
-				float: right;
-				opacity: 1;
-				transition: opacity .25s;
-				&.hiden{
-					opacity: 0;
-				}
-				&:after{
-					content: '';
-					background-image: url(/img/SGV_icon-add.svg);
-					background-repeat: no-repeat;
-					background-size: 14px;
-			    background-position: center;
-					width: 20px;
-					height: 20px;
-					border: 1px solid @blue_light;
-					border-radius: 100%; 
-					display: inline-block;
-					margin-left: 8px;
-					position: relative;
-					top: 5px;
-				}
-			}
+	.header{
+		flex-wrap: wrap;
+		.actions {
+			padding-right: 10px;
 		}
 	}
 	.add_block, .error_block{
+		display: flex;
+		align-items: center;
 		visibility: hidden;
     height: 0;
+		width: 0;
     padding: 0;
     opacity: 0;
+		overflow: hidden;
+
     transition: height .25s, opacity .25s;
 		&.activated{
+			flex: 1 1 100%;
 			visibility: visible;
-			padding-bottom: 16px;
+			margin-top: 10px;
 			height: 46px;
+			width: auto;
 			opacity: 1;
 		}
 
 		input[type="text"]{
-			width: 154px;
+			flex: 1 1 auto;
 			height: 30px;
 			border: 1px solid @grey35;
 			border-radius: 2px;
@@ -107,70 +77,77 @@
 			}
 		}
 	}
-	
+
 	.error_block{
-		padding-top: 5px;
 		color:@red_main;
 		transition: height 0s, opacity .25s;
 		&.activated{
 			height: 51px;
-			a{
-				float: right;
-			}
+			width: auto;
+			padding: 0 10px;
+		}
+		span {
+			flex: 1 1 auto;
 		}
 		a{
-			top:0;
 			font-weight: 700;
 		}
 	}
 
 	ul{
 		li{
-			line-height: 49px;
 			font-size: 14px;
 			cursor: pointer;
+			display: flex;
+			align-items: center;
+			overflow-x: hidden;
+			padding: 8px 20px;
+			border-bottom: 1px solid @grey20;
+
 			&:before{
 				content: url('/img/SGV_tool-bookmark.svg');
 				position: relative;
-				top: 8px;
+				top: 1px;
 				margin-left: -9px;
 			}
-			&:after{
-				content: '';
-				width: ~ "calc(100% + 40px)";
-				height: 1px;
-				display: block;
-				background-color: @grey20;
-				margin-left: -20px;
-			}
+			// &:after{
+			// 	content: '';
+			// 	width: ~ "calc(100% + 40px)";
+			// 	height: 1px;
+			// 	display: block;
+			// 	background-color: @grey20;
+			// 	margin-left: -20px;
+			// }
 			&:last-of-type{
-				&:after{
-					display: none;
-				}
+				border-bottom: none;
 			}
-			.remove{
-				float: right;
-				margin: 8px 20px;
-				position: relative;
+			span {
+				flex: 1 1 auto;
 			}
-			
+
 			.remove_block{
 				display: inline-block;
-				float: right;
 				visibility: hidden;
 				width: 0;
   			height: 0;
   			opacity: 0;
+				overflow: hidden;
+				transform: translateX(100px);
+
+				transition: opacity 0.25s, transform .25s ease-in-out;;
+
 				&.activated{
 					width: inherit;
 					height: inherit;
 					visibility: visible;
 					opacity: 1;
-					transition: opacity 0.25s;
+
+					display: block;
+					transform: translateX(0px);
 				}
+
 				a{
 					font-size: 14px;
-			    line-height: 36px;
 			    font-weight: 700;
 			    &.cancel_remove{
 						color:@blue_light;
@@ -188,6 +165,3 @@
 		}
 	}
 }
-
-
-
