@@ -76,6 +76,7 @@ App.View.MapToolbar = Backbone.View.extend({
       this._tool = new fn({
         geoVizModel: this.model,
         reportView: cn == 'Statistical' ? this.reportView: null,
+        parentView: (cn == 'Statistical') ? this: null,
         map: (cn == 'Measure' || cn=='Bookmarks') ? this._map: null,
         vis: (cn == 'Measure') ? this._vis: null,
         type: (cn == 'Measure') ? $li.attr('type'): null

@@ -8,6 +8,7 @@ App.View.Tool.Statistical = Backbone.View.extend({
     App.View.Tool.Overlay.prototype.initialize.apply(this,[options]);
     this.model.unset('overlay');
     this.reportView = options.reportView;
+    this._parentView = options.parentView;
   },
 
   events: {
@@ -20,6 +21,7 @@ App.View.Tool.Statistical = Backbone.View.extend({
     'change [name]' : '_checkFields',
     'change select' : '_checkFields',
     'click input[type="checkbox"]' : '_checkFields',
+    'click .button.notfilled.cancel' : '_closeTool',
   },
 
   onClose: function(){
@@ -119,6 +121,11 @@ App.View.Tool.Statistical = Backbone.View.extend({
     else
       this.$('.run').addClass('disabled');
 
+  },
+
+  _closeTool:function(e){
+    e.preventDefault();
+    this._parentView._closeTool();
   },
 
   render: function(){
