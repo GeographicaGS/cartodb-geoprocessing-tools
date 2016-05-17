@@ -1,14 +1,14 @@
 App.View.Tool.Bookmarks = Backbone.View.extend({
   _template: _.template( $('#tool-bookmark_template').html() ),
 
-  initialize: function(options) { 
+  initialize: function(options) {
   	this._map = options.map;
     this._geoVizModel = options.geoVizModel;
   	this.bookmarkCollection = new Backbone.Collection(this._geoVizModel.get('bookmarks'));
   },
 
   events: {
-  	'click .add_b': '_showAddBlock',
+  	'click .add': '_showAddBlock',
   	'click .cancel_add': '_hideAddBlock',
   	'click .save_b': '_saveBookmark',
   	'click .bookmarks_list li': '_loadBookMark',

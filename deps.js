@@ -47,7 +47,7 @@ deps.JS = [
   srcJS + 'View/LayerControlView.js',
   srcJS + 'View/MapToolbarView.js',
   srcJS + 'View/MapView.js',
-  
+
   srcJS + 'View/ReportView.js',
 
   // Tool Views
