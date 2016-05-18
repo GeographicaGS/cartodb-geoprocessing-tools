@@ -208,7 +208,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
 
       var prefix = attr=='input' ? 'a.' : 'b.';
       // Remove geometry fields. We're building it with the clipping
-      fields = _.without(fields,'the_geom_webmercator','the_geom','cartodb_id');
+      fields = _.difference(fields,App.Cons.SYSTEM_COLS);
       fields = _.map(fields,function(f){ return prefix + f});
 
       cb(fields.join(','));
@@ -605,9 +605,9 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
       var q = [
         'with a as ({{{input_query}}}),',
           'b as ({{{overlay_query}}})',
-          'select {{cartodb_id}},{{fields}},a.the_geom_webmercator from a',
-            'left join b on st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)',
-          'where b.the_geom_webmercator is null'];
+          'select {{fields}},a.the_geom from a',
+            'left join b on st_intersects(a.the_geom,b.the_geom)',
+          'where b.the_geom is null'];
          
       q = Mustache.render(q.join(' '),{
           cartodb_id: this.getCartoDBID(),
