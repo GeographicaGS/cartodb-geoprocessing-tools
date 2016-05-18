@@ -13,7 +13,8 @@ App.View.Account = Backbone.View.extend({
     'keyup input[name="apikey"]' : '_onTypedApiKey',
     'click input[type="submit"]' : '_onClickGo',
     'click .goNext': '_onClickNext',
-    'click .goPrev': '_onClickPrev'
+    'click .goPrev': '_onClickPrev',
+    'submit form': '_onClickGo'
   },
 
   onClose: function(){

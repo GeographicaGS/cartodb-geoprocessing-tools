@@ -17,6 +17,12 @@ App.View.Map = Backbone.View.extend({
     this.footer = new App.View.Footer();
 
     this._user = App.getUserModel();
+    this._user.checkPermissions(this.model.get('account'), function(status){
+      if(!status){
+        App.resetUserModel();
+        App.router.navigate('login', {trigger: true});
+      }
+    });
 
   },
 
@@ -102,7 +108,7 @@ App.View.Map = Backbone.View.extend({
   },
 
   _render: function(){
-   
+
     this.toolbar = new App.View.MapToolbar({
       el: this.$('.toolbar'),
       model: this._geoVizModel,
