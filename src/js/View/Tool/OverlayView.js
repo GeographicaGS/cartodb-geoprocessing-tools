@@ -601,12 +601,10 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
       gtl = geometrytype.toLowerCase();
     
     if (gtl.indexOf('point') != -1){
-      // Point erase
+      // Point erase. Use subqueries. AVOID CTE (WITH clause) BECAUSE OF PERFORMANCE!!!
       var q = [
-        'with a as ({{{input_query}}}),',
-          'b as ({{{overlay_query}}})',
-          'select {{fields}},a.the_geom from a',
-            'left join b on st_intersects(a.the_geom,b.the_geom)',
+          'select {{fields}},a.the_geom from ({{{input_query}}}) a',
+            'left join ({{{overlay_query}}}) b on st_intersects(a.the_geom,b.the_geom)',
           'where b.the_geom is null'];
          
       q = Mustache.render(q.join(' '),{
