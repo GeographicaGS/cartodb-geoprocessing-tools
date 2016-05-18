@@ -14,14 +14,18 @@ deps.JS = [
   srcJS + 'lib/clipboard.js',
   srcJS + 'lib/leaflet.draw-src.js',
 
+
   // Namespace
   srcJS + 'Namespace.js',
+
+  srcJS + 'LayerManager.js',
+  
   srcJS + 'Cons.js',
   // Namespace
   srcJS + 'Config.js',
 
   srcJS + 'Utils.js',
-  srcJS + 'LayerManager.js',
+  
 
   // Models
   srcJS + 'Model/UserModel.js',

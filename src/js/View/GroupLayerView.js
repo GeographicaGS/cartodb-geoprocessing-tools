@@ -210,8 +210,6 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
   render: function(){
     this.$el.html(this._template({m: this.model.toJSON()}));
 
-    var geolayer = this.model.get('geolayer');
-
     if (!this.model.get('geolayer')){
       this.$('.remove').addClass('disabled');
       this.$('a[data-el="wizard"]').addClass('disabled');

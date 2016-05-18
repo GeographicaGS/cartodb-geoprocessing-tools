@@ -1,5 +1,5 @@
 
-LayerManager = function(opts){
+App.LayerManager = function(opts){
   _.extend(this, Backbone.Events);
   this.userModel = opts.userModel;
   this.geoVizModel = opts.geoVizModel;
@@ -9,11 +9,7 @@ LayerManager = function(opts){
   return this;
 };
 
-LayerManager.prototype.createLayer = function(layerdef){
-  
-  var q = [
-    "create table {{tablename}} as ({{{layer_query}}});"
-  ];
+App.LayerManager.prototype.createLayer = function(layerdef){
 
   var _this = this;
 
@@ -47,21 +43,18 @@ LayerManager.prototype.createLayer = function(layerdef){
   
 };
 
-LayerManager.prototype._addWork = function(w){
+App.LayerManager.prototype._addWork = function(w){
   this._works.push(w);
   this._workInspector(w);
 };
 
-LayerManager.prototype.removeLayer = function(layer){
+App.LayerManager.prototype.removeLayer = function(layer){
   //TODO: Use Job API
-  sql = new cartodb.SQL({ user: this.userModel.get('account') });
+  var sql = new cartodb.SQL({ user: this.userModel.get('account') });
   var api_key = this.userModel.get('api_key');
-
-  // all allow, let's do the request
-  q = "DROP TABLE {{layername}}"; 
-
+  
   // Note cache: false
-  sql.execute(q,{layername: layer.geolayer.table_name},{api_key: api_key})
+  sql.execute("DROP TABLE {{layername}}",{layername: layer.geolayer.table_name},{api_key: api_key})
     .error(function(errors) {
       console.error('Cannot remove layer');
       console.error(errors);
@@ -69,11 +62,11 @@ LayerManager.prototype.removeLayer = function(layer){
 
 };
 
-LayerManager.prototype.cancelLayer = function(layer){
+App.LayerManager.prototype.cancelLayer = function(layer){
   //TODO. IMPORT API doesn't support it.
 };
 
-LayerManager.prototype._initializeWorksFromViz = function(){
+App.LayerManager.prototype._initializeWorksFromViz = function(){
   
   this._works = _.filter(this.geoVizModel.getSublayers(),function(l){
     return l.geolayer && 
@@ -81,13 +74,13 @@ LayerManager.prototype._initializeWorksFromViz = function(){
   });
 };
 
-LayerManager.prototype._cleanWork = function(work){
+App.LayerManager.prototype._cleanWork = function(work){
   this._works = _.without(this.works,work);
   clearInterval(this._intervals[work.gid]);
   delete this._intervals[work.gid];
 };
 
-LayerManager.prototype._processWorkResponse = function(work,res) {
+App.LayerManager.prototype._processWorkResponse = function(work,res) {
   if (res.state=='complete'){
     work.options.sql = 'select * from ' + res.table_name;
     work.geolayer.status = App.Cons.LAYER_READY;
@@ -118,7 +111,7 @@ LayerManager.prototype._processWorkResponse = function(work,res) {
   }
 };
 
-LayerManager.prototype._workInspector = function(w){
+App.LayerManager.prototype._workInspector = function(w){
   if (this._intervals[w.gid])
     clearInterval(this._intervals[w.gid]);
 
@@ -142,7 +135,7 @@ LayerManager.prototype._workInspector = function(w){
   return this;
 }
 
-LayerManager.prototype.run = function(){
+App.LayerManager.prototype.run = function(){
   
   this._initializeWorksFromViz();
   for (var i in this._works){
