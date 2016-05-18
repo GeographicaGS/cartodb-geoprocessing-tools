@@ -1,0 +1,139 @@
+.map-options{
+	.option-button{
+		position: relative;
+		box-sizing: border-box;
+		display: inline-block;
+		vertical-align: middle;
+		padding: 10px 14px 10px 37px;
+		margin: 0 3px 0 0;
+		height: auto;
+		min-width: 70px;
+		background: rgba(0,0,0,0.7);
+		color: #fff;
+		font-size: 13px;
+		border-radius: 3px;
+
+		.thumb{
+			margin: 0 5px 0 0;
+			position: absolute;
+			top: 6px;
+			left: 6px;
+			display: inline-block;
+			vertical-align: middle;
+			width: 22px;
+			height: 22px;
+			border-radius: 2px;
+			background-size: 34px;
+			background-color: transparent;
+			background-position: 50% 50%;
+			box-shadow: 0 0 1px rgba(0,0,0,0.9);
+			background-position: 50% 50%; 
+			background-size: 34px 34px; 
+			background-color: rgb(0, 0, 0);
+		}
+	}
+	.base_map_poup{
+		position: absolute;
+    bottom: 50px;
+		border: 1px solid @grey20;
+		background: @white;
+		border-radius: 3px;
+		box-shadow: rgba(0,0,0,0.2) 0 0 4px 1px;
+		color: @grey30;
+		font-size: 13px;
+		visibility: hidden;
+		transform:translateY(45px);
+		opacity: 0;
+
+		&.activated{
+			transition: all .25s;
+			visibility: visible;
+			transform:translateY(0);
+			opacity: 1;
+		}
+
+		&:before{
+			content: '';
+			position: absolute;
+			display: block;
+			width: 0;
+			height: 0;
+			bottom: -5px;
+			border-top: 6px solid @white;
+			border-left: 6px solid transparent;
+			border-right: 6px solid transparent;
+			left: 12px;
+		}
+		.custom{
+			ul{
+				display: flex;
+				vertical-align: top;
+				padding: 0 5px 0 10px;
+				border-bottom: none;
+				width: 100%;
+				margin: 0;
+				list-style: none;
+				overflow: visible;
+
+				li{
+					margin: 0 10px 0 0;
+					display: block;
+					&:last-child{
+						margin-right: 0;
+					}
+					>a{
+						display: block;
+						padding: 0;
+						box-sizing: border-box;
+						line-height: 13px;
+						.thumb{
+							position: relative;
+							float: left;
+							width: 24px;
+							height: 24px;
+							border-radius: 2px;
+							text-indent: -9999px;
+							line-height: 0px;
+							font-size: 0px;
+							text-transform: uppercase;
+							background-size: 34px 34px;
+							background-position: 50% 50%;
+							text-decoration: none;
+							cursor: pointer;
+							&:before{
+								content: '';
+								position: absolute;
+								top: 0;
+								right: 0;
+								bottom: 0;
+								left: 0;
+								border-radius: 2px;
+								border: 1px solid rgba(0,0,0,0.15);
+							}
+						}
+					}
+				}
+			}
+			>ul{
+				width: auto;
+				box-sizing: border-box;
+				margin: 0 10px;
+				padding: 10px 10px;
+				border-bottom: 1px solid @grey20;
+
+				&:last-child{
+					border:none;
+				}
+
+				>li:first-child{
+					width: 60px;
+					margin: 5px 4px 0 0;
+				}
+
+				li{
+					border: none;
+				}
+			}
+		}
+	}
+}
