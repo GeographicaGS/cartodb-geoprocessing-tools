@@ -10,12 +10,15 @@ App.View.BaseMap = Backbone.View.extend({
   	this._map = options.map;
   	this._baseMapCollection = new App.Collection.BaseMap();
   	var map;
-  	if(this._geoVizModel.get('basemap'))
+  	if(this._geoVizModel.get('basemap')){
   		map = this._baseMapCollection.findMap(this._geoVizModel.get('basemap').id,this._geoVizModel.get('basemap').title);
   		if(this._geoVizModel.get('basemap').id == 'OneMap')
   			this._map.setView([1.3751664,103.7800963],13)
-  	else
+  	}else{
   		map = this._baseMapCollection.findMap('CartoDB','Positron');
+  	}
+
+  	this.currentThumb = map.thumb;
   	this._base_layer._url = map.url;
   	this._label_layer._url = map.url_label;
   	this._base_layer.redraw();
@@ -25,11 +28,16 @@ App.View.BaseMap = Backbone.View.extend({
   },
 
   events: {
-    'click .base_map_poup .thumb' : '_changeBaseMap',
+  	'click .option-button' : '_toggleBaseMaps',
+    'click .base_map_poup .thumb' : '_changeBaseMap'
   },
 
 	onClose: function(){
     this.stopListening();
+  },
+
+  _toggleBaseMaps:function(){
+  	this.$('.base_map_poup').toggleClass('activated');
   },
 
   _changeBaseMap:function(e){
@@ -51,11 +59,14 @@ App.View.BaseMap = Backbone.View.extend({
 
     if(this._geoVizModel.get('basemap').id == 'OneMap')
   			this._map.setView([1.3751664,103.7800963],13)
+
+		this.currentThumb = map.thumb;
+    this.render();
   },
   
 
   render: function(options){
-  	this.$el.html(this._template({'g_maps':this._baseMapCollection.toJSON()}));
+  	this.$el.html(this._template({'g_maps':this._baseMapCollection.toJSON(), 'thumb':this.currentThumb}));
     return this;
   }
 
