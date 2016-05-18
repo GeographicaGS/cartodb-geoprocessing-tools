@@ -43,6 +43,11 @@ header {
 			flex: 1 1 100%;
 			padding: 0 10px;
       cursor: pointer;
+
+      img {
+        vertical-align: middle;
+        margin-right: 5px;
+      }
 		}
 
     & > img {
@@ -87,7 +92,7 @@ header {
       box-shadow: 0 -2px 8px 0 fade(@black, 10%);
       background-color: @white;
       color: @blue_light;
-      .top_triangle(calc(~'100% - 26px'), 8px, 14px, @white, @grey20);
+      .top_triangle(calc(~'100% - 100px'), 8px, 14px, @white, @grey20);
       z-index: 300;
 
       &:empty {
@@ -275,7 +280,8 @@ header {
         }
 
         .help{
-          display: none;
+          display: inline-block;
+          margin: 0 5px;
         }
       }
     }

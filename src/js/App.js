@@ -184,7 +184,7 @@ App.ini = function(){
 
   var _this = this;
   this._userModel = new App.Model.UserLocalStorage();
-  
+
   this._userModel.fetch({
     'success' : function(a,b){
 
@@ -216,7 +216,6 @@ App.getUserModel = function(){
 
 App.resetUserModel = function(){
   this._userModel.destroy();
+  localStorage.clear();
   this._userModel = new App.Model.UserLocalStorage();
 }
-
-
