@@ -233,6 +233,9 @@ App.Model.GeoViz = App.Model.Viz.extend({
     if (!l)
       return cb(null);
 
+    if (l.geolayer && l.geometrytype)
+      return cb(l.geometrytype,l);
+
     var q = "WITH q as ({{{sql}}})"
         + "select st_geometrytype(the_geom_webmercator) as geometrytype from q group by geometrytype";
 
