@@ -440,7 +440,10 @@ App.Model.GeoViz = App.Model.Viz.extend({
   },
 
   createLayerManager: function(){
-    this._layerManager = new LayerManager({userModel: this._user,geoVizModel: this});
+    this._layerManager = new App.LayerManager({
+      userModel: this._user,
+      geoVizModel: this
+    });
 
     this.listenTo(this._layerManager,'layerCreated',this.onLayerCreated);
     this.listenTo(this._layerManager,'layerReady',this.onLayerReady);
@@ -455,6 +458,11 @@ App.Model.GeoViz = App.Model.Viz.extend({
     return _.filter(this.getSublayers(),function(m){
       return (m.visible && (!m.geolayer || m.geolayer.status == App.Cons.LAYER_READY));
     });
+  },
+
+  setSublayers: function(sublayers){
+    App.Model.Viz.prototype.setSublayers.apply(this,[sublayers]);
+    this._saveAndTrigger();
   }
 
 });
