@@ -13,7 +13,6 @@ App.View.MapToolbar = Backbone.View.extend({
       this._vis = options.vis;
 
     this.listenTo(App.events,'tool:close',this._closeTool)
-    // this.layersControl = new App.View.LayerControl();
   },
 
   events: {

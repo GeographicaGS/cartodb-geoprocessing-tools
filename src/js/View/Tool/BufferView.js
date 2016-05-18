@@ -127,16 +127,21 @@ App.View.Tool.Buffer = Backbone.View.extend({
     var q;
 
     if (!this.model.get('disolve')){
+
       q = [
         ' WITH a as ({{{input_query}}})',
-        ' SELECT {{{fields}}},st_multi(st_buffer(the_geom_webmercator,{{buffer_size}})) as the_geom_webmercator from a'
+        ' SELECT {{{fields}}},st_multi(',
+          'st_transform(st_buffer(the_geom::geography,{{buffer_size}})::geometry,3857)) as the_geom_webmercator',
+        ' FROM a'
       ]; 
     }
     else{
       q = [
         ' WITH a as ({{{input_query}}}),',
         ' buffer as (',
-          'SELECT st_multi(st_buffer(the_geom_webmercator,{{buffer_size}})) as the_geom_webmercator from a',
+          'SELECT st_multi(',
+            'st_transform(st_buffer(the_geom::geography,{{buffer_size}})::geometry,3857)) as the_geom_webmercator',
+          'FROM a',
         ')',
         ' SELECT ROW_NUMBER() OVER () AS cartodb_id,st_union(the_geom_webmercator) as the_geom_webmercator from buffer'
       ];  

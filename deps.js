@@ -9,18 +9,25 @@ deps.templateFolder = [srcJS + 'template'];
 
 deps.JS = [
   srcJS + 'lib/jquery-2.1.3.js',
+  srcJS + 'lib/jquery-ui.js',
+  srcJS + 'lib/jquery-ui-touch-punch.js',
   srcJS + 'lib/underscore-1.8.2.js',
   srcJS + 'lib/backbone-1.1.2.js',
   srcJS + 'lib/clipboard.js',
   srcJS + 'lib/leaflet.draw-src.js',
 
+
   // Namespace
   srcJS + 'Namespace.js',
 
+  srcJS + 'LayerManager.js',
+  
+  srcJS + 'Cons.js',
   // Namespace
   srcJS + 'Config.js',
 
   srcJS + 'Utils.js',
+  
 
   // Models
   srcJS + 'Model/UserModel.js',
@@ -56,6 +63,8 @@ deps.JS = [
   srcJS + 'View/Tool/BufferView.js',
   srcJS + 'View/Tool/BookmarksView.js',
   srcJS + 'View/Tool/Measure.js',
+
+
 
   // Router
   srcJS + 'Router.js',

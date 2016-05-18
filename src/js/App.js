@@ -184,9 +184,12 @@ App.ini = function(){
 
   var _this = this;
   this._userModel = new App.Model.UserLocalStorage();
+  
   this._userModel.fetch({
     'success' : function(a,b){
+
       _this._userModel.validateAndCreate(function(){
+
         Backbone.history.start({pushState: true});
       });
     }
@@ -215,3 +218,5 @@ App.resetUserModel = function(){
   this._userModel.destroy();
   this._userModel = new App.Model.UserLocalStorage();
 }
+
+

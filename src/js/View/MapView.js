@@ -97,6 +97,7 @@ App.View.Map = Backbone.View.extend({
 
 
     this._geoVizModel.calculateSublayersGeometryTypes(this._render);
+    this._geoVizModel.createLayerManager();
 
     this.map.fitBounds(this._geoVizModel.get('bounds'));
     this._baseMapView = new App.View.BaseMap({'base_layer':this.vis.getLayers()[0], 'label_layer':this.vis.getLayers()[this.vis.getLayers().length-1]});
@@ -128,7 +129,6 @@ App.View.Map = Backbone.View.extend({
 
     this.$map = this.$('.map');
     this.$map.css('width','100%').css('height', this.$el.parent().height() + "px"); // TODO: parameterize or calculate hardcoded toolbar height value (64px)
-
 
     var url = 'http://alasarr.cartodb.com/api/v2/viz/d1e1bf50-1675-11e6-a016-0e3ff518bd15/viz.json';
     cartodb.createVis('map', url)
