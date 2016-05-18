@@ -4,7 +4,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
   _template: _.template( $('#tool-overlay_template').html() ),
 
   initialize: function(options) {
-    
+
     this.model = new Backbone.Model({
       'input': null,
       'overlay': null,
@@ -70,9 +70,9 @@ App.View.Tool.Overlay = Backbone.View.extend({
       }
       else if (input.geometrytype=='ST_MultiPoint' || input.geometrytype=='ST_Point'){
         gtypes = ['polygon','line','point'];
-      }  
+      }
     }
-    else if (this._mergetype == 'sametype'){  
+    else if (this._mergetype == 'sametype'){
       gtypes = [App.Utils.getBaseGeometryType(input.geometrytype)];
     }
     else{
@@ -317,7 +317,7 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
       //     "SELECT CASE WHEN st_geometrytype(the_geom_webmercator)='ST_GeometryCollection'",
       //       " THEN ST_CollectionExtract(the_geom_webmercator,{{collection_extract}})",
       //       " ELSE the_geom_webmercator",
-      //       " END as the_geom_webmercator", 
+      //       " END as the_geom_webmercator",
       //   "FROM clip",
       //     "WHERE st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' OR ",
       //       "st_geometrytype(the_geom_webmercator)='" + this.model.get('geometrytype') + "'",
@@ -407,7 +407,7 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
 
 App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
 
-  initialize: function(options) { 
+  initialize: function(options) {
     App.View.Tool.Overlay.prototype.initialize.apply(this,[options]);
     _.bindAll(this,'_runUnion');
     this._title = 'Union';
@@ -420,7 +420,7 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
   },
 
   _runUnion: function(queryFields){
-    
+
     var inputlayer = this._geoVizModel.findSublayer(this.model.get('input'));
     var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
 
@@ -463,7 +463,7 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
 
       q = Mustache.render(q.join(' '),{
         cartodb_id: this.getCartoDBID(),
-        input_query: inputlayer.options.sql, 
+        input_query: inputlayer.options.sql,
         overlay_query: overlaylayer.options.sql,
         fields: queryFields
       });
@@ -500,7 +500,7 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
 
       q = Mustache.render(q.join(' '),{
         cartodb_id: this.getCartoDBID(),
-        input_query: inputlayer.options.sql, 
+        input_query: inputlayer.options.sql,
         overlay_query: overlaylayer.options.sql,
         fields: queryFields
       });
@@ -531,7 +531,7 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
 
       q = Mustache.render(q.join(' '),{
         cartodb_id: this.getCartoDBID(),
-        input_query: inputlayer.options.sql, 
+        input_query: inputlayer.options.sql,
         overlay_query: overlaylayer.options.sql,
         fields: queryFields
       });
@@ -541,7 +541,7 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
     }
     else{
       throw new Error('Union: unsupported '+ geometrytype);
-    }    
+    }
 
     this.model.set({
       'infowindow_fields': queryFields,
@@ -599,7 +599,7 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
 
     var geometrytype = inputlayer.geometrytype,
       gtl = geometrytype.toLowerCase();
-    
+
     if (gtl.indexOf('point') != -1){
       // Point erase
       var q = [
@@ -608,7 +608,7 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
           'select {{cartodb_id}},{{fields}},a.the_geom_webmercator from a',
             'left join b on st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)',
           'where b.the_geom_webmercator is null'];
-         
+
       q = Mustache.render(q.join(' '),{
           cartodb_id: this.getCartoDBID(),
           input_query: inputlayer.options.sql,
