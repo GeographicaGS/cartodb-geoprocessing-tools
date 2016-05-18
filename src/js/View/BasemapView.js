@@ -4,14 +4,24 @@ App.View.BaseMap = Backbone.View.extend({
   _template: _.template( $('#base_map_template').html() ),
 
   initialize: function(options) {
-  	this.base_layer = options.base_layer;
-  	this.label_layer = options.label_layer;
-  	this.base_layer._url = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
-  	this.label_layer._url = 'http://b.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png'
-  	this.base_layer.redraw();
-  	this.label_layer.redraw();
-  	this.base_layer.setOpacity(1);
-  	this.label_layer.setOpacity(1);
+  	this._base_layer = options.base_layer;
+  	this._label_layer = options.label_layer;
+  	this._geoVizModel = options.geoVizModel;
+  	this._map = options.map;
+  	this._baseMapCollection = new App.Collection.BaseMap();
+  	var map;
+  	if(this._geoVizModel.get('basemap'))
+  		map = this._baseMapCollection.findMap(this._geoVizModel.get('basemap').id,this._geoVizModel.get('basemap').title);
+  		if(this._geoVizModel.get('basemap').id == 'OneMap')
+  			this._map.setView([1.3751664,103.7800963],13)
+  	else
+  		map = this._baseMapCollection.findMap('CartoDB','Positron');
+  	this._base_layer._url = map.url;
+  	this._label_layer._url = map.url_label;
+  	this._base_layer.redraw();
+  	this._label_layer.redraw();
+  	this._base_layer.setOpacity(1);
+  	this._label_layer.setOpacity(1);
   },
 
   events: {
@@ -22,14 +32,30 @@ App.View.BaseMap = Backbone.View.extend({
     this.stopListening();
   },
 
-  _changeBaseMap:function(){
-  	this._base_layer._url = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
+  _changeBaseMap:function(e){
+  	var id = $(e.currentTarget).closest('[group]').attr('group'),
+  			title = $(e.currentTarget).closest('li').attr('data-title'),
+  			map = this._baseMapCollection.findMap(id,title);
+
+  	this._base_layer._url = map.url;
   	this._base_layer.redraw();
+  	if(map.url_label != ''){
+  		this._label_layer._url = map.url_label;
+  		this._label_layer.redraw();
+  		this._label_layer.setOpacity(1);
+  	}else{
+  		this._label_layer.setOpacity(0);
+  	}
+  	this._geoVizModel.set('basemap',{'id':id,'title':title});
+    this._geoVizModel.save();
+
+    if(this._geoVizModel.get('basemap').id == 'OneMap')
+  			this._map.setView([1.3751664,103.7800963],13)
   },
   
 
   render: function(options){
-  	this.$el.html(this._template());
+  	this.$el.html(this._template({'g_maps':this._baseMapCollection.toJSON()}));
     return this;
   }
 

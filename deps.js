@@ -41,6 +41,7 @@ deps.JS = [
   // Collections
   srcJS + 'Collection/MapCollection.js',
   srcJS + 'Collection/ReportCollection.js',
+  srcJS + 'Collection/BaseMapCollection.js',
 
   // Views
   srcJS + 'View/AccountView.js',

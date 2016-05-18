@@ -100,7 +100,7 @@ App.View.Map = Backbone.View.extend({
     this._geoVizModel.createLayerManager();
 
     this.map.fitBounds(this._geoVizModel.get('bounds'));
-    this._baseMapView = new App.View.BaseMap({'base_layer':this.vis.getLayers()[0], 'label_layer':this.vis.getLayers()[this.vis.getLayers().length-1]});
+    this._baseMapView = new App.View.BaseMap({'map':this.map, 'geoVizModel':this._geoVizModel, 'base_layer':this.vis.getLayers()[0], 'label_layer':this.vis.getLayers()[this.vis.getLayers().length-1]});
     this.$('.map-options').html(this._baseMapView.render().el);
   },
 
