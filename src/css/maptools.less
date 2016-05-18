@@ -202,6 +202,31 @@
       .font(italic);
       font-size: 14px;
     }
+
+    input[name="disolve"]{
+      margin-right: 5px;
+      appearance: none;
+      outline: none;
+      &:before{
+        content: '';
+        display: block;
+        width: 12px;
+        height: 12px;
+        border: 1px solid @grey35;
+        background-color: @grey05;
+        border-radius: 2px;
+      }
+      &:checked{
+        &:before{
+          border:none;
+          background-color: @blue_light;
+          background-image: url('/img/SGV_icon-check-white.svg');
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: 12px;
+        }
+      }
+    }
   }
 
   .button {

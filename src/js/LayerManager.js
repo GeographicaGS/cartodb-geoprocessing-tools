@@ -32,7 +32,7 @@ App.LayerManager.prototype.createLayer = function(layerdef){
     else{
       layerdef.geolayer.status = App.Cons.LAYER_ERROR;
     }
-    
+
   })
   .fail(function( jqXHR, textStatus, errorThrown){
     layerdef.geolayer.status = App.Cons.LAYER_ERROR;
@@ -40,7 +40,7 @@ App.LayerManager.prototype.createLayer = function(layerdef){
   .always(function(){
     _this.trigger('layerCreated',layerdef);
   });
-  
+
 };
 
 App.LayerManager.prototype._addWork = function(w){
@@ -52,7 +52,7 @@ App.LayerManager.prototype.removeLayer = function(layer){
   //TODO: Use Job API
   var sql = new cartodb.SQL({ user: this.userModel.get('account') });
   var api_key = this.userModel.get('api_key');
-  
+
   // Note cache: false
   sql.execute("DROP TABLE {{layername}}",{layername: layer.geolayer.table_name},{api_key: api_key})
     .error(function(errors) {
@@ -67,9 +67,9 @@ App.LayerManager.prototype.cancelLayer = function(layer){
 };
 
 App.LayerManager.prototype._initializeWorksFromViz = function(){
-  
+
   this._works = _.filter(this.geoVizModel.getSublayers(),function(l){
-    return l.geolayer && 
+    return l.geolayer &&
        [App.Cons.LAYER_RUNNING,App.Cons.LAYER_WAITING].indexOf(l.geolayer.status)!=-1;
   });
 };
@@ -84,12 +84,12 @@ App.LayerManager.prototype._processWorkResponse = function(work,res) {
   if (res.state=='complete'){
     work.options.sql = 'select * from ' + res.table_name;
     work.geolayer.status = App.Cons.LAYER_READY;
-    work.geolayer.table_name =  res.table_name; 
+    work.geolayer.table_name =  res.table_name;
     // REMOVE  work
-    
+
     this.trigger('layerReady',work);
     this._cleanWork(work);
-    
+
   }
   else if (res.state == 'failure'){
     work.geolayer.status = App.Cons.LAYER_ERROR;
@@ -123,25 +123,24 @@ App.LayerManager.prototype._workInspector = function(w){
       data: {
         api_key: _this.userModel.get('api_key')
       }
-    }) 
+    })
     .done(function( res, textStatus, jqXHR ) {
       _this._processWorkResponse(w,res);
     })
     .fail(function( jqXHR, textStatus, errorThrown){
       console.error('Cannot get info from Batch API');
     })
-  },6000);
+  },4000);
 
   return this;
 }
 
 App.LayerManager.prototype.run = function(){
-  
+
   this._initializeWorksFromViz();
   for (var i in this._works){
     this._workInspector(this._works[i]);
   }
   return this;
-  
-}
 
+}

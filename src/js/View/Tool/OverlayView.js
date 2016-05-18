@@ -4,7 +4,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
   _template: _.template( $('#tool-overlay_template').html() ),
 
   initialize: function(options) {
-    
+
     this.model = new Backbone.Model({
       'input': null,
       'overlay': null,
@@ -16,8 +16,6 @@ App.View.Tool.Overlay = Backbone.View.extend({
 
     this.listenTo(this.model,'change',this._updateModelUI);
     this.listenTo(this.model,'change:input',this._renderOverlaySelect);
-
-
   },
 
   events: {
@@ -70,9 +68,9 @@ App.View.Tool.Overlay = Backbone.View.extend({
       }
       else if (input.geometrytype=='ST_MultiPoint' || input.geometrytype=='ST_Point'){
         gtypes = ['polygon','line','point'];
-      }  
+      }
     }
-    else if (this._mergetype == 'sametype'){  
+    else if (this._mergetype == 'sametype'){
       gtypes = [App.Utils.getBaseGeometryType(input.geometrytype)];
     }
     else{
@@ -143,7 +141,6 @@ App.View.Tool.Overlay = Backbone.View.extend({
     for (var i in inputLayers){
       $select.append('<option value="' + inputLayers[i].gid + '">' + inputLayers[i].options.layer_name + '</option>');
     }
-
     // Fill overlay layers combo
     this._renderOverlaySelect();
 
@@ -163,13 +160,6 @@ App.View.Tool.Overlay = Backbone.View.extend({
 
       if (_this._fields.input && _this._fields.overlay){
         // Both layer fetches. Do the merge
-
-        // if (_this._fields['input'].indexOf('cartodb_id')!= -1 && _this._fields['overlay'].indexOf('cartodb_id')!= -1){
-        //   // CartoDB id is at both layers
-        //   // Let's remove it from the overlay.
-        //   var index = _this._fields['overlay'].indexOf('cartodb_id');
-        //   _this._fields['overlay'].splice(index, 1);
-        // }
 
         var common_fields = _.intersection(_this._fields['input'],_this._fields['overlay']);
         var input_fields = _this._fields['input'];
@@ -229,7 +219,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
     return '"<div class="cartodb-popup v2"><a href="#close" class="cartodb-popup-close-button close">x</a> <div class="cartodb-popup-content-wrapper"> <div class="cartodb-popup-content"> {{#content.fields}} {{#title}}<h4>{{title}}</h4>{{/title}} {{#value}} <p {{#type}}class="{{ type }}"{{/type}}>{{{ value }}}</p> {{/value}} {{^value}} <p class="empty">null</p> {{/value}} {{/content.fields}} </div> </div> <div class="cartodb-popup-tip-container"></div> </div>"';
   },
 
-  _getInfoWindowFields: function(sqlFields){
+  _fields2alias: function(sqlFields){
     var fields = [];
     var re = new RegExp("(?!\\w+\\s[as])(?!as)([A-Za-z])\\w+","g");
     var result = re.exec(sqlFields);
@@ -237,8 +227,11 @@ App.View.Tool.Overlay = Backbone.View.extend({
       fields.push(result[0]);
       result = re.exec(sqlFields);
     }
+    return fields;
+  },
 
-    return _.map(fields,function(f,i){
+  _fields2infowindow: function(sqlFields){
+    return _.map(this._fields2alias(sqlFields),function(f,i){
       return {
         name: f,
         position: i+1,
@@ -258,7 +251,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
 
     var ifields = this.model.get('infowindow_fields')
     if (ifields){
-      newLayer.infowindow.fields = this._getInfoWindowFields(ifields);
+      newLayer.infowindow.fields = this._fields2infowindow(ifields);
       newLayer.infowindow.template = this._getInfoWindowTemplate();
     }
 
@@ -317,7 +310,7 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
       //     "SELECT CASE WHEN st_geometrytype(the_geom_webmercator)='ST_GeometryCollection'",
       //       " THEN ST_CollectionExtract(the_geom_webmercator,{{collection_extract}})",
       //       " ELSE the_geom_webmercator",
-      //       " END as the_geom_webmercator", 
+      //       " END as the_geom_webmercator",
       //   "FROM clip",
       //     "WHERE st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' OR ",
       //       "st_geometrytype(the_geom_webmercator)='" + this.model.get('geometrytype') + "'",
@@ -407,7 +400,7 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
 
 App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
 
-  initialize: function(options) { 
+  initialize: function(options) {
     App.View.Tool.Overlay.prototype.initialize.apply(this,[options]);
     _.bindAll(this,'_runUnion');
     this._title = 'Union';
@@ -420,7 +413,7 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
   },
 
   _runUnion: function(queryFields){
-    
+
     var inputlayer = this._geoVizModel.findSublayer(this.model.get('input'));
     var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
 
@@ -463,7 +456,7 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
 
       q = Mustache.render(q.join(' '),{
         cartodb_id: this.getCartoDBID(),
-        input_query: inputlayer.options.sql, 
+        input_query: inputlayer.options.sql,
         overlay_query: overlaylayer.options.sql,
         fields: queryFields
       });
@@ -500,7 +493,7 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
 
       q = Mustache.render(q.join(' '),{
         cartodb_id: this.getCartoDBID(),
-        input_query: inputlayer.options.sql, 
+        input_query: inputlayer.options.sql,
         overlay_query: overlaylayer.options.sql,
         fields: queryFields
       });
@@ -531,7 +524,7 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
 
       q = Mustache.render(q.join(' '),{
         cartodb_id: this.getCartoDBID(),
-        input_query: inputlayer.options.sql, 
+        input_query: inputlayer.options.sql,
         overlay_query: overlaylayer.options.sql,
         fields: queryFields
       });
@@ -541,7 +534,7 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
     }
     else{
       throw new Error('Union: unsupported '+ geometrytype);
-    }    
+    }
 
     this.model.set({
       'infowindow_fields': queryFields,
@@ -549,30 +542,29 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
     });
 
     this.createLayer();
-  },
-
-  getFieldsUnion: function(queryFields,prefix){
-    var fields = queryFields.split(',');
-
-    var r = _.map(fields,function(f){
-      if (f.startsWith(prefix)){
-        return f;
-      }
-      else{
-        // It's an alias.
-        var alias = f.indexOf(' as ')!=-1;
-
-        if (alias){
-          return 'null as ' + f.substring(f.indexOf(' ')).replace(' as ','');
-        }
-        else{
-          return 'null as ' + f.substring(f.indexOf('.') + 1 );
-        }
-      }
-    });
-
-    return r.join(',');
   }
+
+  // getFieldsUnion: function(queryFields,prefix){
+  //   var fields = queryFields.split(',');
+  //
+  //   var r = _.map(fields,function(f){
+  //     if (f.startsWith(prefix)){
+  //       return f;
+  //     }
+  //     else{
+  //       // It's an alias.
+  //       var alias = f.indexOf(' as ')!=-1;
+  //
+  //       if (alias){
+  //         return 'null as ' + f.substring(f.indexOf(' ')).replace(' as ','');
+  //       }
+  //       else{
+  //         return 'null as ' + f.substring(f.indexOf('.') + 1 );
+  //       }
+  //     }
+  //   });
+  //  return r.join(',');
+  //}
 });
 
 App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
@@ -599,16 +591,15 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
 
     var geometrytype = inputlayer.geometrytype,
       gtl = geometrytype.toLowerCase();
-    
+
     if (gtl.indexOf('point') != -1){
       // Point erase. Use subqueries. AVOID CTE (WITH clause) BECAUSE OF PERFORMANCE!!!
       var q = [
           'select {{fields}},a.the_geom from ({{{input_query}}}) a',
             'left join ({{{overlay_query}}}) b on st_intersects(a.the_geom,b.the_geom)',
           'where b.the_geom is null'];
-         
+
       q = Mustache.render(q.join(' '),{
-          cartodb_id: this.getCartoDBID(),
           input_query: inputlayer.options.sql,
           overlay_query: overlaylayer.options.sql,
           fields: queryFields
@@ -619,11 +610,42 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
     }
     else if (gtl.indexOf('line') != -1){
       var q = [
+        "SELECT {{fields}}, ",
+              " CASE WHEN st_geometrytype(the_geom)='ST_GeometryCollection' then ST_CollectionExtract(the_geom,{{collection_extract}})",
+              " ELSE the_geom",
+              " END as the_geom",
+        "FROM (",
+          "SELECT st_multi(ST_Difference(a.the_geom,ST_Union(b.the_geom))) AS the_geom,{{fields}}",
+           "FROM ({{{input_query}}}) a",
+           "INNER JOIN ({{{overlay_query}}}) b ON ST_Intersects(a.the_geom, b.the_geom)",
+           "GROUP BY a.the_geom,{{fields_groupby}}",
+        ") s",
+        "where not st_isempty(the_geom) and st_geometrytype(the_geom)='ST_MultiLineString'",
 
+        "UNION ALL",
+
+        "SELECT st_multi(a.the_geom) as the_geom,{{fields}} FROM ({{{input_query}}}) a",
+          "left join ({{{overlay_query}}}) b  on ST_Intersects(a.the_geom, b.the_geom)",
+          "where b.the_geom is null"
       ];
+
+      var fields_groupby = _.map(queryFields.split(','),function(f){
+        return (f.indexOf(' ')!=-1) ? f : f.split(' ')[0];
+      });
+
+      q = Mustache.render(q.join(' '),{
+          input_query: inputlayer.options.sql,
+          overlay_query: overlaylayer.options.sql,
+          fields: queryFields,
+          fields_groupby: fields_groupby,
+          collection_extract: 2
+      });
+
+      this.model.set('geometrytype','ST_MultiLineString');
     }
     else{
-      throw new Error('Unsupported');
+      alert('Not yet supported');
+      return;
     }
 
     // this.model.set('geometrytype',App.Utils.getPostgisMultiType(inputlayer.geometrytype));

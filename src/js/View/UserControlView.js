@@ -4,7 +4,7 @@ App.View.UserControl = Backbone.View.extend({
   _template: _.template( $('#usercontrol_template').html() ),
 
   events: {
-    'click .save-status' : '_toggleAutoSave'
+    'click .username' : '_toggleAutoSave'
   },
 
   initialize: function(options) {
@@ -29,7 +29,7 @@ App.View.UserControl = Backbone.View.extend({
 
   render: function(){
     this.$el.html(this._template({m: this.model.toJSON(),account: this._account}));
-    this._renderSaveStatus();
+    // this._renderSaveStatus();
 
     return this;
   },

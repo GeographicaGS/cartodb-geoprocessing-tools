@@ -9,19 +9,45 @@
         <img src="/img/SGV_logo-cartodb_login.svg" />
         <h1>CartoDB <span>Geoprocessing Tools</span></h1>
       </div>
-      <p>To get started, insert your CartoDB username and load one of your maps:</p>
-      <input type='text' name='username' placeholder='CartoDB username' autocomplete="off" />
-      <div class="submit">
-        <div class="loadingbar">
-          <div class='loading-ico'>
-            <svg viewBox="-10 -10 220 220">
-              <path d="M200,100 C200,44.771525 155.228475,0 100,0 C44.771525,0 0,44.771525 0,100 C0,155.228475 44.771525,200 100,200 C155.228475,200 200,155.228475 200,100 Z" stroke-dashoffset="0">
-              </path>
-            </svg>
+      <div class="content one">
+        <div class="step one">
+          <p>To get started, insert your CartoDB username:</p>
+          <input type='text' name='username' placeholder='CartoDB username' autocomplete="off" />
+          <div class="submit">
+            <div class="loadingbar">
+              <div class='loading-ico'>
+                <svg viewBox="-10 -10 220 220">
+                  <path d="M200,100 C200,44.771525 155.228475,0 100,0 C44.771525,0 0,44.771525 0,100 C0,155.228475 44.771525,200 100,200 C155.228475,200 200,155.228475 200,100 Z" stroke-dashoffset="0">
+                  </path>
+                </svg>
+              </div>
+            </div>
+            <p class="error" id='invalid_user_text'>Username not found. Try again.</p>
+            <input type='button' class="goNext" value='NEXT' />
           </div>
         </div>
-        <p class="error" id='invalid_user_text'>Username not found. Try again.</p>
-        <input type='submit' value='GO' />
+        <div class="step two">
+          <p class="greetings">
+            <a href="#" class="goPrev"><img src="/img/SGV_arrow-back-white.svg" alt="Back"></a>
+            Hello, <span class="username"></span>
+          </p>
+          <p>Finally, insert your API key:</p>
+          <input type='text' name='apikey' placeholder='Insert here your API Key' autocomplete="off" />
+          <p class="externallink"><a href="#" target="_blank">How to get it?</a> <img src="/img/SGV_icon-linkext-white.svg"></p>
+          <div class="separator"></div>
+          <div class="submit">
+            <div class="loadingbar">
+              <div class='loading-ico'>
+                <svg viewBox="-10 -10 220 220">
+                  <path d="M200,100 C200,44.771525 155.228475,0 100,0 C44.771525,0 0,44.771525 0,100 C0,155.228475 44.771525,200 100,200 C155.228475,200 200,155.228475 200,100 Z" stroke-dashoffset="0">
+                  </path>
+                </svg>
+              </div>
+            </div>
+            <p class="error" id='invalid_user_text'>API Key not valid. Try again.</p>
+            <input type='submit' value='GO' />
+          </div>
+        </div>
       </div>
     </form>
   </div>
