@@ -458,6 +458,11 @@ App.Model.GeoViz = App.Model.Viz.extend({
     return _.filter(this.getSublayers(),function(m){
       return (m.visible && (!m.geolayer || m.geolayer.status == App.Cons.LAYER_READY));
     });
+  },
+
+  setSublayers: function(sublayers){
+    App.Model.Viz.prototype.setSublayers.apply(this,[sublayers]);
+    this._saveAndTrigger();
   }
 
 });

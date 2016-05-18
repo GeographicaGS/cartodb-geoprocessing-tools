@@ -72,7 +72,8 @@ App.View.GroupLayerPanel = Backbone.View.extend({
   },
 
   render: function(){
-    var m = this.model.toJSON();
+    var m = this.model.toJSON(),
+        _this = this;
 
     var layers = _.find(m.layers, function(l){ return l.type=='layergroup'}).options.layer_definition.layers;
     this._layers = [];
@@ -83,6 +84,14 @@ App.View.GroupLayerPanel = Backbone.View.extend({
       this._renderSublayer(l);
     };
 
+    var sortableOpts = {
+      stop: function(event, ui) {
+          _this._refreshLayerOrders();
+      }
+    }
+
+    this.$el.sortable(sortableOpts);
+
     return this;
   },
 
@@ -90,6 +99,18 @@ App.View.GroupLayerPanel = Backbone.View.extend({
     var v = new App.View.GroupLayerPanelLayer({model: new Backbone.Model(l),geoVizModel: this.model});
     this._layers.push(v);
     this.$el.prepend(v.render().$el);
+  },
+
+  _refreshLayerOrders:function(e){
+    var _this = this;
+    var layerList = this.$el.find('li');
+    var subLayers = [];
+    _.each(layerList.toArray().reverse(), function(l) {
+      var gid = $(l).attr('gid');
+      if(gid)
+        subLayers.push(_this.model.findSublayer(gid));
+    });
+    this.model.setSublayers(subLayers);
   }
 
 });
@@ -208,7 +229,9 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
   },
 
   render: function(){
+
     this.$el.html(this._template({m: this.model.toJSON()}));
+    this.$el.attr('gid',this.model.get('gid'));
 
     if (!this.model.get('geolayer')){
       this.$('.remove').addClass('disabled');

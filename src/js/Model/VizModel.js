@@ -25,3 +25,4 @@ App.Model.Viz = Backbone.Model.extend({
   }
 
 });
+
