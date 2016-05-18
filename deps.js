@@ -41,6 +41,7 @@ deps.JS = [
   // Collections
   srcJS + 'Collection/MapCollection.js',
   srcJS + 'Collection/ReportCollection.js',
+  srcJS + 'Collection/BaseMapCollection.js',
 
   // Views
   srcJS + 'View/AccountView.js',
@@ -54,8 +55,8 @@ deps.JS = [
   srcJS + 'View/LayerControlView.js',
   srcJS + 'View/MapToolbarView.js',
   srcJS + 'View/MapView.js',
-
   srcJS + 'View/ReportView.js',
+  srcJS + 'View/BasemapView.js',
 
   // Tool Views
   srcJS + 'View/Tool/StatisticalView.js',
