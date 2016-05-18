@@ -9,8 +9,10 @@ App.View.MapToolbar = Backbone.View.extend({
     if(options.map)
       this._map = options.map;
 
+    if(options.vis)
+      this._vis = options.vis;
+
     this.listenTo(App.events,'tool:close',this._closeTool)
-    // this.layersControl = new App.View.LayerControl();
   },
 
   events: {
@@ -54,28 +56,46 @@ App.View.MapToolbar = Backbone.View.extend({
     else if (type == 'measure'){
       cn = 'Measure';
     }
+    else if (type == 'bookmarks'){
+      cn = 'Bookmarks';
+    }
     else{
       throw new Error('Unsupported tool type: '+ type);
     }
 
     var fn = App.View.Tool[cn];
-    
-    if (this._tool)
+
+    if (this._tool){
       this._tool.close();
+      this.$('.toolholder').get(0).className = "toolholder";
+    }
 
-    this._tool = new fn({
-      geoVizModel: this.model,
-      reportView: cn == 'Statistical' ? this.reportView: null
-    });
+    if(this._currentCn != cn || (cn == 'Measure' && this._tool._type != $li.attr('type'))){
 
-    this.$('.toolholder').html(this._tool.render().$el).show().get(0).className = "toolholder " + type;
-    this.$selectedToolBtn = $(e.currentTarget);
-    this.$selectedToolBtn.addClass('selected');
+      this._tool = new fn({
+        geoVizModel: this.model,
+        reportView: cn == 'Statistical' ? this.reportView: null,
+        parentView: (cn == 'Statistical') ? this: null,
+        map: (cn == 'Measure' || cn=='Bookmarks') ? this._map: null,
+        vis: (cn == 'Measure') ? this._vis: null,
+        type: (cn == 'Measure') ? $li.attr('type'): null
+      });
+
+      this._currentCn = cn;
+
+      this.$('.toolholder').html(this._tool.render().$el).get(0).className = "toolholder shown " + type;
+      this.$selectedToolBtn = $(e.currentTarget);
+      this.$selectedToolBtn.addClass('selected');
+
+    }else{
+      this._currentCn = null;
+    }
   },
 
   _closeTool: function(){
-    this.$('.toolholder').hide();
+    this.$('.toolholder').get(0).className = "toolholder";
     this.$('.buttons .selected').removeClass('selected');
+    this._currentCn = null;
     if (this._tool){
       this._tool.close();
       this._tool = null;

@@ -27,6 +27,8 @@ App.View.Map = Backbone.View.extend({
       this.header.remove();
     if (this.footer)
       this.footer.remove();
+    if (this._baseMapView)
+      this._baseMapView.close();
   },
 
   _onFetchVizModel: function(m){
@@ -87,22 +89,28 @@ App.View.Map = Backbone.View.extend({
       }
     }
 
+    this._geoVizModel.set('title',this._cartoVizModel.get('title'));
+    this.header.updateTitle(this._geoVizModel.get('title'));
+
     if (this._user.get('autosave') && this._user.get('account')==this._geoVizModel.get('account'))
       this._geoVizModel.save();
 
-    this._geoVizModel.calculateSublayersGeometryTypes(this._render);
-    this.map.fitBounds(this._geoVizModel.get('bounds'));
 
+    this._geoVizModel.calculateSublayersGeometryTypes(this._render);
+    this._geoVizModel.createLayerManager();
+
+    this.map.fitBounds(this._geoVizModel.get('bounds'));
+    this._baseMapView = new App.View.BaseMap({'map':this.map, 'geoVizModel':this._geoVizModel, 'base_layer':this.vis.getLayers()[0], 'label_layer':this.vis.getLayers()[this.vis.getLayers().length-1]});
+    this.$('.map-options').html(this._baseMapView.render().el);
   },
 
   _render: function(){
-    if(this._geoVizModel.get('title')){
-      this.header.updateTitle(this._geoVizModel.get('title'));
-    }
+   
     this.toolbar = new App.View.MapToolbar({
       el: this.$('.toolbar'),
       model: this._geoVizModel,
-      map: this.map
+      map: this.map,
+      vis:this.vis
     });
     this.toolbar.render();
     this.$map.addClass('wToolbar');
@@ -122,7 +130,6 @@ App.View.Map = Backbone.View.extend({
     this.$map = this.$('.map');
     this.$map.css('width','100%').css('height', this.$el.parent().height() + "px"); // TODO: parameterize or calculate hardcoded toolbar height value (64px)
 
-
     var url = 'http://alasarr.cartodb.com/api/v2/viz/d1e1bf50-1675-11e6-a016-0e3ff518bd15/viz.json';
     cartodb.createVis('map', url)
       .done(this._onCreatedVIS);
@@ -136,9 +143,12 @@ App.View.Map = Backbone.View.extend({
     this.vis = vis;
 
     // We only use the vis for the CartoDB loading control
-    // for (var i in layers){
-    //   layers[i].hide();
-    // }
+    for (var i in layers){
+      if(i!=0 && i!= layers.length -1)
+        layers[i].remove();
+      else
+        layers[i].setOpacity(0);
+    }
 
     this._cartoVizModel = new App.Model.CartoViz({
       id: this.model.get('viz'),
