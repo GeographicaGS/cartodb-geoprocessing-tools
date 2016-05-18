@@ -16,11 +16,12 @@ deps.JS = [
 
   // Namespace
   srcJS + 'Namespace.js',
-
+  srcJS + 'Cons.js',
   // Namespace
   srcJS + 'Config.js',
 
   srcJS + 'Utils.js',
+  srcJS + 'LayerManager.js',
 
   // Models
   srcJS + 'Model/UserModel.js',
@@ -56,6 +57,8 @@ deps.JS = [
   srcJS + 'View/Tool/BufferView.js',
   srcJS + 'View/Tool/BookmarksView.js',
   srcJS + 'View/Tool/Measure.js',
+
+
 
   // Router
   srcJS + 'Router.js',

@@ -1,6 +1,7 @@
+<%if (!m.geolayer || m.geolayer.status==App.Cons.LAYER_READY) {%>
 <div class="ctrls">
   <img class="drag" src="/img/SGV_drag-drop.svg">
-  <span><%= layer_name %> </span>
+  <span><%= m.options.layer_name %> </span>
   <a href="#" class="subviewcontrol tooltip" data-el="wizard" data-title="Wizard"><img src="/img/SGV_icon-wizard.svg" alt="Wizard"></a>
   <a href="#" class="subviewcontrol tooltip" data-el="cartocss" data-title="CartoCSS"><img src="/img/SGV_icon-cartocss.svg" alt="CartoCSS"></a>
   <a href="#" class="subviewcontrol tooltip" data-el="sql" data-title="SQL"><img src="/img/SGV_icon-sql.svg" alt="SQL"></a>
@@ -9,3 +10,16 @@
   <a href="#" class="remove tooltip" data-title="Remove"><img src="/img/SGV_icon-delete.svg" alt="Remove"></a>
 </div>
 <div class="subviewholder"></div>
+
+<% } else if ([App.Cons.LAYER_WAITING,App.Cons.LAYER_RUNNING].indexOf(m.geolayer.status)!= -1){ %>
+  Loading layer <%= m.options.layer_name %>
+  <a href='#' class='cancel_runing_layer'>Cancel</a>
+<% } else if (m.geolayer.status == App.Cons.LAYER_ERROR) { %>
+  Error: <%= m.options.layer_name %> 
+  <p><%= m.geolayer.error.title %></p>
+  <p><%= m.geolayer.error.what_about %></p>
+  <p><%= m.geolayer.error.sql %></p>
+
+  <a href="#" class="remove tooltip" data-title="Remove">Remove</a>
+
+<% } %>

@@ -103,7 +103,10 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
   initialize: function(options) {
     this._geoVizModel = options.geoVizModel;
     this.listenTo(this.model,'change:visible',this._renderUpdateButton);
+    this.listenTo(this.model,'change:geolayer',this.render);
     this.listenTo(this._geoVizModel,'sublayer:change:cartocss',this._sublayerUpdateCartoCSS);
+    this.listenTo(this._geoVizModel,'sublayer:ready',this._updateSublayer);
+    this.listenTo(this._geoVizModel,'sublayer:failed',this._updateSublayer);
   },
 
   events: {
@@ -121,6 +124,15 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
       this.model.set(l);
     }
   },
+
+  _updateSublayer: function(l){
+    if (l.gid == this.model.get('gid')){
+      // It's me, let's do something!
+      this.model.set('geolayer',l.geolayer);
+      this.model.trigger('change:geolayer');
+    }
+  },
+
   _toggleSubView: function(e){
     e.preventDefault();
 
@@ -196,13 +208,14 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
   },
 
   render: function(){
-    this.$el.html(this._template(this.model.get('options')));
+    this.$el.html(this._template({m: this.model.toJSON()}));
+
+    var geolayer = this.model.get('geolayer');
+
     if (!this.model.get('geolayer')){
       this.$('.remove').addClass('disabled');
       this.$('a[data-el="wizard"]').addClass('disabled');
     }
-
-
 
     this._renderUpdateButton();
     return this;
@@ -383,7 +396,7 @@ App.View.GroupLayerMap = Backbone.View.extend({
 
     this._map = options.map;
     this.listenTo(this.model, "change", this.render);
-    this.listenTo(this.model, "addSublayer", this.render);
+    this.listenTo(this.model, "sublayer:ready", this.render);
   },
 
   onClose: function(){
@@ -415,11 +428,9 @@ App.View.GroupLayerMap = Backbone.View.extend({
     // var vizjson = this.model.clone().toJSON();
     var vizjson = JSON.parse(JSON.stringify(this.model.toJSON())),
       m = new App.Model.GeoViz(vizjson),
-      invisibleLayers = m.getInvisibleLayers();
+      visibleLayers = m.getLayersForDraw();
 
-    // for (var i in invisibleLayers){
-    //   invisibleLayers[i].infowindow = null;
-    // }
+    m.setSublayers(visibleLayers);
 
 
     $('.cartodb-tiles-loader').animate({opacity: 1}, 400);

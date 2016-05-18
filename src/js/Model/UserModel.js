@@ -53,20 +53,8 @@ App.Model.UserLocalStorage = App.Model.User.extend({
       });
     }
 
-    // var autosave = typeof attributes === 'object' ? attributes.autosave : attributes == 'autosave' ? options : null;
-    // if (autosave){
-    //   this._setAutosave(autosave);
-    //   if (attributes === 'object')
-    //     delete attributes.autosave;
-    //   else
-    //     // Cannot call to super
-    //     return this;
-    // }
-    
     Backbone.Model.prototype.set.apply(this, [attributes,options]); 
-
     return this;
-   
   },
 
   createConfigTable: function(cb){

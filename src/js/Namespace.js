@@ -6,3 +6,4 @@ App.View = {};
 App.View.Tool = {};
 App.Collection = {};
 App.Config = {};
+App.Cons = {};

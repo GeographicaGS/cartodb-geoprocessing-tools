@@ -461,7 +461,6 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
               'left join ap a on St_Within(p.pip, a.geom)',
               'left join bp b on St_Within(p.pip, b.geom)'];
 
-
       q = Mustache.render(q.join(' '),{
         cartodb_id: this.getCartoDBID(),
         input_query: inputlayer.options.sql, 
@@ -621,7 +620,9 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
 
     }
     else if (gtl.indexOf('line') != -1){
+      var q = [
 
+      ];
     }
     else{
       throw new Error('Unsupported');

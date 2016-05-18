@@ -2,6 +2,7 @@ App.Model.GeoViz = App.Model.Viz.extend({
   
   constructor: function() {
     this._user = App.getUserModel(); 
+    
     Backbone.Model.apply(this, arguments);
   },
 
@@ -127,6 +128,8 @@ App.Model.GeoViz = App.Model.Viz.extend({
         layers.splice(index, 1);
       }
     }
+
+    this._layerManager.removeLayer(layer);
     // else{
     //   // Layers added from CartoDB editor are not completely removed.  
     //   var layer = this.findSublayer(sublayerid);
@@ -398,23 +401,60 @@ App.Model.GeoViz = App.Model.Viz.extend({
 
   addSublayer:function(layerdef){
     var layers = this.getSublayers();
-    layers.push(layerdef);
+
     delete layerdef.id;
-    layerdef.order = layers.length;
-    layerdef.geolayer = true;
+    layerdef.order = layers.length+1;
     layerdef.gid = this.getUUID();
+    layerdef.geolayer = {
+      status: App.Cons.LAYER_WAITING,
+      time : new Date()
+    };
+    this._layerManager.createLayer(layerdef);
+    layers.push(layerdef);
+
     this.trigger('addSublayer',layerdef);
     this.save();
+
     //this._saveAndTrigger();
-    //this.guessSublayerGeometryType(layerdef.gid);
   },
 
-  // save: function(attributes,options){
-  //   if (!attributes)
-  //     attributes = {};
-    
-  //   attributes['updated_at_ts'] = new Date().getTime();
-  //   Backbone.Model.prototype.save.apply(this, [attributes,options]);
-  // } 
+  onLayerCreated: function(layerdef){
+    this.trigger('sublayer:created',layerdef);
+    this.save();
+  },
+
+  onLayerReady: function(layerdef){
+    this.trigger('sublayer:ready',layerdef);
+    this.save();
+  },
+
+  onLayerFailed: function(layerdef){
+    this.trigger('sublayer:failed',layerdef);
+    this.save();
+  },
+
+  getReadyLayers: function(){
+    return _.filter(this.getSublayers(),function(l){
+      return !l.geolayer || l.geolayer.status == App.Cons.LAYER_READY;
+    });
+  },
+
+  createLayerManager: function(){
+    this._layerManager = new LayerManager({userModel: this._user,geoVizModel: this});
+
+    this.listenTo(this._layerManager,'layerCreated',this.onLayerCreated);
+    this.listenTo(this._layerManager,'layerReady',this.onLayerReady);
+    this.listenTo(this._layerManager,'layerFailed',this.onLayerFailed);
+
+    this._layerManager.run();
+    return this._layerManager;
+
+  },
+
+  getLayersForDraw: function(){
+    return _.filter(this.getSublayers(),function(m){
+      return (m.visible && (!m.geolayer || m.geolayer.status == App.Cons.LAYER_READY));
+    });
+  }
 
 });

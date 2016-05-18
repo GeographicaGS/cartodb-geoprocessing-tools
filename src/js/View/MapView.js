@@ -95,6 +95,7 @@ App.View.Map = Backbone.View.extend({
 
 
     this._geoVizModel.calculateSublayersGeometryTypes(this._render);
+    this._geoVizModel.createLayerManager();
 
     this.map.fitBounds(this._geoVizModel.get('bounds'));
 
