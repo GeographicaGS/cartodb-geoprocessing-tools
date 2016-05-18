@@ -31,7 +31,7 @@ App.Model.Report = Backbone.Model.extend({
       }
   	})
     .error(function(errors) {
-      options.error(errors);
+      options.error({'errors':errors});
     });
   },
 
