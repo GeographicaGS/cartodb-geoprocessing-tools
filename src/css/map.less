@@ -22,7 +22,7 @@
     box-shadow: 0 0 0 4px rgba(100,100,100,.2);
     border-radius: 2px;
 
-    transition: transform .25s;
+    transition: transform .25s ease-out;
     &.translated{
       transform: translateX(350px);
     }
@@ -85,6 +85,17 @@
 
   .leaflet-draw-tooltip-subtext{
     color:@blue_light;
+  }
+
+  .cartodb-logo {
+    bottom: 60px !important;
+    left: 9px !important;
+
+    transition: transform .25s ease-out;
+
+    &.translated{
+      transform: translateX(350px);
+    }
   }
 }
 
@@ -301,7 +312,7 @@
 			left: 18px;
 			z-index: 2;
 
-      transition: transform .25s;
+      transition: transform .25s ease-out;
       &.translated{
         transform: translateX(350px);
       }
@@ -326,6 +337,20 @@
       bottom: 18px;
       left: 18px;
       z-index: 100;
+
+      transition: transform .25s ease-out;
+
+      &.translated{
+        transform: translateX(350px);
+      }
+
+      .option-button {
+        background: @white;
+        color: @grey60;
+        border: 1px solid @blue_lighter;
+        box-shadow: 0 0 0 4px rgba(100,100,100,.2);
+        border-radius: 2px;
+      }
     }
 	}
 

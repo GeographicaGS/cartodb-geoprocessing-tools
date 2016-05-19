@@ -29,7 +29,7 @@ App.View.MapToolbar = Backbone.View.extend({
   },
 
   _openTool: function(e){
-    this.$('.buttons .selected').removeClass('selected');
+    this.$('.buttons .selected:not(#reportBtn):not(#layersBtn)').removeClass('selected');
 
     var $li = $(e.target).closest('li'),
       type = $li.attr('data-tool'),
@@ -79,7 +79,7 @@ App.View.MapToolbar = Backbone.View.extend({
 
   _closeTool: function(){
     this.$('.toolholder').get(0).className = "toolholder";
-    this.$('.buttons .selected').removeClass('selected');
+    this.$('.buttons .selected:not(#reportBtn):not(#layersBtn)').removeClass('selected');
     this._currentCn = null;
     this._removeToolWidget();
   },
@@ -122,6 +122,8 @@ App.View.MapToolbar = Backbone.View.extend({
     $(e.currentTarget).toggleClass('selected');
     $(e.currentTarget).closest('.map_extra_controls').toggleClass('translated');
     $('.cartodb-zoom').toggleClass('translated');
+    $('.cartodb-logo').toggleClass('translated');
+    $('#mapview .map-options').toggleClass('translated');
     $('.left-sidebar').toggleClass('activated');
   },
 
@@ -144,6 +146,8 @@ App.View.MapToolbar = Backbone.View.extend({
       this.$('.map_extra_controls .tooltip').addClass('selected');
       this.$('.map_extra_controls .tooltip').closest('.map_extra_controls').addClass('translated');
       $('.cartodb-zoom').addClass('translated');
+      $('.cartodb-logo').addClass('translated');
+      $('#mapview .map-options').addClass('translated');
       $('.left-sidebar').addClass('activated');
       this._closeTool();
     });
