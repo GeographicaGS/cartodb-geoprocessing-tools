@@ -464,7 +464,7 @@ App.View.GroupLayerMap = Backbone.View.extend({
       m = new App.Model.GeoViz(vizjson),
       visibleLayers = m.getLayersForDraw();
 
-    m.setSublayers(visibleLayers);
+    m.setSublayers(visibleLayers, {silent: true});
 
 
     $('.cartodb-tiles-loader').animate({opacity: 1}, 400);
