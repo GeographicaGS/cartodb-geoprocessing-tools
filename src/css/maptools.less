@@ -1,42 +1,41 @@
 .toolholder {
+  flex-direction: column;
   position:absolute;
   left:10px;
   top:60px;
+  max-height: calc(~'100vh - ' @headerHeight + @mapToolbarHeight + @footerHeight + 16px);
   background-color: @white;
   color: @grey75;
   border: 1px solid @grey20;
+  border-radius: 2px;
   box-shadow: 0 2px 8px 0 fade(@black, 10%);
   display: none;
   z-index: 1080;
 
-  &.clip {
-    transform: translateX(207px);
-    width: 320px;
+  &.shown {
+    display: flex;
   }
 
-  &.statistical {
-    transform: translateX(314px);
-    width: 318px;
+  &.bookmarks {
+    transform: translateX(7px);
+    width: 320px;
+  }
+  &.union {
+    transform: translateX(70px);
+    width: 320px;
+  }
+  &.erase {
+    transform: translateX(116px);
+    width: 320px;
   }
   &.intersection {
     transform: translateX(162px);
     width: 320px;
   }
-
-  &.erase {
-    transform: translateX(116px);
+  &.clip {
+    transform: translateX(207px);
     width: 320px;
   }
-
-
-  &.measure{
-    border: none;
-    background-color: transparent;
-    &:after{
-      display: none;
-    }
-  }
-
   &.buffer {
     transform: translateX(270px);
     width: 320px;
@@ -63,13 +62,33 @@
       }
     }
   }
+  &.statistical {
+    transform: translateX(314px);
+    width: 320px;
+  }
+  &.measure{
+    border: none;
+    background-color: transparent;
+    &:after{
+      display: none;
+    }
+  }
 
   .top_triangle(8px, 8px, 14px, @white, @grey20);
+
+  // Fix
+  & > div {
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+  }
 
   .header {
     display: flex;
     align-items: center;
+    flex: 0 0 auto;
     padding: 8px;
+    border-bottom: 1px solid @grey20;
 
     h3 {
       flex: 1 1 auto;
@@ -84,12 +103,19 @@
   }
 
   .content {
+    overflow-y: auto;
+    flex: 1 1 auto;
+
     ol {
       list-style-position: inside;
 
       li {
         padding: 16px;
-        border-top: 1px solid @grey20;
+        border-bottom: 1px solid @grey20;
+
+        &:last-child {
+          border-bottom: none;
+        }
 
         p.title {
           display: inline-block;
@@ -138,9 +164,9 @@
       outline: none;
     }
 
-    select[name="field"]{
-      width: 242px;
-    }
+    // select[name="field"]{
+      // width: 242px;
+    // }
 
     input[type=text],input[type=number] {
       background-color: @grey05;
@@ -169,6 +195,37 @@
 
     [placeholder]:-ms-input-placeholder {
       .placeholder;
+    }
+
+    .notice {
+      color: @grey50;
+      .font(italic);
+      font-size: 14px;
+    }
+
+    input[name="disolve"]{
+      margin-right: 5px;
+      appearance: none;
+      outline: none;
+      &:before{
+        content: '';
+        display: block;
+        width: 12px;
+        height: 12px;
+        border: 1px solid @grey35;
+        background-color: @grey05;
+        border-radius: 2px;
+      }
+      &:checked{
+        &:before{
+          border:none;
+          background-color: @blue_light;
+          background-image: url('/img/SGV_icon-check-white.svg');
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: 12px;
+        }
+      }
     }
   }
 
@@ -207,24 +264,38 @@
   }
 
   .add, .remove{
-    background-repeat: no-repeat;
-    background-size: 16px;
     display: inline-block;
-    width: 20px;
-    height: 20px;
-    border-radius: 100%;
-    background-position: center;
-    position: relative;
-    top: 7px;
-    left: 20px;
-  }
-  .add{
-    background-image: url('/img/SGV_icon-add.svg');
-    border: 1px solid @blue_light;
+
+    &:empty {
+      margin-left: 15px;
+    }
+    &:after {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      padding: 2px;
+      border-radius: 100%;
+      vertical-align: middle;
+    }
+    &:not(:empty) {
+      margin-left: 8px;
+    }
   }
 
-  .remove{
-    background-image: url('/img/SGV_icon-delete.svg');
+  .add {
+    color: @blue_light;
+
+    &:after{
+      content: url('/img/SGV_icon-add.svg');
+      border: 1px solid @blue_light;
+      margin-left: 8px;
+    }
+  }
+
+  .remove:after{
+    content: url('/img/SGV_icon-delete.svg');
+    padding: 3px;
     background-color: @grey10;
   }
 

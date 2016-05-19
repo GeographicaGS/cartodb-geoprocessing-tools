@@ -18,6 +18,11 @@ App.Model.Viz = Backbone.Model.extend({
 
   getInvisibleLayers: function(){
     return _.where(this.getSublayers(),{visible: false});
+  },
+
+  setSublayers: function(sublayers){
+    _.find(this.get('layers'), function(l){ return l.type=='layergroup'}).options.layer_definition.layers = sublayers;
   }
 
 });
+

@@ -1,0 +1,29 @@
+<a href="#" class="option-button">
+  <div style="background-image: url('<%=thumb%>');" class="thumb"></div>
+
+
+  Change basemap
+</a>
+  
+<div class="base_map_poup">
+  <div class="custom">
+    <%_.each(g_maps,function(g){%>
+      <ul group="<%=g.id%>">
+        <li><%=g.id%></li>
+        <li>
+          <ul>
+            <%_.each(g.maps,function(m){%>
+                <li class="tooltip top" data-title="<%=m.title%>">
+                  <a>
+                    <div class="thumb" style="background-image:url(<%=m.thumb%>)"></div>
+                  </a>
+                </li>
+            <%})%>
+          </ul>
+        </li>
+      </ul>
+    <%})%>
+  </div>
+</div>
+  
+

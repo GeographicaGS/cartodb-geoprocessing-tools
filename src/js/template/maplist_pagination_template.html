@@ -1,0 +1,14 @@
+<li class="pagination">
+  <div>
+    <span>Page <%=currentPage%> of <%=nPages%></span>
+    <% var bloqsize = 5,
+    		init = (currentPage-2 >0 ? currentPage-2:1),
+    		final = (nPages>bloqsize ? (currentPage+1 < bloqsize ? bloqsize:(currentPage+2<=nPages ? currentPage+2:nPages)) : nPages);
+
+    		init -= bloqsize - (final - init + 1);
+
+    for(var i=(init<1 ? 1:init); i<=final; i++){%>
+    	<a class="<%=i==currentPage ? 'selected':''%>" href="#"><%=i%></a>
+    <%}%>
+  </div>
+</li>

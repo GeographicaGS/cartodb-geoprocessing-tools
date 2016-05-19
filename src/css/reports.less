@@ -117,7 +117,10 @@
 			    font-weight: 700;
 			    &.cancel_remove{
 						color:@blue_light;
-						margin-right: 20px;
+						&:after{
+							content: '\00B7';
+							margin: 0 8px 0 10px;
+						}
 			    }
 			    &.confirm_remove{
 						color:@red_main;
@@ -207,6 +210,10 @@
 					background-color: @grey05;
 				}
 			}
+		}
+		.error{
+			margin-top: 20px;
+			color: @red_main;
 		}
 	}
 }

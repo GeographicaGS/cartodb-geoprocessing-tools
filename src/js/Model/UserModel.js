@@ -1,5 +1,5 @@
 App.Model.User = Backbone.Model.extend({
-  
+
   defaults:{
     autosave : 'disabled'
   },
@@ -13,6 +13,25 @@ App.Model.User = Backbone.Model.extend({
       .error(function(errors) {
         cb(false);
       });
+  },
+  checkPermissions: function(account,cb){
+    var current_account = this.get('account');
+    if(!current_account)
+      cb(false);
+    var _this = this;
+    this.checkAccount(current_account, function(st){
+      if(st){
+        if(account === current_account){
+          _this.validateAPIKey(function(st){
+            cb(st);
+          });
+        }else{
+          cb(false);
+        }
+      }else{
+        cb(false);
+      }
+    });
   }
 });
 
@@ -44,7 +63,7 @@ App.Model.UserLocalStorage = App.Model.User.extend({
   set: function(attributes,options){
     var _this = this;
     var account = typeof attributes === 'object' ? attributes.account : attributes == 'account' ? options : null;
-    
+
     if (account){
       var _this = this;
       this.checkAccount(account,function(st){
@@ -53,20 +72,8 @@ App.Model.UserLocalStorage = App.Model.User.extend({
       });
     }
 
-    // var autosave = typeof attributes === 'object' ? attributes.autosave : attributes == 'autosave' ? options : null;
-    // if (autosave){
-    //   this._setAutosave(autosave);
-    //   if (attributes === 'object')
-    //     delete attributes.autosave;
-    //   else
-    //     // Cannot call to super
-    //     return this;
-    // }
-    
-    Backbone.Model.prototype.set.apply(this, [attributes,options]); 
-
+    Backbone.Model.prototype.set.apply(this, [attributes,options]);
     return this;
-   
   },
 
   createConfigTable: function(cb){
@@ -87,10 +94,10 @@ App.Model.UserLocalStorage = App.Model.User.extend({
         if (data && data.rows.length && data.rows[0].n){
           if (cb)
             cb(false);
-          // Table already exits 
+          // Table already exits
           return;
         }
-        
+
         // Let's create the table
         var q = 'CREATE TABLE {{tablename}} (id_viz text, viz json, PRIMARY KEY(id_viz)); GRANT SELECT ON {{tablename}} TO publicuser;';
         sql.execute(q,{tablename: App.Config.Data.CFG_TABLE_NAME},{api_key: api_key,cache: true})
@@ -101,7 +108,7 @@ App.Model.UserLocalStorage = App.Model.User.extend({
           .error(function(errors) {
             console.error('Cannot create config table at CartoDB. ' + errors);
           });
-        
+
       })
       .error(function(errors) {
         console.error('Cannot check if config table exists. ' + errors);

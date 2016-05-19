@@ -3,6 +3,7 @@
 App.View.MapList = Backbone.View.extend({
   _template: _.template( $('#maplist_template').html() ),
   _template_item: _.template( $('#maplist_item_template').html() ),
+  _template_pagination: _.template( $('#maplist_pagination_template').html() ),
   id: 'maplist',
 
   initialize: function(options) {
@@ -17,6 +18,10 @@ App.View.MapList = Backbone.View.extend({
     _.bindAll(this,'_onAccountChecked');
     this.collection = new App.Collection.Map({username: this.model.get('account')});
     this.listenTo(this.collection, 'reset', this.refreshList);
+  },
+
+  events: {
+    'click .pagination a' : '_changePage',
   },
 
   onClose: function(){
@@ -46,6 +51,12 @@ App.View.MapList = Backbone.View.extend({
     // Show a loading whereas check if the account exist
     this.$el.html(App.loading());
 
+    App.getUserModel().checkPermissions(this.model.get('account'), function(status){
+      if(!status){
+        App.resetUserModel();
+        App.router.navigate('login', {trigger: true});
+      }
+    });
     this.model.checkAccount(this.model.get('account'),this._onAccountChecked);
 
     return this;
@@ -61,6 +72,15 @@ App.View.MapList = Backbone.View.extend({
       var item_el = that._template_item({account: account , map: item.toJSON()});
       $maplist_ul.append(item_el);
     });
+    if(this.collection.getNrecords() > this.collection._pageSize)
+      $maplist_ul.append(this._template_pagination({'currentPage':this.collection.getCurrentPage(),'nPages':Math.ceil(this.collection.getNrecords()/this.collection._pageSize)}));
+  },
+
+  _changePage:function(e){
+    e.preventDefault();
+    this.collection.setCurrentPage(parseInt($(e.currentTarget).text()));
+    this.$('.maplist ul').html(App.loading())
+    this.collection.fetch({reset: true});
   }
 
 });

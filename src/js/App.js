@@ -174,7 +174,7 @@ App.nbf = function (n){
 }
 
 App.loading = function(){
-  return '<div class="loading"></div>';
+  return '<div class="loading-ico"><svg viewBox="-10 -10 220 220"><path d="M200,100 C200,44.771525 155.228475,0 100,0 C44.771525,0 0,44.771525 0,100 C0,155.228475 44.771525,200 100,200 C155.228475,200 200,155.228475 200,100 Z" stroke-dashoffset="0"></path></svg></div>';
 }
 
 App.ini = function(){
@@ -184,9 +184,12 @@ App.ini = function(){
 
   var _this = this;
   this._userModel = new App.Model.UserLocalStorage();
+
   this._userModel.fetch({
     'success' : function(a,b){
+
       _this._userModel.validateAndCreate(function(){
+
         Backbone.history.start({pushState: true});
       });
     }
@@ -213,5 +216,6 @@ App.getUserModel = function(){
 
 App.resetUserModel = function(){
   this._userModel.destroy();
+  localStorage.clear();
   this._userModel = new App.Model.UserLocalStorage();
 }

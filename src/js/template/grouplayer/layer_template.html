@@ -1,6 +1,7 @@
+<%if (!m.geolayer || m.geolayer.status==App.Cons.LAYER_READY) {%>
 <div class="ctrls">
   <img class="drag" src="/img/SGV_drag-drop.svg">
-  <span><%= layer_name %> </span>
+  <span><%= m.options.layer_name %> </span>
   <a href="#" class="subviewcontrol tooltip" data-el="wizard" data-title="Wizard"><img src="/img/SGV_icon-wizard.svg" alt="Wizard"></a>
   <a href="#" class="subviewcontrol tooltip" data-el="cartocss" data-title="CartoCSS"><img src="/img/SGV_icon-cartocss.svg" alt="CartoCSS"></a>
   <a href="#" class="subviewcontrol tooltip" data-el="sql" data-title="SQL"><img src="/img/SGV_icon-sql.svg" alt="SQL"></a>
@@ -9,3 +10,31 @@
   <a href="#" class="remove tooltip" data-title="Remove"><img src="/img/SGV_icon-delete.svg" alt="Remove"></a>
 </div>
 <div class="subviewholder"></div>
+
+<% } else if ([App.Cons.LAYER_WAITING,App.Cons.LAYER_RUNNING].indexOf(m.geolayer.status)!= -1){ %>
+  <div class="ctrls running">
+    <div class="loadingbar">
+      <div class='loading-ico'>
+        <svg viewBox="-10 -10 220 220">
+          <path d="M200,100 C200,44.771525 155.228475,0 100,0 C44.771525,0 0,44.771525 0,100 C0,155.228475 44.771525,200 100,200 C155.228475,200 200,155.228475 200,100 Z" stroke-dashoffset="0">
+          </path>
+        </svg>
+      </div>
+    </div>
+    <span>Processing layer <%= m.options.layer_name %>...</span>
+    <a href='#' class='remove'>Cancel</a>
+  </div>
+<% } else if (m.geolayer.status == App.Cons.LAYER_ERROR) { %>
+  <div class="ctrls error">
+    <img src="/img/SGV_icon_error.svg">
+    <span><strong>Error:</strong> <%= m.options.layer_name %></span>
+    <a href="#" class="moreinfo">More info</a>&nbsp;·&nbsp;
+    <a href="#" class="forceremove">Ok</a>
+  </div>
+  <div class="subviewholder">
+    <p class="title"><%= m.geolayer.error.title %></p>
+    <p class="explanation"><%= m.geolayer.error.what_about %></p>
+    <pre><%= m.geolayer.error.sql %></pre>
+  </div>
+
+<% } %>
