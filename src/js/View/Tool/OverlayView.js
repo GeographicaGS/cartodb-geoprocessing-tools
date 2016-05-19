@@ -263,6 +263,12 @@ App.View.Tool.Overlay = Backbone.View.extend({
       console.log(  newLayer.options.sql );
     }
     App.events.trigger('tool:close');
+  },
+
+  queryFields2GroupBy: function(queryFields){
+    return _.map(queryFields.split(','),function(f){
+      return (f.indexOf(' ')!=-1) ? f : f.split(' ')[0];
+    });
   }
 
 });
@@ -284,66 +290,28 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
     var inputlayer = this._geoVizModel.findSublayer(this.model.get('input'));
     var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
 
-    this.model.set('geometrytype',App.Utils.getPostgisMultiType(inputlayer.geometrytype));
+    var geometrytype = App.Utils.getPostgisMultiType(inputlayer.geometrytype);
+    this.model.set('geometrytype',geometrytype);
 
     var q = [
-      " WITH a as ({{{input_query}}}), b as ({{{overlay_query}}}),",
-      "bu as (",
-        "select st_union(the_geom_webmercator) as the_geom_webmercator from b",
-      "),",
-      " r as (",
-        "SELECT distinct {{fields}},",
-        "st_multi(st_intersection(a.the_geom_webmercator,bu.the_geom_webmercator)) as the_geom_webmercator",
-        " FROM a,bu ",
-        " WHERE st_intersects(a.the_geom_webmercator,bu.the_geom_webmercator)",
-      ") ",
-      " select {{cartodb_id}},{{fields2}},",
-        " CASE WHEN st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' then ST_CollectionExtract(the_geom_webmercator,{{collection_extract}})",
-        " ELSE the_geom_webmercator",
-        " END as the_geom_webmercator",
-      "from r where ",
-        "not ST_IsEmpty(the_geom_webmercator) AND (st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' OR ",
-        "st_geometrytype(the_geom_webmercator)='" + this.model.get('geometrytype') + "')"];
-
-   // var q = [
-      // "WITH a as ({{{input_query}}}), b as ({{{overlay_query}}}),",
-      // "clip as ( ",
-      //   "SELECT distinct st_multi(st_intersection(a.the_geom_webmercator,b.the_geom_webmercator)) as the_geom_webmercator",
-      //   "FROM a,b",
-      //   "WHERE a.the_geom_webmercator && b.the_geom_webmercator AND st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)",
-      // "),",
-      // "clean_clip as (",
-      //     "SELECT CASE WHEN st_geometrytype(the_geom_webmercator)='ST_GeometryCollection'",
-      //       " THEN ST_CollectionExtract(the_geom_webmercator,{{collection_extract}})",
-      //       " ELSE the_geom_webmercator",
-      //       " END as the_geom_webmercator",
-      //   "FROM clip",
-      //     "WHERE st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' OR ",
-      //       "st_geometrytype(the_geom_webmercator)='" + this.model.get('geometrytype') + "'",
-      // "),",
-      // "clip_union as (",
-      //   "select st_union(the_geom_webmercator) as the_geom_webmercator from clean_clip",
-      // ")",
-      // "select ROW_NUMBER() OVER () AS cartodb_id, {{fields}},c.the_geom_webmercator",
-      // "from clip_union c",
-      // "left join a ON st_within(st_pointonsurface(a.the_geom_webmercator),c.the_geom_webmercator)"];
-
-    var fields2 = this.fieldsRemoveTablePrefix(queryFields);
+      "SELECT (ST_Multi(ST_CollectionExtract(ST_Intersection(a.the_geom,ST_Union(b.the_geom)),{{{geomtype_constant}}}))) AS the_geom,{{{fields}}}",
+        "FROM ({{{input_query}}}) a",
+        "INNER JOIN ({{{overlay_query}}}) b ON ST_Intersects(a.the_geom,b.the_geom)",
+        "GROUP BY a.the_geom,{{{fields_groupby}}}" ];
 
     q = Mustache.render(q.join(' '),{
-          cartodb_id: this.getCartoDBID(),
-          input_query: inputlayer.options.sql,
-          overlay_query: overlaylayer.options.sql,
-          fields: queryFields,
-          fields2: fields2,
-          collection_extract: App.Utils.getConstantGeometryType(this.model.get('geometrytype'))
-        });
+        input_query: inputlayer.options.sql,
+        overlay_query: overlaylayer.options.sql,
+        fields: queryFields,
+        fields_groupby: this.queryFields2GroupBy(queryFields),
+        geomtype_constant: App.Utils.getConstantGeometryType(geometrytype),
+        geometrytype: geometrytype
+    });
 
     this.model.set({
       'sql':q,
-      'infowindow_fields': fields2,
+      'infowindow_fields': queryFields,
     });
-
 
     this.createLayer();
 
@@ -639,21 +607,14 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
           "where b.the_geom is null"
       ];
 
-      var fields_groupby = _.map(queryFields.split(','),function(f){
-        return (f.indexOf(' ')!=-1) ? f : f.split(' ')[0];
-      });
-
       q = Mustache.render(q.join(' '),{
           input_query: inputlayer.options.sql,
           overlay_query: overlaylayer.options.sql,
           fields: queryFields,
-          fields_groupby: fields_groupby,
+          fields_groupby: this.queryFields2GroupBy(queryFields),
           geomtype_constant: App.Utils.getConstantGeometryType(geometrytype),
           geometrytype: geometrytype
       });
-
-
-
 
     }
 
