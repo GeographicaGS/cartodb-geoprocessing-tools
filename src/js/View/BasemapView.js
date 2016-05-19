@@ -29,7 +29,7 @@ App.View.BaseMap = Backbone.View.extend({
 
   events: {
   	'click .option-button' : '_toggleBaseMaps',
-    'click .base_map_poup .thumb' : '_changeBaseMap'
+    'click .base_map_popup .thumb' : '_changeBaseMap'
   },
 
 	onClose: function(){
@@ -37,7 +37,7 @@ App.View.BaseMap = Backbone.View.extend({
   },
 
   _toggleBaseMaps:function(){
-  	this.$('.base_map_poup').toggleClass('activated');
+  	this.$('.base_map_popup').toggleClass('activated');
   },
 
   _changeBaseMap:function(e){
@@ -63,7 +63,7 @@ App.View.BaseMap = Backbone.View.extend({
 		this.currentThumb = map.thumb;
     this.render();
   },
-  
+
 
   render: function(options){
   	this.$el.html(this._template({'g_maps':this._baseMapCollection.toJSON(), 'thumb':this.currentThumb}));

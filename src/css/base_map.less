@@ -27,12 +27,12 @@
 			background-color: transparent;
 			background-position: 50% 50%;
 			box-shadow: 0 0 1px rgba(0,0,0,0.9);
-			background-position: 50% 50%; 
-			background-size: 34px 34px; 
+			background-position: 50% 50%;
+			background-size: 34px 34px;
 			background-color: rgb(0, 0, 0);
 		}
 	}
-	.base_map_poup{
+	.base_map_popup{
 		position: absolute;
     bottom: 50px;
 		border: 1px solid @grey20;
@@ -44,9 +44,9 @@
 		visibility: hidden;
 		transform:translateY(45px);
 		opacity: 0;
+		transition: transform .25s ease-out, visibility .25s linear, opacity .25s ease-out;
 
 		&.activated{
-			transition: all .25s;
 			visibility: visible;
 			transform:translateY(0);
 			opacity: 1;

@@ -66,11 +66,26 @@ App.View.MapToolbar = Backbone.View.extend({
     var fn = App.View.Tool[cn];
 
     if (this._tool){
-      this._tool.close();
-      this.$('.toolholder').get(0).className = "toolholder";
+      this._removeToolWidget();
+      var _this = this;
+      setTimeout(function () {
+        _this._createToolWidget(fn, cn, type, e.currentTarget);
+      }, 500);
+    }else{
+      this._createToolWidget(fn, cn, type, e.currentTarget);
     }
 
-    if(this._currentCn != cn || (cn == 'Measure' && this._tool._type != $li.attr('type'))){
+  },
+
+  _closeTool: function(){
+    this.$('.toolholder').get(0).className = "toolholder";
+    this.$('.buttons .selected').removeClass('selected');
+    this._currentCn = null;
+    this._removeToolWidget();
+  },
+
+  _createToolWidget: function(fn, cn, type, button){
+    if(this._currentCn != cn || (cn == 'Measure' && this._tool && this._type != $(button).attr('type'))){
 
       this._tool = new fn({
         geoVizModel: this.model,
@@ -78,28 +93,29 @@ App.View.MapToolbar = Backbone.View.extend({
         parentView: (cn == 'Statistical') ? this: null,
         map: (cn == 'Measure' || cn=='Bookmarks') ? this._map: null,
         vis: (cn == 'Measure') ? this._vis: null,
-        type: (cn == 'Measure') ? $li.attr('type'): null
+        type: (cn == 'Measure') ? $(button).attr('type'): null
       });
 
       this._currentCn = cn;
 
       this.$('.toolholder').html(this._tool.render().$el).get(0).className = "toolholder shown " + type;
-      this.$selectedToolBtn = $(e.currentTarget);
-      this.$selectedToolBtn.addClass('selected');
 
+      this.$selectedToolBtn = $(button);
+      this.$selectedToolBtn.addClass('selected');
     }else{
       this._currentCn = null;
     }
   },
 
-  _closeTool: function(){
-    this.$('.toolholder').get(0).className = "toolholder";
-    this.$('.buttons .selected').removeClass('selected');
-    this._currentCn = null;
-    if (this._tool){
-      this._tool.close();
-      this._tool = null;
-    }
+  _removeToolWidget: function(){
+    var _this = this;
+    this._tool.$el.parent().get(0).className = "toolholder";
+    setTimeout(function () {
+      if (_this._tool){
+        _this._tool.close();
+        _this._tool = null;
+      }
+    }, 250);
   },
 
   _openReportList:function(e){

@@ -43,6 +43,7 @@ header {
 			flex: 1 1 100%;
 			padding: 0 10px;
       cursor: pointer;
+      .noselect;
 
       img {
         vertical-align: middle;
@@ -94,9 +95,16 @@ header {
       color: @blue_light;
       .top_triangle(calc(~'100% - 100px'), 8px, 14px, @white, @grey20);
       z-index: 300;
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0px);
+
+      transition: visibility .25s linear, opacity .25s ease-out, transform .25s ease-out;
 
       &:empty {
-        display: none;
+        visibility: hidden;
+        opacity: .00001;
+        transform: translateY(-10px);
       }
 
       .header {
