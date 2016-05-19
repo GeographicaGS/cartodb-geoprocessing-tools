@@ -1,15 +1,15 @@
 App.Model.GeoViz = App.Model.Viz.extend({
-  
+
   constructor: function() {
-    this._user = App.getUserModel(); 
-    
+    this._user = App.getUserModel();
+
     Backbone.Model.apply(this, arguments);
   },
 
   url: function(){
     return App.Config.viz_api_url(this.get('account'),this.get('id'));
   },
-  
+
   sync: function(method, model, options){
     var q,sql,
         tablename = App.Config.Data.CFG_TABLE_NAME,
@@ -36,13 +36,13 @@ App.Model.GeoViz = App.Model.Viz.extend({
               })
               .error(function(errors) {
                 options.error(errors);
-                
+
               });
           }
           else{
-            options.success({});  
+            options.success({});
           }
-          
+
         })
         .error(function(errors) {
           options.error(errors);
@@ -90,7 +90,7 @@ App.Model.GeoViz = App.Model.Viz.extend({
               .error(function(errors) {
                 options.error(errors);
               });
-          
+
         })
         .error(function(errors) {
           options.error(errors);
@@ -120,7 +120,7 @@ App.Model.GeoViz = App.Model.Viz.extend({
     var layer = this.findSublayer(sublayerid);
 
     if (layer.geolayer){
-      // Layers added from the geoprocessing tools are completely removed. 
+      // Layers added from the geoprocessing tools are completely removed.
       var layers = this.getSublayers();
       var index = this.findSublayerIdx(sublayerid);
 
@@ -131,7 +131,7 @@ App.Model.GeoViz = App.Model.Viz.extend({
 
     this._layerManager.removeLayer(layer);
     // else{
-    //   // Layers added from CartoDB editor are not completely removed.  
+    //   // Layers added from CartoDB editor are not completely removed.
     //   var layer = this.findSublayer(sublayerid);
     //   layer.remove = true;
     //   layer.visible = false;
@@ -151,10 +151,10 @@ App.Model.GeoViz = App.Model.Viz.extend({
   getSublayersByGeometryType: function(geomtypeshort){
 
     var l = _.filter(this.getSublayers(), function(l){
-      
+
       if (typeof geomtypeshort == 'string')
         geomtypeshort = [geomtypeshort];
-      
+
       for (var i in geomtypeshort){
         if (l.geometrytype && l.geometrytype.toLowerCase().indexOf(geomtypeshort[i])!=-1)
           return true;
@@ -218,7 +218,7 @@ App.Model.GeoViz = App.Model.Viz.extend({
   //     .done(function(data) {
   //       if (data && data.rows && data.rows.length)
   //         cb(data.rows[0].geometrytype,l);
-  //       else 
+  //       else
   //         cb(null,l);
   //     })
   //     .error(function(errors) {
@@ -232,6 +232,9 @@ App.Model.GeoViz = App.Model.Viz.extend({
     var l = this.findSublayer(id);
     if (!l)
       return cb(null);
+
+    if (l.geolayer && l.geometrytype)
+      return cb(l.geometrytype,l);
 
     var q = "WITH q as ({{{sql}}})"
         + "select st_geometrytype(the_geom_webmercator) as geometrytype from q group by geometrytype";
@@ -258,7 +261,7 @@ App.Model.GeoViz = App.Model.Viz.extend({
 
 
   // guessSublayerGeometryType: function(id,cb){
-    
+
   //   var _this = this;
 
   //   this.getSublayerGeometryType(id,function(geometrytype,l,err){
@@ -295,7 +298,7 @@ App.Model.GeoViz = App.Model.Viz.extend({
   //   this._guessSublayersGeometryTypesSerial(ids,0,function(){
   //     _this.save();
   //   });
-    
+
   // },
 
   calculateSublayersGeometryTypes: function(cb){
@@ -311,7 +314,7 @@ App.Model.GeoViz = App.Model.Viz.extend({
           cb();
       });
     }
-    
+
   },
 
   getSublayersFields: function(sublayerid,cb){
@@ -460,9 +463,12 @@ App.Model.GeoViz = App.Model.Viz.extend({
     });
   },
 
-  setSublayers: function(sublayers){
+  setSublayers: function(sublayers, options){
+    var options = options || {};
     App.Model.Viz.prototype.setSublayers.apply(this,[sublayers]);
-    this._saveAndTrigger();
+    if(!options.silent){
+      this._saveAndTrigger();
+    }
   }
 
 });

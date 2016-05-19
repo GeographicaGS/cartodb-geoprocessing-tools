@@ -16,7 +16,7 @@ App.View.GroupLayer = Backbone.View.extend({
   },
 
   render: function(){
-    
+
     this.$el.html(this._template());
 
     this.$panel = this.$('.panel');
@@ -133,7 +133,9 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
   events: {
     'click a.subviewcontrol': '_toggleSubView',
     'click a.toggle': '_toggle',
-    'click a.remove': '_remove'
+    'click a.remove': '_ask_remove',
+    'click a.forceremove': '_remove',
+    'click a.moreinfo': '_toggleMoreInfo'
   },
 
   onClose: function(){
@@ -194,6 +196,11 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
     return this;
   },
 
+  _toggleMoreInfo: function(e){
+    e.preventDefault();
+    this.$('.subviewholder').toggleClass('shown');
+  },
+
   _renderUpdateButton: function(){
     var $el = this.$('.toggle');
 
@@ -218,14 +225,20 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
 
   },
 
-  _remove: function(e){
+  _ask_remove: function(e){
     e.preventDefault();
     if (!this.model.get('geolayer')) return;
 
     if(confirm('Are you sure?')){
-      this._geoVizModel.removeSublayer(this.model.get('gid'));
-      this.close();
+      this._remove(e);
     }
+  },
+
+  _remove: function(e){
+    e.preventDefault();
+    if (!this.model.get('geolayer')) return;
+    this._geoVizModel.removeSublayer(this.model.get('gid'));
+    this.close();
   },
 
   render: function(){
@@ -256,9 +269,9 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
     this.cartocssModel = App.Model.Wizard.getModelInstance(this.model.get('geometrytype'));
 
     this.cartocssModel.loadCartoCSS(this.model.get('options').cartocss);
-    
+
     this.listenTo(this.cartocssModel,'change',this._onChangeCartoCSSField);
-    
+
 
   },
 
@@ -303,7 +316,7 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
   },
 
   render: function(){
-    
+
     this.$el.html(this._template({
       m: this.model.toJSON(),
       comp_ops: ['multiply','screen','overlay','darken'],
@@ -311,7 +324,7 @@ App.View.GroupLayerPanelLayerWizard = Backbone.View.extend({
     }));
 
     this._geoVizModel.getSublayersFields(this.model.get('gid'),this._onLayerFields);
-    
+
 
     return this;
   }
@@ -344,14 +357,14 @@ App.View.GroupLayerPanelLayerCartoCSS = Backbone.View.extend({
 
     this._clipboard = new Clipboard('.button.copy');
     this._clipboard.on('success', this._showClipTooltip);
-    
+
     return this;
   },
 
   _showClipTooltip: function(e){
     var $btn = this.$('.button.copy');
     $btn.addClass('tooltip');
-    
+
     setTimeout(function(){
       $btn.removeClass('tooltip');
     },1000);
@@ -361,7 +374,7 @@ App.View.GroupLayerPanelLayerCartoCSS = Backbone.View.extend({
 
   _update: function(e){
     e.preventDefault();
-    
+
     if (!this.model.get('geolayer'))
       return;
 
@@ -389,7 +402,7 @@ App.View.GroupLayerPanelLayerSQL = Backbone.View.extend({
   _showClipTooltip: function(e){
     var $btn = this.$('.button.copy');
     $btn.addClass('tooltip');
-    
+
     setTimeout(function(){
       $btn.removeClass('tooltip');
     },1000);
@@ -451,7 +464,7 @@ App.View.GroupLayerMap = Backbone.View.extend({
       m = new App.Model.GeoViz(vizjson),
       visibleLayers = m.getLayersForDraw();
 
-    m.setSublayers(visibleLayers);
+    m.setSublayers(visibleLayers, {silent: true});
 
 
     $('.cartodb-tiles-loader').animate({opacity: 1}, 400);
