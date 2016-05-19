@@ -339,16 +339,13 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
           collection_extract: App.Utils.getConstantGeometryType(this.model.get('geometrytype'))
         });
 
-    if (App.Config.Data.DEBUG)
-      console.log(q);
-
     this.model.set({
       'sql':q,
       'infowindow_fields': fields2,
     });
 
-    if (!App.Config.Data.DEBUG)
-      this.createLayer();
+
+    this.createLayer();
 
   }
 
@@ -623,7 +620,7 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
       this.model.set('geometrytype',geometrytype);
 
       var q = [
-        "SELECT {{fields}}, ",
+        "SELECT distinct {{fields}}, ",
               " CASE WHEN st_geometrytype(the_geom)='ST_GeometryCollection' then ST_CollectionExtract(the_geom,{{geomtype_constant}})",
               " ELSE the_geom",
               " END as the_geom",
@@ -632,12 +629,12 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
            "FROM ({{{input_query}}}) a",
            "INNER JOIN ({{{overlay_query}}}) b ON ST_Intersects(a.the_geom, b.the_geom)",
            "GROUP BY a.the_geom,{{fields_groupby}}",
-        ") s",
-        "where not st_isempty(the_geom) and st_geometrytype(the_geom)='{{geomtype}}'",
+        ") a",
+        "where not st_isempty(the_geom) and st_geometrytype(the_geom)='{{geometrytype}}'",
 
         "UNION ALL",
 
-        "SELECT st_multi(a.the_geom) as the_geom,{{fields}} FROM ({{{input_query}}}) a",
+        "SELECT distinct {{fields}},st_multi(a.the_geom) as the_geom FROM ({{{input_query}}}) a",
           "left join ({{{overlay_query}}}) b  on ST_Intersects(a.the_geom, b.the_geom)",
           "where b.the_geom is null"
       ];
