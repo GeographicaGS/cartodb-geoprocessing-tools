@@ -3,7 +3,7 @@
 App.Collection.Map = Backbone.Collection.extend({
   _username: null,
   _nrecords : null,
-  _pageSize : 10,
+  _pageSize : 10000,
   _page: 1,
 
   initialize: function(options) {
