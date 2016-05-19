@@ -1,9 +1,9 @@
 App.Model.Report = Backbone.Model.extend({
-  
+
   // url: function(){
   //   return App.Config.viz_api_url(this.get('account'),this.get('id'));
   // },
-  
+
   sync: function(method, model, options){
 
   	var sql = new cartodb.SQL({ user: this.get('account') });
@@ -20,7 +20,7 @@ App.Model.Report = Backbone.Model.extend({
 
     if(this.get('geom'))
       q += ' WHERE the_geom && ST_MakeEnvelope(' + this.get('geom')._southWest.lng + ', ' + this.get('geom')._southWest.lat + ',' + this.get('geom')._northEast.lng + ',' + this.get('geom')._northEast.lat + ',4326)'
-    
+
 
   	sql.execute(q,{cache:false}).done(function(data) {
   		if (data && data.rows.length && data.rows[0]) {
@@ -30,10 +30,10 @@ App.Model.Report = Backbone.Model.extend({
         options.success({});
       }
   	})
-    .error(function(errors) {
+    .error(function(errors, xhr) {
+      App.onAjaxError(xhr.status);
       options.error({'errors':errors});
     });
   },
 
 });
-

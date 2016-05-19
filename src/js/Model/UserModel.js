@@ -146,7 +146,9 @@ App.Model.UserLocalStorage = App.Model.User.extend({
         if (st)
           _this.createConfigTable(function(){
             cb(_this);
-          })
+          });
+        else
+          cb(false);
       });
     }
     else{
