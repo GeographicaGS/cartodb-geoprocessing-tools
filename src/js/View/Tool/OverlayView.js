@@ -218,7 +218,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
   },
 
   _getInfoWindowTemplate: function(){
-    return '"<div class="cartodb-popup v2"><a href="#close" class="cartodb-popup-close-button close">x</a> <div class="cartodb-popup-content-wrapper"> <div class="cartodb-popup-content"> {{#content.fields}} {{#title}}<h4>{{title}}</h4>{{/title}} {{#value}} <p {{#type}}class="{{ type }}"{{/type}}>{{{ value }}}</p> {{/value}} {{^value}} <p class="empty">null</p> {{/value}} {{/content.fields}} </div> </div> <div class="cartodb-popup-tip-container"></div> </div>"';
+    return '<div class="cartodb-popup v2"><a href="#close" class="cartodb-popup-close-button close">x</a> <div class="cartodb-popup-content-wrapper"> <div class="cartodb-popup-content"> {{#content.fields}} {{#title}}<h4>{{title}}</h4>{{/title}} {{#value}} <p {{#type}}class="{{ type }}"{{/type}}>{{{ value }}}</p> {{/value}} {{^value}} <p class="empty">null</p> {{/value}} {{/content.fields}} </div> </div> <div class="cartodb-popup-tip-container"></div> </div>';
   },
 
   _fields2alias: function(sqlFields){
@@ -341,8 +341,8 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
 
     var q = ["SELECT {{{fields2}}}, ",
         " CASE WHEN st_geometrytype(the_geom)='ST_GeometryCollection' then ST_CollectionExtract(the_geom,{{geomtype_constant}})",
-        " ELSE the_geom_webmercator",
-        " END as the_geom_webmercator",
+        " ELSE the_geom",
+        " END as the_geom",
       "FROM (",
         "SELECT distinct {{{fields}}},",
           "st_multi(st_intersection(a.the_geom,b.the_geom)) as the_geom",
