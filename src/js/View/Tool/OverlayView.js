@@ -337,34 +337,32 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
     var inputlayer = this._geoVizModel.findSublayer(this.model.get('input'));
     var overlaylayer = this._geoVizModel.findSublayer(this.model.get('overlay'));
 
-    this.model.set('geometrytype',App.Utils.getPostgisMultiType(inputlayer.geometrytype));
+    var geometrytype = App.Utils.getPostgisMultiType(inputlayer.geometrytype);
 
-    var q = [
-      " WITH a as ({{{input_query}}}), b as ({{{overlay_query}}}),",
-      " r as (",
-        "SELECT distinct {{cartodb_id}},{{fields}},",
-        "st_multi(st_intersection(a.the_geom_webmercator,b.the_geom_webmercator)) as the_geom_webmercator",
-        " FROM a,b ",
-        " WHERE st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)",
-      ") ",
-      " select {{cartodb_id}},{{fields2}},",
-        " CASE WHEN st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' then ST_CollectionExtract(the_geom_webmercator,{{collection_extract}})",
+    var q = ["SELECT {{{fields2}}}, ",
+        " CASE WHEN st_geometrytype(the_geom)='ST_GeometryCollection' then ST_CollectionExtract(the_geom,{{geomtype_constant}})",
         " ELSE the_geom_webmercator",
         " END as the_geom_webmercator",
-      "from r where ",
-        "not ST_IsEmpty(the_geom_webmercator) AND (st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' OR ",
-        "st_geometrytype(the_geom_webmercator)='" + this.model.get('geometrytype') + "')"];
+      "FROM (",
+        "SELECT distinct {{{fields}}},",
+          "st_multi(st_intersection(a.the_geom,b.the_geom)) as the_geom",
+          " FROM ({{{input_query}}}) as a",
+          " INNER JOIN ({{{overlay_query}}}) as b ON st_intersects(a.the_geom,b.the_geom)",
+        ") as a",
+       "WHERE not ST_IsEmpty(the_geom) AND (st_geometrytype(the_geom)='ST_GeometryCollection' OR ",
+               "st_geometrytype(the_geom)='{{geometrytype}}')"];
 
     q = Mustache.render(q.join(' '),{
-          cartodb_id: this.getCartoDBID(),
-          input_query: inputlayer.options.sql,
-          overlay_query: overlaylayer.options.sql,
-          fields: queryFields,
-          fields2: this.fieldsRemoveTablePrefix(queryFields),
-          collection_extract: App.Utils.getConstantGeometryType(this.model.get('geometrytype'))
-        });
+      input_query: inputlayer.options.sql,
+      overlay_query: overlaylayer.options.sql,
+      fields: queryFields,
+      fields2: this.fieldsRemoveTablePrefix(queryFields),
+      geomtype_constant: App.Utils.getConstantGeometryType(geometrytype),
+      geometrytype: geometrytype
+    });
 
     this.model.set({
+      'geometrytype' : geometrytype,
       'infowindow_fields': queryFields,
       'sql' : q
     });
