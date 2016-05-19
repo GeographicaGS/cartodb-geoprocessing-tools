@@ -29,12 +29,15 @@ App.View.GroupLayer = Backbone.View.extend({
     this._mapView.render();
     this._counterView.render();
 
+    this.listenTo(this._panelView, 'GroupLayer:forceOpen', function(){this.togglePanel(true);});
+
     return this;
   },
 
-  togglePanel: function() {
-    this.$panel.toggleClass('show');
-    this.$togglePanelBtn.toggleClass('selected');
+  togglePanel: function(force) {
+    var force = force || false;
+    this.$panel.toggleClass('show', force);
+    this.$togglePanelBtn.toggleClass('selected', force);
   }
 
 });
@@ -99,6 +102,7 @@ App.View.GroupLayerPanel = Backbone.View.extend({
     var v = new App.View.GroupLayerPanelLayer({model: new Backbone.Model(l),geoVizModel: this.model});
     this._layers.push(v);
     this.$el.prepend(v.render().$el);
+    this.trigger('GroupLayer:forceOpen');
   },
 
   _refreshLayerOrders:function(e){
