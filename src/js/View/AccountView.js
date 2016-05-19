@@ -14,7 +14,7 @@ App.View.Account = Backbone.View.extend({
     'click input[type="submit"]' : '_onClickGo',
     'click .goNext': '_onClickNext',
     'click .goPrev': '_onClickPrev',
-    'submit form': '_onClickGo'
+    'submit form': '_onEnterKey'
   },
 
   onClose: function(){
@@ -22,23 +22,27 @@ App.View.Account = Backbone.View.extend({
   },
 
   _onTypedUsername: function(e){
+    if (e.keyCode == 13) {
+      if(this.$next.hasClass('ready')){
+        this._onClickNext(e);
+      }
+    }else{
+      this.$next.removeClass('error').removeClass('ready');
+      this.$username.removeClass('error');
+      if(this.$username.val() != ''){
+        this.$next.addClass('loading');
+      }
 
-    this.$next.removeClass('error').removeClass('ready');
-    this.$username.removeClass('error');
-    if(this.$username.val() != ''){
-      this.$next.addClass('loading');
+
+      if (this._usernameTimeout)
+        clearTimeout(this._usernameTimeout);
+
+      var _this = this;
+      this._usernameTimeout = setTimeout(function(){
+        clearTimeout(_this._usernameTimeout);
+        _this.model.set('account',$(e.target).val());
+      },500);
     }
-
-
-    if (this._usernameTimeout)
-      clearTimeout(this._usernameTimeout);
-
-    var _this = this;
-    this._usernameTimeout = setTimeout(function(){
-      clearTimeout(_this._usernameTimeout);
-      _this.model.set('account',$(e.target).val());
-    },500);
-
   },
 
   _onTypedApiKey: function(e){
@@ -104,12 +108,17 @@ App.View.Account = Backbone.View.extend({
       var username = this.$username.val();
       this.$('.username').html(username);
       this.$('.externallink a').attr('href', App.Config.get_api_key_url(username));
+      var _this = this;
+      window.setTimeout(function () {
+        _this.$apikey.focus();
+      }, 500);
     }
   },
 
   _onClickPrev: function(e){
     e.preventDefault();
     this.$content.get(0).className = "content one";
+    this.$username.focus();
   },
 
   _onClickGo: function(e){
@@ -124,6 +133,15 @@ App.View.Account = Backbone.View.extend({
       }else{
         this.$submit.removeClass('loading');
       }
+    }
+  },
+
+  _onEnterKey: function(e){
+    e.preventDefault();
+    if(this.$submit.hasClass('ready')){
+      this._onClickGo(e);
+    }else if(this.$next.hasClass('ready')){
+      this._onClickNext(e);
     }
   }
 
