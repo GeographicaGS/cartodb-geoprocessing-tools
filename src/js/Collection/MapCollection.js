@@ -3,7 +3,7 @@
 App.Collection.Map = Backbone.Collection.extend({
   _username: null,
   _nrecords : null,
-  _pageSize : 10,
+  _pageSize : 16,
   _page: 1,
 
   initialize: function(options) {
@@ -42,6 +42,10 @@ App.Collection.Map = Backbone.Collection.extend({
   parse: function(result){
     this._nrecords = result.total_entries;
     return result.visualizations;
+  },
+
+  setCurrentPage: function(page){
+      this._page = page;
   },
 
   sync: function(method, collection, options){

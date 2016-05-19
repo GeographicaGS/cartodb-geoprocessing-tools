@@ -96,6 +96,33 @@
               line-height: 18px;
             }
           }
+          &.pagination{
+            text-align: right;
+            padding-right: 0;
+            span{
+              margin-right: 20px;
+              font-size: 14px;
+              color:@grey50;
+            }
+            a{
+              border-right: 1px solid @grey10;
+              padding: 17px 23px 17px 19px;
+              font-size: 14px;
+              color:@blue_light;
+              &.selected{
+                color:@grey50;   
+              }
+            }
+          }
+        }
+        .loading-ico{
+          margin: auto;
+          margin-bottom: 8px;
+          width: 20px;
+          height: 20px;
+          svg path{
+            stroke:@blue_light;
+          }
         }
       }
     }
