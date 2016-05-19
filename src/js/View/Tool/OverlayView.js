@@ -16,6 +16,8 @@ App.View.Tool.Overlay = Backbone.View.extend({
 
     this.listenTo(this.model,'change',this._updateModelUI);
     this.listenTo(this.model,'change:input',this._renderOverlaySelect);
+
+
   },
 
   events: {
@@ -254,8 +256,12 @@ App.View.Tool.Overlay = Backbone.View.extend({
       newLayer.infowindow.fields = this._fields2infowindow(ifields);
       newLayer.infowindow.template = this._getInfoWindowTemplate();
     }
-
-    this._geoVizModel.addSublayer(newLayer);
+    if (!App.Config.Data.DEBUG){
+      this._geoVizModel.addSublayer(newLayer);
+    }
+    else{
+      console.log(  newLayer.options.sql );
+    }
     App.events.trigger('tool:close');
   }
 
@@ -333,12 +339,16 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
           collection_extract: App.Utils.getConstantGeometryType(this.model.get('geometrytype'))
         });
 
+    if (App.Config.Data.DEBUG)
+      console.log(q);
+
     this.model.set({
       'sql':q,
       'infowindow_fields': fields2,
     });
 
-    this.createLayer();
+    if (!App.Config.Data.DEBUG)
+      this.createLayer();
 
   }
 
@@ -608,10 +618,13 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
       this.model.set('geometrytype',geometrytype);
 
     }
-    else if (gtl.indexOf('line') != -1){
+    else{
+      var geometrytype = App.Utils.getPostgisMultiType(geometrytype);
+      this.model.set('geometrytype',geometrytype);
+
       var q = [
         "SELECT {{fields}}, ",
-              " CASE WHEN st_geometrytype(the_geom)='ST_GeometryCollection' then ST_CollectionExtract(the_geom,{{collection_extract}})",
+              " CASE WHEN st_geometrytype(the_geom)='ST_GeometryCollection' then ST_CollectionExtract(the_geom,{{geomtype_constant}})",
               " ELSE the_geom",
               " END as the_geom",
         "FROM (",
@@ -620,7 +633,7 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
            "INNER JOIN ({{{overlay_query}}}) b ON ST_Intersects(a.the_geom, b.the_geom)",
            "GROUP BY a.the_geom,{{fields_groupby}}",
         ") s",
-        "where not st_isempty(the_geom) and st_geometrytype(the_geom)='ST_MultiLineString'",
+        "where not st_isempty(the_geom) and st_geometrytype(the_geom)='{{geomtype}}'",
 
         "UNION ALL",
 
@@ -638,14 +651,13 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
           overlay_query: overlaylayer.options.sql,
           fields: queryFields,
           fields_groupby: fields_groupby,
-          collection_extract: 2
+          geomtype_constant: App.Utils.getConstantGeometryType(geometrytype),
+          geometrytype: geometrytype
       });
 
-      this.model.set('geometrytype','ST_MultiLineString');
-    }
-    else{
-      alert('Not yet supported');
-      return;
+
+
+
     }
 
     // this.model.set('geometrytype',App.Utils.getPostgisMultiType(inputlayer.geometrytype));
@@ -681,10 +693,12 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
     //     collection_extract: App.Utils.getConstantGeometryType(this.model.get('geometrytype'))
     //   });
 
+
     this.model.set({
       'sql' : q
     });
 
     this.createLayer();
+
   }
 });
