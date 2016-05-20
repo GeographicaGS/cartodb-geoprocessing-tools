@@ -473,7 +473,8 @@ App.View.GroupLayerMap = Backbone.View.extend({
 
     cartodb.createLayer(this._map, m.toJSON(),{
         maps_api_template: App.Config.cartodbjs_maps_api_url(),
-        no_cdn: true
+        no_cdn: true,
+        https: true
       })
       .addTo(this._map)
       .on('done',this._onLayerDone)
