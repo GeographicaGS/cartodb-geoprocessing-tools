@@ -50,7 +50,8 @@ App.LayerManager.prototype._addWork = function(w){
 
 App.LayerManager.prototype.removeLayer = function(layer){
   //TODO: Use Job API
-  var sql = new cartodb.SQL({ user: this.userModel.get('account') });
+  var username = this.userModel.get('account');
+  var sql = App.Utils.getCartoDBSQLInstance(username);
   var api_key = this.userModel.get('api_key');
 
   // Note cache: false

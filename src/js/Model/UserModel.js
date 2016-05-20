@@ -5,7 +5,7 @@ App.Model.User = Backbone.Model.extend({
   },
 
   checkAccount: function(account,cb){
-    var sql = new cartodb.SQL({ 'user': account});
+    var sql = App.Utils.getCartoDBSQLInstance(account);
     sql.execute("SELECT now()")
       .done(function(data) {
        cb(true);
@@ -86,9 +86,10 @@ App.Model.UserLocalStorage = App.Model.User.extend({
       return;
     }
 
-    var sql = new cartodb.SQL({ user: this.get('account') });
-    // check if table exists
+    var username = this.get('account');
+    var sql = App.Utils.getCartoDBSQLInstance(username);
     var q = "select count(*) as n from CDB_UserTables() as name where name='{{tablename}}'";
+    // check if table exists
     sql.execute(q,{tablename: App.Config.Data.CFG_TABLE_NAME},{cache: true})
       .done(function(data) {
         if (data && data.rows.length && data.rows[0].n){
@@ -120,7 +121,9 @@ App.Model.UserLocalStorage = App.Model.User.extend({
       return false;
 
     // Create SQL object
-    var sql = new cartodb.SQL({ user: this.get('account') });
+    var username = this.get('account');
+    var sql = App.Utils.getCartoDBSQLInstance(username);
+
     // check if table exists
     var q = "BEGIN;CREATE VIEW {{name}} as select 1; drop view {{name}}; COMMIT;";
     var _this = this;
