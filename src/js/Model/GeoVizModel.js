@@ -1,3 +1,5 @@
+'use strict';
+
 App.Model.GeoViz = App.Model.Viz.extend({
 
   constructor: function() {

@@ -1,3 +1,5 @@
+'use strict';
+
 App.Cons = {
   LAYER_WAITING : 0,
   LAYER_RUNNING : 1,

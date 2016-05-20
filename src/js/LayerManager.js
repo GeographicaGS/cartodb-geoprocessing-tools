@@ -1,3 +1,4 @@
+'use strict';
 
 App.LayerManager = function(opts){
   _.extend(this, Backbone.Events);

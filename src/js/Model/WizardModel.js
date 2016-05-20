@@ -1,16 +1,6 @@
+'use strict';
+
 App.Model.Wizard.CartoCSS = Backbone.Model.extend({
-  // toCartoCSS: function(){
-
-  //   var m = this.toJSON();
-  //   for (var i in m){
-  //     if (!m[i])
-  //       delete m[i];
-  //   }
-
-  //   var res = JSON.stringify(m);
-  //   return '#overlay' +  res.replace(/_/g, '-').replace(/,/g,';\n');
-  // }
-
   toCartoCSS: function(){
 
     var m = this.toJSON();

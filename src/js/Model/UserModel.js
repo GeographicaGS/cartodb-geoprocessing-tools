@@ -1,3 +1,5 @@
+'use strict';
+
 App.Model.User = Backbone.Model.extend({
 
   defaults:{

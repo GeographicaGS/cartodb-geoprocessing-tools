@@ -1,7 +1,9 @@
+'use strict';
+
 App.View.Tool.Measure = Backbone.View.extend({
 	_template: _.template( $('#tool-measure_infowindow_template').html() ),
 
-  initialize: function(options) { 
+  initialize: function(options) {
 
   	this._vis = options.vis;
   	this._map = options.map;
@@ -41,7 +43,7 @@ App.View.Tool.Measure = Backbone.View.extend({
 			var layer = e.layer,
       		type = e.layerType;
 
-      
+
       _this._createInfoWindow(layer,type);
 
       // layer.on('click', function (e) {
@@ -58,7 +60,7 @@ App.View.Tool.Measure = Backbone.View.extend({
 
 		this._drawTool = new L.Draw[cn](this._map, drawControl.options.draw[this._type]);
 		this._drawTool.enable();
-		
+
 
   },
 
@@ -90,7 +92,7 @@ App.View.Tool.Measure = Backbone.View.extend({
     });
     this._vis.mapView.addInfowindow(infowindow);
     this._infoWindows[layer._leaflet_id] = infowindow;
-    
+
     var aux,
     		value;
     if(type == "polygon"){

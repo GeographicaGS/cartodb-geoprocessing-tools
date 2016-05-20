@@ -19,15 +19,11 @@ deps.JS = [
 
   // Namespace
   srcJS + 'Namespace.js',
-
   srcJS + 'LayerManager.js',
-  
   srcJS + 'Cons.js',
-  // Namespace
   srcJS + 'Config.js',
-
+  srcJS + 'ConfigFN.js',
   srcJS + 'Utils.js',
-  
 
   // Models
   srcJS + 'Model/UserModel.js',

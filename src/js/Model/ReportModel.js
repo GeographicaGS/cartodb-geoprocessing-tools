@@ -1,3 +1,5 @@
+'use strict';
+
 App.Model.Report = Backbone.Model.extend({
 
   // url: function(){
