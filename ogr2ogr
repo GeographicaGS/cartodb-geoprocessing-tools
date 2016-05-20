@@ -1,0 +1,5 @@
+ogr2ogr --config CARTODB_API_KEY 2811f63db23f44251291e8e5adfcc7cd7dfe8543 -f PostgreSQL PG:"host=pgsql  user=postgres dbname=test port=5432 password=postgres"  "CartoDB:smart-admin tables=neighborhood_councils_losangeles"  -lco GEOMETRY_NAME=the_geom
+
+
+
+ogr2ogr --config CARTODB_API_KEY 50e02854ebc4813f9b9f8210ac010639c260b2e5 -f PostgreSQL PG:"host=pgsql  user=postgres dbname=test port=5432 password=postgres"  "CartoDB:alasarr tables=tornados"  -lco GEOMETRY_NAME=the_geom
