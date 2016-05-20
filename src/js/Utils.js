@@ -59,7 +59,7 @@ App.Utils = {
       });
     }
     else{
-      return new cartodb.SQL();
+      return new cartodb.SQL({ user: username});
     }
   }
 }
