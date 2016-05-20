@@ -42,3 +42,5 @@ public/index.html
 config.yml
 config.dev.yml
 config.production.yml
+
+s3_website.yml

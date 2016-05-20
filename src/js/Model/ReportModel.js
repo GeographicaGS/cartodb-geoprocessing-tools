@@ -1,12 +1,16 @@
+'use strict';
+
 App.Model.Report = Backbone.Model.extend({
-  
+
   // url: function(){
   //   return App.Config.viz_api_url(this.get('account'),this.get('id'));
   // },
-  
+
   sync: function(method, model, options){
 
-  	var sql = new cartodb.SQL({ user: this.get('account') });
+  	var username = this.get('account');
+    var sql = App.Utils.getCartoDBSQLInstance(username);
+
   	var q = 'WITH a as (' + this.get('layer_sql') + ') SELECT ';
   	_.each(this.get('fields'),function(field) {
   		var name = field.name;
@@ -20,7 +24,7 @@ App.Model.Report = Backbone.Model.extend({
 
     if(this.get('geom'))
       q += ' WHERE the_geom && ST_MakeEnvelope(' + this.get('geom')._southWest.lng + ', ' + this.get('geom')._southWest.lat + ',' + this.get('geom')._northEast.lng + ',' + this.get('geom')._northEast.lat + ',4326)'
-    
+
 
   	sql.execute(q,{cache:false}).done(function(data) {
   		if (data && data.rows.length && data.rows[0]) {
@@ -36,4 +40,3 @@ App.Model.Report = Backbone.Model.extend({
   },
 
 });
-
