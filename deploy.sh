@@ -2,9 +2,10 @@
 
 function deploy(){
   cp s3_website.$1.yml s3_website.yml;
-  cp src/js/Config.sla.js src/js/Config.js;
+  cp src/js/Config.$1.js src/js/Config.js;
   docker-compose up builder
-  s3_website push 
+  s3_website cfg apply
+  s3_website push
 }
 
 case $1 in
@@ -17,6 +18,11 @@ case $1 in
     deploy $1;
     shift
     ;;
+  all)
+    deploy cdb;
+    deploy sla;
+    shift
+  ;;
   *)
       echo "Bad parameters"
       exit

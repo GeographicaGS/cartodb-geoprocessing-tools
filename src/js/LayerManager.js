@@ -102,11 +102,9 @@ App.LayerManager.prototype._processWorkResponse = function(work,res) {
     this.trigger('layerFailed',work);
     this._cleanWork(work);
   }
-  else{
-    console.log(res.state + ' ' + work.options.layer_name);
-  }
-
-
+  // else{
+  //   console.log(res.state + ' ' + work.options.layer_name);
+  // }
 
   if (res.warnings){
     console.log('Here the warning: ' + res.warning);

@@ -32,6 +32,6 @@ routing_rules:
           http_error_code_returned_equals: 404
       redirect:
           host_name: sla.geographica.io
-          protocol: https
+          # protocol: https
           replace_key_prefix_with: "#"
           http_redirect_code: 301

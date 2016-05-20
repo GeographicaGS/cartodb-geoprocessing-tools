@@ -9,6 +9,7 @@ App.View.GroupLayer = Backbone.View.extend({
 
   initialize: function(options) {
     this._map = options.map;
+    this.listenTo(this.model,'addSublayer',this.openPanel)
   },
 
   onClose: function(){
@@ -35,6 +36,12 @@ App.View.GroupLayer = Backbone.View.extend({
   togglePanel: function() {
     this.$panel.toggleClass('show');
     this.$togglePanelBtn.toggleClass('selected');
+  },
+  openPanel: function(){
+    if (!this.$panel.hasClass('show')){
+      this.$panel.addClass('show');
+      this.$togglePanelBtn.addClass('selected');
+    }
   }
 
 });
