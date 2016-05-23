@@ -44,7 +44,7 @@
 		visibility: hidden;
 		transform:translateY(45px);
 		opacity: 0;
-		transition: transform .25s ease-out, visibility .25s linear, opacity .25s ease-out;
+		transition: transform @transTimeDefault @transFuncDefault, visibility @transTimeDefault linear, opacity @transTimeDefault @transFuncDefault;
 
 		&.activated{
 			visibility: visible;

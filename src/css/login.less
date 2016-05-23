@@ -73,7 +73,7 @@ main {
         .content {
           width: @form_width * 2;
           display: flex;
-          transition: transform .5s ease-in-out;
+          transition: transform .5s @transFuncDefault;
 
           .step {
             opacity: .00001;
@@ -81,7 +81,7 @@ main {
             width: @form_width;
             padding: 0 18px;
             overflow-y: visible;
-            transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
+            transition: opacity .5s @transFuncDefault, max-height .5s @transFuncDefault;
           }
 
           .selected {
@@ -183,7 +183,7 @@ main {
             display: inline-block;
             border-bottom: 1px solid fade(@white, 25%);
 
-            transition: border-bottom-color .25s ease-in-out;
+            transition: border-bottom-color @transTimeDefault @transFuncDefault;
 
             &:hover {
               border-bottom-color: @white;
@@ -218,7 +218,7 @@ main {
 						font-family: inherit;
 						font-weight: 600;
 						opacity: .5;
-						transition: opacity .25s ease-in-out, color .25s ease-in-out, background-color .25s ease-in-out;
+						transition: opacity @transTimeDefault @transFuncDefault, color @transTimeDefault @transFuncDefault, background-color @transTimeDefault @transFuncDefault;
 					}
 
 					.loadingbar {
@@ -230,7 +230,7 @@ main {
 						opacity: .000001;
 						z-index: 1;
 						transform: translate(-50%, -50%) scale(10);
-						transition: visibility 0s linear 0.25s, opacity .25s ease-in-out, transform .25s ease-in-out;
+						transition: visibility 0s linear 0@transTimeDefault, opacity @transTimeDefault @transFuncDefault, transform @transTimeDefault @transFuncDefault;
 					}
 
 					p.error {
@@ -242,7 +242,7 @@ main {
 						font-size: 1em;
 						font-weight: 600;
 						text-align: center;
-						transition: visibility 0s linear 0.5s, opacity .5s ease-in-out, height .5s ease-in-out;
+						transition: visibility 0s linear 0.5s, opacity .5s @transFuncDefault, height .5s @transFuncDefault;
 
 						position: absolute;
 						top: 50%;

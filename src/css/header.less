@@ -99,7 +99,7 @@ header {
       opacity: 1;
       transform: translateY(0px);
 
-      transition: visibility .25s linear, opacity .25s ease-out, transform .25s ease-out;
+      transition: visibility @transTimeDefault linear, opacity @transTimeDefault @transFuncDefault, transform @transTimeDefault @transFuncDefault;
 
       &:empty {
         visibility: hidden;

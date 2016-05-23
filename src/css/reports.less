@@ -107,7 +107,7 @@
 				overflow: hidden;
 		    transition: none;
 				&.activated{
-					transition:opacity .25s;
+					transition:opacity @transTimeDefault;
 					opacity: 1;
 					overflow: visible;
 				}
@@ -191,7 +191,7 @@
 			min-width: 238px;
 			visibility: hidden;
 			opacity: 0;
-			transition:opacity .25s;
+			transition:opacity @transTimeDefault;
 			&.activated{
 				visibility: visible;
 				opacity: 1;

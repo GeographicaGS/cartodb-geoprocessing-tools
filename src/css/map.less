@@ -22,7 +22,7 @@
     box-shadow: 0 0 0 4px rgba(100,100,100,.2);
     border-radius: 2px;
 
-    transition: transform .25s ease-out;
+    transition: transform @transTimeDefault @transFuncDefault;
     &.translated{
       transform: translateX(350px);
     }
@@ -91,7 +91,7 @@
     bottom: 60px !important;
     left: 9px !important;
 
-    transition: transform .25s ease-out;
+    transition: transform @transTimeDefault @transFuncDefault;
 
     &.translated{
       transform: translateX(350px);
@@ -195,7 +195,7 @@
   .transitionLegend(){
     transition-property: all;
     transition-duration: .4s;
-    transition-timing-function: ease-out;
+    transition-timing-function: @transFuncDefault;
   }
 
   &.collapsed{
@@ -314,7 +314,7 @@
 			left: 18px;
 			z-index: 2;
 
-      transition: transform .25s ease-out;
+      transition: transform @transTimeDefault @transFuncDefault;
       &.translated{
         transform: translateX(350px);
       }
@@ -340,7 +340,7 @@
       left: 18px;
       z-index: 100;
 
-      transition: transform .25s ease-out;
+      transition: transform @transTimeDefault @transFuncDefault;
 
       &.translated{
         transform: translateX(350px);
@@ -367,7 +367,7 @@
     opacity: 1;
     cursor: pointer;
 
-    transition: background-color .10s ease-in-out, opacity .10s ease-in-out;
+    transition: background-color @transTimeFast @transFuncDefault, opacity @transTimeFast @transFuncDefault;
     transition-delay: 0s;
 
     img {
@@ -401,7 +401,7 @@
       visibility: hidden;
       opacity: .00001;
 
-      transition: visibility 0s linear .25s, opacity .18s ease-in-out;
+      transition: visibility 0s linear @transTimeDefault, opacity .18s @transFuncDefault;
     }
 
     & + .button {

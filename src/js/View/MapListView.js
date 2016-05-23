@@ -22,6 +22,9 @@ App.View.MapList = Backbone.View.extend({
 
   events: {
     'click .pagination a' : '_changePage',
+    'click .search_tool': '_activateSearch',
+    'keyup .search_input input[type=text]': '_searchMaps',
+    'click .clear_search': '_clearSearchMap',
   },
 
   onClose: function(){
@@ -38,6 +41,9 @@ App.View.MapList = Backbone.View.extend({
       this.$maplist = this.$('.maplist');
       this.$mapNumber = this.$('.toolbar h2 span');
       this.collection.fetch({reset: true});
+
+      this.$searchInput = this.$('.search_input input[type=text]');
+      this.$('.maplist ul').html(App.loading());
     }
     else{
       this.$el.html('User does not exist');
@@ -79,8 +85,32 @@ App.View.MapList = Backbone.View.extend({
   _changePage:function(e){
     e.preventDefault();
     this.collection.setCurrentPage(parseInt($(e.currentTarget).text()));
-    this.$('.maplist ul').html(App.loading())
+    this.$('.maplist ul').html(App.loading());
     this.collection.fetch({reset: true});
+  },
+
+  _activateSearch: function(e) {
+    e.preventDefault();
+    $(e.currentTarget).addClass('active');
+    this.$searchInput.focus();
+  },
+
+  _searchMaps: function(e) {
+    if(e.keyCode == 13){
+      this.collection.setCurrentQuery(this.$searchInput.val().trim());
+      this.$('.maplist ul').html(App.loading());
+      this.collection.fetch({reset: true});
+    }
+  },
+
+  _clearSearchMap: function(e) {
+    this.$('.search_tool').removeClass('active');
+    this.$searchInput.val('');
+    if(this.collection.getCurrentQuery() != ''){
+      this.collection.setCurrentQuery('');
+      this.$('.maplist ul').html(App.loading());
+      this.collection.fetch({reset: true});
+    }
   }
 
 });

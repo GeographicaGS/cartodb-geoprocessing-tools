@@ -21,14 +21,14 @@
       transform: translateY(-25px);
       z-index: 110;
 
-      transition: visibility 0s linear .25s, opacity .18s ease-in-out, transform .25s ease-in-out;
+      transition: visibility 0s linear @transTimeDefault, opacity .18s @transFuncDefault, transform @transTimeDefault @transFuncDefault;
 
       &.show {
         visibility: visible;
         opacity: 1;
         transform: translateY(0px);
 
-        transition: visibility 0s linear, opacity .25s ease-in-out .06s, transform .25s ease-in-out;
+        transition: visibility 0s linear, opacity @transTimeDefault @transFuncDefault .06s, transform @transTimeDefault @transFuncDefault;
       }
 
       & > li {
@@ -37,7 +37,7 @@
         padding: 0;
         border-bottom: 1px solid @grey10;
 
-        // transition: background-color .10s ease-in-out;
+        // transition: background-color @transTimeFast @transFuncDefault;
 
         .ctrls {
           display: flex;
@@ -83,7 +83,7 @@
               padding: 0 20px;
               overflow-y: hidden;
 
-              transition: padding .25s ease-in-out, max-height .25s ease-in-out;
+              transition: padding @transTimeDefault @transFuncDefault, max-height @transTimeDefault @transFuncDefault;
 
               &.shown {
                 max-height: 550px;
@@ -125,7 +125,7 @@
             overflow-x: hidden;
             text-overflow: ellipsis;
 
-            transition: color .25s ease-in-out;
+            transition: color @transTimeDefault @transFuncDefault;
           }
 
           .drag {
@@ -143,7 +143,7 @@
 
           .remove {
             opacity: .00001;
-            // transition: opacity .10s ease-in-out;
+            // transition: opacity @transTimeFast @transFuncDefault;
             line-height: 0;
           }
 
@@ -152,7 +152,7 @@
             outline: none;
             opacity: .75;
             line-height: 0;
-            transition: opacity .10s ease-in-out;
+            transition: opacity @transTimeFast @transFuncDefault;
 
             &.selected, &:hover {
               opacity: 1;
@@ -185,7 +185,7 @@
           position: relative;
           padding: 0 20px;
 
-          transition: padding .20s ease-in-out;
+          transition: padding .20s @transFuncDefault;
 
           &:before {
             content: "";
@@ -199,7 +199,7 @@
             border-color: transparent transparent @grey60 transparent;
             opacity: .00001;
 
-            transition: transform .20s ease-in-out .25s, opacity .20s ease-in-out .25s;
+            transition: transform .20s @transFuncDefault @transTimeDefault, opacity .20s @transFuncDefault @transTimeDefault;
           }
 
           &:after {
@@ -223,7 +223,7 @@
             overflow: hidden;
             opacity: .00001;
 
-            transition: max-height .3s ease-in-out, opacity .3s ease-in-out;
+            transition: max-height .3s @transFuncDefault, opacity .3s @transFuncDefault;
           }
 
           .actions {

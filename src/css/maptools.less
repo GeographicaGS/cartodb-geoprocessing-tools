@@ -15,28 +15,28 @@
   opacity: .00001;
   z-index: 1080;
   transform: translateY(-100vh);
-  transition: left 0s linear .25s, transform .25s ease-out;
-  animation: toolHolderDisappear .25s ease-out forwards running 1;
+  transition: left 0s linear @transTimeDefault, transform @transTimeDefault @transFuncDefault;
+  animation: toolHolderDisappear @transTimeDefault @transFuncDefault forwards running 1;
 
   &.shown {
-    animation: toolHolderAppear .25s ease-out forwards running 1;
-    transition: left 0s linear, transform .25s ease-out;
+    animation: toolHolderAppear @transTimeDefault @transFuncDefault forwards running 1;
+    transition: left 0s linear, transform @transTimeDefault @transFuncDefault;
   }
 
   &.bookmarks {
     left: 16px;
   }
   &.union {
-    left: 79px;
+    left: 217px;
   }
   &.erase {
-    left: 125px;
+    left: 79px;
   }
   &.intersection {
-    left: 171px;
+    left: 125px;
   }
   &.clip {
-    left: 217px;
+    left: 171px;
   }
   &.buffer {
     left: 279px;
@@ -235,7 +235,7 @@
 
     &.run {
       position: relative;
-      transition: opacity .25s ease-in-out;
+      transition: opacity @transTimeDefault @transFuncDefault;
 
       .loadingbar {
         display: block;
@@ -247,7 +247,7 @@
         opacity: .000001;
         z-index: 1;
         transform: translate(-50%, -50%) scale(10);
-        transition: visibility 0s linear 0.25s, opacity .25s ease-in-out, transform .25s ease-in-out;
+        transition: visibility 0s linear 0@transTimeDefault, opacity @transTimeDefault @transFuncDefault, transform @transTimeDefault @transFuncDefault;
       }
 
       &.running {
