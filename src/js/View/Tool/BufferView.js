@@ -3,11 +3,11 @@
 App.View.Tool.Buffer = Backbone.View.extend({
   _template: _.template( $('#tool-buffer_template').html() ),
 
-  initialize: function(options) { 
-    
+  initialize: function(options) {
+
     this.model = new App.Model.Tool.Buffer();
     this._geoVizModel = options.geoVizModel;
-   
+
     this.listenTo(this.model,'change',this._updateModelUI);
     this.listenTo(this.model,'change:input',this._changeInput);
     this.listenTo(this.model,'change:type',this._changeType);
@@ -61,7 +61,7 @@ App.View.Tool.Buffer = Backbone.View.extend({
           return $run.addClass('disabled');
       }
       else{
-        // Not basic types 
+        // Not basic types
         var type = m['type'];
 
         if (type == 'input' && o == 'type_input' && !m[o]){
@@ -90,7 +90,7 @@ App.View.Tool.Buffer = Backbone.View.extend({
     if (!input)
       return;
 
-    // reset 
+    // reset
     var defaults = this.model.defaults;
     delete defaults.input;
     this.model.set(defaults);
@@ -103,7 +103,7 @@ App.View.Tool.Buffer = Backbone.View.extend({
 
       fields = _.omit(fields,'the_geom_webmercator','the_geom');
       _this.model.set('fields',_.allKeys(fields).join(','));
-      
+
       var numfields = _this._geoVizModel.filterFieldsByType(fields,'number');
       numfields = _.without(numfields,'cartodb_id');
       var $field = _this.$('select[name="type_field"]');
@@ -130,10 +130,10 @@ App.View.Tool.Buffer = Backbone.View.extend({
 
       q = [
         ' WITH a as ({{{input_query}}})',
-        ' SELECT {{{fields}}},st_multi(',
-          'st_transform(st_buffer(the_geom::geography,{{buffer_size}})::geometry,3857)) as the_geom_webmercator',
+        ' SELECT st_multi(',
+          'st_transform(st_buffer(the_geom::geography,{{buffer_size}})::geometry,3857)) as the_geom_webmercator{{{fields}}}',
         ' FROM a'
-      ]; 
+      ];
     }
     else{
       q = [
@@ -143,8 +143,8 @@ App.View.Tool.Buffer = Backbone.View.extend({
             'st_transform(st_buffer(the_geom::geography,{{buffer_size}})::geometry,3857)) as the_geom_webmercator',
           'FROM a',
         ')',
-        ' SELECT ROW_NUMBER() OVER () AS cartodb_id,st_union(the_geom_webmercator) as the_geom_webmercator from buffer'
-      ];  
+        ' SELECT st_multi(st_union(the_geom_webmercator)) as the_geom_webmercator from buffer'
+      ];
     }
 
     var buffer_size;
@@ -162,14 +162,14 @@ App.View.Tool.Buffer = Backbone.View.extend({
     q = Mustache.render(q.join(' '),{
       input_query: input.options.sql,
       buffer_size : buffer_size,
-      fields: this.model.get('fields')
+      fields: this.model.get('fields') ? ',' + this.model.get('fields') : ''
     });
 
     var newLayer = JSON.parse(JSON.stringify(input));
     newLayer.options.sql = q;
     newLayer.options.cartocss = App.Model.Wizard.getModelInstance('ST_MultiPolygon').toCartoCSS();
     newLayer.options.layer_name = this.model.get('name');
-    
+
     if (this.model.get('disolve')){
       newLayer.infowindow = null;
     }

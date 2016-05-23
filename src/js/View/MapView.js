@@ -48,6 +48,14 @@ App.View.Map = Backbone.View.extend({
 
   _mergeViz: function(){
 
+    // Check if it's a valid visualization (no support for named maps)
+    if (!this._cartoVizModel.isValid()){
+      alert('This map is not supported. All layers at the visualization must be public.');
+      App.router.navigate(this.model.get('account') + '/map_list',{trigger: true});
+      return;
+    }
+
+
     // Add GID to cartoVizModel
     this._cartoVizModel.addLayerGID();
 
