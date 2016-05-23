@@ -92,7 +92,7 @@ App.View.GroupLayerPanel = Backbone.View.extend({
     };
 
     var sortableOpts = {
-      cancel: '.sql, .cartocss, .wizard',
+      cancel: '.sql, .cartocss, .wizard, .shown, .error',
       items:'li',
       stop: function(event, ui) {
           _this._refreshLayerOrders();
