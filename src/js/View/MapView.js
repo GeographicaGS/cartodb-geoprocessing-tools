@@ -50,7 +50,7 @@ App.View.Map = Backbone.View.extend({
 
     // Check if it's a valid visualization (no support for named maps)
     if (!this._cartoVizModel.isValid()){
-      alert('This map is not supported. All layers at the visualization must be public.');
+      alert('This kind of map is not supported. All your datasets in the map should be public.');
       App.router.navigate(this.model.get('account') + '/map_list',{trigger: true});
       return;
     }
