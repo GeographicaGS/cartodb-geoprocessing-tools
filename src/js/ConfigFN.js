@@ -33,7 +33,7 @@ App.Config.get_api_key_url = function(user){
   return App.Config.Parser('GET_API_KEY_URL',{'user': user});
 }
 
-App.Config.table_list_url = function(user, page, pagesize){
+App.Config.table_list_url = function(user, page, pagesize, query){
   if (user)
-  return App.Config.Parser('TABLE_LIST_URL',{'user': user, 'page': page, 'pagesize': pagesize});
+  return App.Config.Parser('TABLE_LIST_URL',{'user': user, 'page': page, 'pagesize': pagesize, 'query': query});
 }

@@ -57,7 +57,8 @@ App.LayerManager.prototype.removeLayer = function(layer){
 
   // Note cache: false
   sql.execute("DROP TABLE {{layername}}",{layername: layer.geolayer.table_name},{api_key: api_key})
-    .error(function(errors) {
+    .error(function(errors, xhr) {
+      App.onAjaxError(xhr.status);
       console.error('Cannot remove layer');
       console.error(errors);
     });

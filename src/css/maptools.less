@@ -4,41 +4,42 @@
   left:10px;
   top:60px;
   max-height: calc(~'100vh - ' @headerHeight + @mapToolbarHeight + @footerHeight + 16px);
+  width: 320px;
   background-color: @white;
   color: @grey75;
   border: 1px solid @grey20;
   border-radius: 2px;
   box-shadow: 0 2px 8px 0 fade(@black, 10%);
-  display: none;
+  visibility: hidden;
+  display: flex;
+  opacity: .00001;
   z-index: 1080;
+  transform: translateY(-100vh);
+  transition: left 0s linear @transTimeDefault, transform @transTimeDefault @transFuncDefault;
+  animation: toolHolderDisappear @transTimeDefault @transFuncDefault forwards running 1;
 
   &.shown {
-    display: flex;
+    animation: toolHolderAppear @transTimeDefault @transFuncDefault forwards running 1;
+    transition: left 0s linear, transform @transTimeDefault @transFuncDefault;
   }
 
   &.bookmarks {
-    transform: translateX(7px);
-    width: 320px;
+    left: 16px;
   }
   &.union {
-    transform: translateX(70px);
-    width: 320px;
+    left: 217px;
   }
   &.erase {
-    transform: translateX(116px);
-    width: 320px;
+    left: 79px;
   }
   &.intersection {
-    transform: translateX(162px);
-    width: 320px;
+    left: 125px;
   }
   &.clip {
-    transform: translateX(207px);
-    width: 320px;
+    left: 171px;
   }
   &.buffer {
-    transform: translateX(270px);
-    width: 320px;
+    left: 279px;
 
     .middle {
       padding-top: 20px;
@@ -63,13 +64,13 @@
     }
   }
   &.statistical {
-    transform: translateX(314px);
-    width: 320px;
+    left: 323px;
   }
   &.measure{
     border: none;
     background-color: transparent;
-    &:after{
+    left: -100vw;
+    &:after, &:before{
       display: none;
     }
   }
@@ -234,7 +235,7 @@
 
     &.run {
       position: relative;
-      transition: opacity .25s ease-in-out;
+      transition: opacity @transTimeDefault @transFuncDefault;
 
       .loadingbar {
         display: block;
@@ -246,7 +247,7 @@
         opacity: .000001;
         z-index: 1;
         transform: translate(-50%, -50%) scale(10);
-        transition: visibility 0s linear 0.25s, opacity .25s ease-in-out, transform .25s ease-in-out;
+        transition: visibility 0s linear 0@transTimeDefault, opacity @transTimeDefault @transFuncDefault, transform @transTimeDefault @transFuncDefault;
       }
 
       &.running {

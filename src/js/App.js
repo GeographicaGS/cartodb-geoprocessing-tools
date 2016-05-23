@@ -12,14 +12,15 @@ Backbone.View.prototype.close = function(){
 }
 
 $(function() {
-
   ga('create', App.Config.Data.GA, 'auto');
 
   $(document).ajaxError(function(event, jqxhr) {
     if (jqxhr.status == 404) {
       //App.router.navigate('notfound',{trigger: true});
-    }
-    else {
+    }else if (jqxhr.status === 401) {
+      // App.resetUserModel();
+      App.router.navigate('login',{trigger: true});
+    } else {
       //App.router.navigate('error',{trigger: true});
     }
   });
@@ -220,4 +221,13 @@ App.resetUserModel = function(){
   this._userModel.destroy();
   localStorage.clear();
   this._userModel = new App.Model.UserLocalStorage();
+}
+
+App.onAjaxError = function(status){
+  switch(status) {
+    case 401: this.resetUserModel();
+              this.router.navigate('login', {trigger: true});
+        break;
+    default: console.error('Error on AJAX request: ' + status);
+  }
 }

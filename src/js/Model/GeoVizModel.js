@@ -36,9 +36,9 @@ App.Model.GeoViz = App.Model.Viz.extend({
                   options.success({});
                 }
               })
-              .error(function(errors) {
+              .error(function(errors, xhr) {
+                App.onAjaxError(xhr.status);
                 options.error(errors);
-
               });
           }
           else{
@@ -46,7 +46,8 @@ App.Model.GeoViz = App.Model.Viz.extend({
           }
 
         })
-        .error(function(errors) {
+        .error(function(errors, xhr) {
+          App.onAjaxError(xhr.status);
           options.error(errors);
         });
       // check if table exists
@@ -105,12 +106,14 @@ App.Model.GeoViz = App.Model.Viz.extend({
               .done(function(data) {
                 options.success(true);
               })
-              .error(function(errors) {
+              .error(function(errors, xhr) {
+                App.onAjaxError(xhr.status);
                 options.error(errors);
               });
 
         })
-        .error(function(errors) {
+        .error(function(errors, xhr) {
+          App.onAjaxError(xhr.status);
           options.error(errors);
         });
       }
@@ -215,7 +218,8 @@ App.Model.GeoViz = App.Model.Viz.extend({
           cb(null,l);
         }
       })
-      .error(function(errors) {
+      .error(function(errors, xhr) {
+        App.onAjaxError(xhr.status);
         cb(null,l,errors)
       });
 
@@ -253,7 +257,8 @@ App.Model.GeoViz = App.Model.Viz.extend({
         else
           cb([],null);
       })
-      .error(function(errors) {
+      .error(function(errors, xhr) {
+        App.onAjaxError(xhr.status);
         cb(null,errors)
       });
 
@@ -273,7 +278,8 @@ App.Model.GeoViz = App.Model.Viz.extend({
       .done(function(data) {
         cb(data.fields)
       })
-      .error(function(errors) {
+      .error(function(errors, xhr) {
+        App.onAjaxError(xhr.status);
         cb(null,errors)
       });
   },
@@ -301,7 +307,8 @@ App.Model.GeoViz = App.Model.Viz.extend({
         var r = _this.filterFieldsByType(data.fields,type);
         cb(r);
       })
-      .error(function(errors) {
+      .error(function(errors, xhr) {
+        App.onAjaxError(xhr.status);
         cb(null,errors)
       });
   },

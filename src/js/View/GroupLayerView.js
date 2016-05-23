@@ -33,15 +33,14 @@ App.View.GroupLayer = Backbone.View.extend({
     return this;
   },
 
-  togglePanel: function() {
-    this.$panel.toggleClass('show');
-    this.$togglePanelBtn.toggleClass('selected');
+  togglePanel: function(force) {
+    var force = force || null;
+    this.$panel.toggleClass('show', force);
+    this.$togglePanelBtn.toggleClass('selected', force);
   },
+
   openPanel: function(){
-    if (!this.$panel.hasClass('show')){
-      this.$panel.addClass('show');
-      this.$togglePanelBtn.addClass('selected');
-    }
+    this.togglePanel(true);
   }
 
 });

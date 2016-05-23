@@ -34,7 +34,8 @@ App.Model.Report = Backbone.Model.extend({
         options.success({});
       }
   	})
-    .error(function(errors) {
+    .error(function(errors, xhr) {
+      App.onAjaxError(xhr.status);
       options.error({'errors':errors});
     });
   },

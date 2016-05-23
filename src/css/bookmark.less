@@ -24,7 +24,7 @@
     opacity: 0;
 		overflow: hidden;
 
-    transition: height .25s, opacity .25s;
+    transition: height @transTimeDefault, opacity @transTimeDefault;
 		&.activated{
 			flex: 1 1 100%;
 			visibility: visible;
@@ -81,7 +81,7 @@
 
 	.error_block{
 		color:@red_main;
-		transition: height 0s, opacity .25s;
+		transition: height 0s, opacity @transTimeDefault;
 		&.activated{
 			height: 46px;
 			width: auto;
@@ -135,7 +135,7 @@
 				overflow: hidden;
 				transform: translateX(100px);
 
-				transition: opacity 0.25s, transform .25s ease-in-out;;
+				transition: opacity 0@transTimeDefault, transform @transTimeDefault @transFuncDefault;;
 
 				&.activated{
 					width: inherit;

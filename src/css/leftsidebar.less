@@ -3,7 +3,7 @@
 	height: 100%;
 	z-index: 2;
 	width: 0;
-	transition: width .25s;
+	transition: width @transTimeDefault;
 	background-color: @grey10;
 	visibility: hidden;
     overflow-y: auto;
@@ -12,7 +12,7 @@
 		width: 342px;
 		visibility: visible;
 		div{
-			transition-delay: .25s;
+			transition-delay: @transTimeDefault;
 			opacity: 1;
 		}
 	}
