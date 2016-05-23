@@ -169,16 +169,23 @@ App.Model.GeoViz = App.Model.Viz.extend({
     this.trigger('sublayer:change:cartocss',l);
   },
 
-  getSublayersByGeometryType: function(geomtypeshort){
-
+  getSublayersByGeometryType: function(geomtypeshort,opts){
+    var opts = _.defaults(opts || {}, {geolayer_ready: true});
     var l = _.filter(this.getSublayers(), function(l){
 
       if (typeof geomtypeshort == 'string')
         geomtypeshort = [geomtypeshort];
 
       for (var i in geomtypeshort){
-        if (l.geometrytype && l.geometrytype.toLowerCase().indexOf(geomtypeshort[i])!=-1)
-          return true;
+        if (l.geometrytype && l.geometrytype.toLowerCase().indexOf(geomtypeshort[i])!=-1){
+          if (l.geolayer && opts.geolayer_ready){
+            return l.geolayer.status == App.Cons.LAYER_READY;
+          }
+          else {
+            return true;
+          }
+        }
+
       }
       return false;
     });
@@ -390,6 +397,19 @@ App.Model.GeoViz = App.Model.Viz.extend({
     App.Model.Viz.prototype.setSublayers.apply(this,[sublayers]);
     if(!options.silent){
       this._saveAndTrigger();
+    }
+  },
+
+  getSublayers: function(options){
+    var options = _.defaults(options || {},{only_ready: false});
+    var sublayers = App.Model.Viz.prototype.getSublayers.apply(this,[options]);
+    if (!options.only_ready){
+      return sublayers;
+    }
+    else{
+      return _.filter(sublayers,function(l){
+        return !l.geolayer || l.geolayer.status == App.Cons.LAYER_READY;
+      });
     }
   }
 

@@ -19,8 +19,8 @@ case $1 in
     shift
     ;;
   all)
-    deploy cdb;
     deploy sla;
+    deploy cdb;
     shift
   ;;
   *)

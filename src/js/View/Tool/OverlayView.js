@@ -122,11 +122,11 @@ App.View.Tool.Overlay = Backbone.View.extend({
   },
 
   getOverlayLayers: function(){
-    return this._geoVizModel.getSublayers();
+    return this._geoVizModel.getSublayers({only_ready: true});
   },
 
   getInputLayers: function(){
-    return this._geoVizModel.getSublayers();
+    return this._geoVizModel.getSublayers({only_ready: true});
   },
 
   getCartoDBID: function(){
@@ -252,7 +252,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
     newLayer.visible = true;
 
     var ifields = this.model.get('infowindow_fields')
-    if (ifields){
+    if (ifields && newLayer.infowindow){
       newLayer.infowindow.fields = this._fields2infowindow(ifields);
       newLayer.infowindow.template = this._getInfoWindowTemplate();
     }
@@ -268,7 +268,11 @@ App.View.Tool.Overlay = Backbone.View.extend({
   queryFields2GroupBy: function(queryFields){
     return _.map(queryFields.split(','),function(f){
       return (f.indexOf(' ')!=-1) ? f : f.split(' ')[0];
-    });
+    }).join(',');
+  },
+
+  toSQL: function(fields){
+    return fields ? ',' + fields : '' ;
   }
 
 });
@@ -294,16 +298,16 @@ App.View.Tool.OverlayClip = App.View.Tool.Overlay.extend({
     this.model.set('geometrytype',geometrytype);
 
     var q = [
-      "SELECT (ST_Multi(ST_CollectionExtract(ST_Intersection(a.the_geom,ST_Union(b.the_geom)),{{{geomtype_constant}}}))) AS the_geom,{{{fields}}}",
+      "SELECT (ST_Multi(ST_CollectionExtract(ST_Intersection(a.the_geom,ST_Union(b.the_geom)),{{{geomtype_constant}}}))) AS the_geom{{{fields}}}",
         "FROM ({{{input_query}}}) a",
         "INNER JOIN ({{{overlay_query}}}) b ON ST_Intersects(a.the_geom,b.the_geom)",
-        "GROUP BY a.the_geom,{{{fields_groupby}}}" ];
+        "GROUP BY a.the_geom{{{fields_groupby}}}" ];
 
     q = Mustache.render(q.join(' '),{
         input_query: inputlayer.options.sql,
         overlay_query: overlaylayer.options.sql,
-        fields: queryFields,
-        fields_groupby: this.queryFields2GroupBy(queryFields),
+        fields: this.toSQL(queryFields),
+        fields_groupby: this.toSQL(this.queryFields2GroupBy(queryFields)),
         geomtype_constant: App.Utils.getConstantGeometryType(geometrytype),
         geometrytype: geometrytype
     });
@@ -339,13 +343,12 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
 
     var geometrytype = App.Utils.getPostgisMultiType(inputlayer.geometrytype);
 
-    var q = ["SELECT {{{fields2}}}, ",
+    var q = ["SELECT",
         " CASE WHEN st_geometrytype(the_geom)='ST_GeometryCollection' then ST_CollectionExtract(the_geom,{{geomtype_constant}})",
         " ELSE the_geom",
-        " END as the_geom",
+        " END as the_geom{{{fields2}}}",
       "FROM (",
-        "SELECT distinct {{{fields}}},",
-          "st_multi(st_intersection(a.the_geom,b.the_geom)) as the_geom",
+        "SELECT distinct st_multi(st_intersection(a.the_geom,b.the_geom)) as the_geom{{{fields}}}",
           " FROM ({{{input_query}}}) as a",
           " INNER JOIN ({{{overlay_query}}}) as b ON st_intersects(a.the_geom,b.the_geom)",
         ") as a",
@@ -355,8 +358,8 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
     q = Mustache.render(q.join(' '),{
       input_query: inputlayer.options.sql,
       overlay_query: overlaylayer.options.sql,
-      fields: queryFields,
-      fields2: this.fieldsRemoveTablePrefix(queryFields),
+      fields: this.toSQL(queryFields),
+      fields2: this.toSQL(this.fieldsRemoveTablePrefix(queryFields)),
       geomtype_constant: App.Utils.getConstantGeometryType(geometrytype),
       geometrytype: geometrytype
     });
@@ -403,10 +406,10 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
           'b as ({{{overlay_query}}}),',
           // Convert from multipolygon to polygon
           'ap as (',
-            'select *,(st_dump(the_geom_webmercator)).geom from a',
+            'select *,(st_dump(the_geom)).geom from a',
           '),',
           'bp as (',
-            'select *,(st_dump(the_geom_webmercator)).geom from b',
+            'select *,(st_dump(the_geom)).geom from b',
           '),',
           'all_lines as (',
             'select St_ExteriorRing(geom) as geom from ap',
@@ -422,16 +425,15 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
                 'select st_polygonize(geom) as geom from noded_lines',
               '))',
           ')',
-          'select {{cartodb_id}}, {{fields}}, p.geom as the_geom_webmercator',
+          'select p.geom as the_geom{{fields}}',
               'from new_polys p',
               'left join ap a on St_Within(p.pip, a.geom)',
               'left join bp b on St_Within(p.pip, b.geom)'];
 
       q = Mustache.render(q.join(' '),{
-        cartodb_id: this.getCartoDBID(),
         input_query: inputlayer.options.sql,
         overlay_query: overlaylayer.options.sql,
-        fields: queryFields
+        fields: this.toSQL(queryFields)
       });
 
     }
@@ -442,9 +444,9 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
         'b as ({{{overlay_query}}}),',
         //put all lines together
         'all_lines as (',
-          'select (st_dump(the_geom_webmercator)).geom  from a',
+          'select (st_dump(the_geom)).geom  from a',
           'union all',
-          'select (st_dump(the_geom_webmercator)).geom  from b ',
+          'select (st_dump(the_geom)).geom  from b ',
         '),',
         // Get noded lines. Avoid overlapping segments
         'noded_lines as (',
@@ -453,22 +455,17 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
         // Decompose back again
         'non_intersect_lines as (',
           'select distinct (st_dump(geom)).geom from noded_lines',
-        '),',
-        // Get attributes using left join + st_within
-        'lines_attributes as (',
-          'select l.geom as the_geom_webmercator,{{fields}}',
-           'from non_intersect_lines l',
-           'left join a on st_within(l.geom,a.the_geom_webmercator)',
-           'left join b on st_within(l.geom,b.the_geom_webmercator)',
         ')',
-        // prepare the output, add a cartodb_id
-        'select {{cartodb_id}},* from lines_attributes'];
+        // Get attributes using left join + st_within
+        'select l.geom as the_geom{{fields}}',
+         'from non_intersect_lines l',
+         'left join a on st_within(l.geom,a.the_geom)',
+         'left join b on st_within(l.geom,b.the_geom)'];
 
       q = Mustache.render(q.join(' '),{
-        cartodb_id: this.getCartoDBID(),
         input_query: inputlayer.options.sql,
         overlay_query: overlaylayer.options.sql,
-        fields: queryFields
+        fields: this.toSQL(queryFields)
       });
 
       this.model.set('geometrytype','ST_LineString');
@@ -481,25 +478,20 @@ App.View.Tool.OverlayUnion = App.View.Tool.Overlay.extend({
         'b as ({{{overlay_query}}}),',
         //put all points together
         'all_points as (',
-          'select (st_dump(the_geom_webmercator)).geom  from a',
+          'select (st_dump(the_geom)).geom  from a',
           'union',
-          'select (st_dump(the_geom_webmercator)).geom  from b ',
-        '),',
-        // Get attributes using left join + st_within
-        'attributes as (',
-          'select p.geom as the_geom_webmercator,{{fields}}',
-           'from all_points p',
-           'left join a on st_intersects(p.geom,a.the_geom_webmercator)',
-           'left join b on st_intersects(p.geom,b.the_geom_webmercator)',
+          'select (st_dump(the_geom)).geom  from b ',
         ')',
-        // prepare the output, add a cartodb_id
-        'select {{cartodb_id}},* from attributes'];
+        'select p.geom as the_geom{{fields}}',
+           'from all_points p',
+           'left join a on st_intersects(p.geom,a.the_geom)',
+           'left join b on st_intersects(p.geom,b.the_geom)'];
+
 
       q = Mustache.render(q.join(' '),{
-        cartodb_id: this.getCartoDBID(),
         input_query: inputlayer.options.sql,
         overlay_query: overlaylayer.options.sql,
-        fields: queryFields
+        fields: this.toSQL(queryFields)
       });
 
       this.model.set('geometrytype','ST_Point');
@@ -568,14 +560,14 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
     if (gtl.indexOf('point') != -1){
       // Point erase. Use subqueries. AVOID CTE (WITH clause) BECAUSE OF PERFORMANCE!!!
       var q = [
-          'select {{fields}},a.the_geom from ({{{input_query}}}) a',
+          'select a.the_geom{{fields}} from ({{{input_query}}}) a',
             'left join ({{{overlay_query}}}) b on st_intersects(a.the_geom,b.the_geom)',
           'where b.the_geom is null'];
 
       q = Mustache.render(q.join(' '),{
           input_query: inputlayer.options.sql,
           overlay_query: overlaylayer.options.sql,
-          fields: queryFields
+          fields: this.toSQL(queryFields)
       });
 
       this.model.set('geometrytype',geometrytype);
@@ -586,21 +578,21 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
       this.model.set('geometrytype',geometrytype);
 
       var q = [
-        "SELECT distinct {{fields}}, ",
+        "SELECT distinct ",
               " CASE WHEN st_geometrytype(the_geom)='ST_GeometryCollection' then ST_CollectionExtract(the_geom,{{geomtype_constant}})",
               " ELSE the_geom",
-              " END as the_geom",
+              " END as the_geom{{fields}}",
         "FROM (",
-          "SELECT st_multi(ST_Difference(a.the_geom,ST_Union(b.the_geom))) AS the_geom,{{fields}}",
+          "SELECT st_multi(ST_Difference(a.the_geom,ST_Union(b.the_geom))) AS the_geom{{fields}}",
            "FROM ({{{input_query}}}) a",
            "INNER JOIN ({{{overlay_query}}}) b ON ST_Intersects(a.the_geom, b.the_geom)",
-           "GROUP BY a.the_geom,{{fields_groupby}}",
+           "GROUP BY a.the_geom{{fields_groupby}}",
         ") a",
         "where not st_isempty(the_geom) and st_geometrytype(the_geom)='{{geometrytype}}'",
 
         "UNION ALL",
 
-        "SELECT distinct {{fields}},st_multi(a.the_geom) as the_geom FROM ({{{input_query}}}) a",
+        "SELECT distinct st_multi(a.the_geom) as the_geom{{fields}} FROM ({{{input_query}}}) a",
           "left join ({{{overlay_query}}}) b  on ST_Intersects(a.the_geom, b.the_geom)",
           "where b.the_geom is null"
       ];
@@ -608,8 +600,8 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
       q = Mustache.render(q.join(' '),{
           input_query: inputlayer.options.sql,
           overlay_query: overlaylayer.options.sql,
-          fields: queryFields,
-          fields_groupby: this.queryFields2GroupBy(queryFields),
+          fields: this.toSQL(queryFields),
+          fields_groupby: this.toSQL(this.queryFields2GroupBy(queryFields)),
           geomtype_constant: App.Utils.getConstantGeometryType(geometrytype),
           geometrytype: geometrytype
       });

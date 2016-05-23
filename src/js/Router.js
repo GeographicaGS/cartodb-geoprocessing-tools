@@ -14,6 +14,16 @@ App.Router = Backbone.Router.extend({
       '*other'    : 'defaultRoute'
   },
 
+  initialize: function() {
+    this.bind('route', this._pageView);
+  },
+
+  _pageView: function() {
+    var path = Backbone.history.getFragment();
+    console.log("/" + path);
+    ga('send', 'pageview', {page: "/" + path});
+  },
+
   home: function(){
     var m = App.getUserModel(),
         account = m.get('account');

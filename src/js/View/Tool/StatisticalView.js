@@ -134,7 +134,7 @@ App.View.Tool.Statistical = Backbone.View.extend({
 
     this.$el.html(this._template({title: this._title}));
 
-    var inputLayers = this._geoVizModel.getSublayers();;
+    var inputLayers = this._geoVizModel.getSublayers({only_ready: true});
     var $select = this.$('select[name="input"]');
     for (var i in inputLayers){
       if(!inputLayers[i].geoLayer)

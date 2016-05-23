@@ -24,6 +24,10 @@ App.Model.Viz = Backbone.Model.extend({
 
   setSublayers: function(sublayers){
     _.find(this.get('layers'), function(l){ return l.type=='layergroup'}).options.layer_definition.layers = sublayers;
+  },
+
+  isValid: function(){
+    return _.find(this.get('layers'), function(l){ return l.type=='layergroup'})!=null;
   }
 
 });

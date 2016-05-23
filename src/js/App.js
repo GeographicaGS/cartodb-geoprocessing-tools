@@ -12,6 +12,8 @@ Backbone.View.prototype.close = function(){
 }
 
 $(function() {
+  ga('create', App.Config.Data.GA, 'auto');
+
   $(document).ajaxError(function(event, jqxhr) {
     if (jqxhr.status == 404) {
       //App.router.navigate('notfound',{trigger: true});
