@@ -11,5 +11,6 @@ App.Config.Data = {
   'GET_API_KEY_URL': '/your_apps',
   'TABLE_LIST_URL': '/api/v1/viz/?tag_name=&q=&page={{page}}&type=&exclude_shared=false&per_page={{pagesize}}&tags=&shared=no&locked=false&only_liked=false&order=updated_at&types=derived&deepInsights=false',
   'DEBUG' : false,
-  'ONPREMISE' : true
+  'ONPREMISE' : true,
+  'GA': 'UA-66042906-4'
 }
