@@ -117,7 +117,7 @@ App.View.Tool.Buffer = Backbone.View.extend({
   },
 
   render: function(){
-    this.$el.html(this._template({m: this.model.toJSON(),inputLayers: this._geoVizModel.getSublayers()}));
+    this.$el.html(this._template({m: this.model.toJSON(),inputLayers: this._geoVizModel.getSublayers({only_ready: true})}));
     return this;
   },
 

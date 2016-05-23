@@ -122,11 +122,11 @@ App.View.Tool.Overlay = Backbone.View.extend({
   },
 
   getOverlayLayers: function(){
-    return this._geoVizModel.getSublayers();
+    return this._geoVizModel.getSublayers({only_ready: true});
   },
 
   getInputLayers: function(){
-    return this._geoVizModel.getSublayers();
+    return this._geoVizModel.getSublayers({only_ready: true});
   },
 
   getCartoDBID: function(){
