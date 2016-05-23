@@ -1,3 +1,5 @@
+'use strict';
+
 App.Model.Viz = Backbone.Model.extend({
 
   getSublayers: function(){
@@ -25,4 +27,3 @@ App.Model.Viz = Backbone.Model.extend({
   }
 
 });
-

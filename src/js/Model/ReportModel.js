@@ -1,3 +1,5 @@
+'use strict';
+
 App.Model.Report = Backbone.Model.extend({
 
   // url: function(){
@@ -6,7 +8,9 @@ App.Model.Report = Backbone.Model.extend({
 
   sync: function(method, model, options){
 
-  	var sql = new cartodb.SQL({ user: this.get('account') });
+  	var username = this.get('account');
+    var sql = App.Utils.getCartoDBSQLInstance(username);
+
   	var q = 'WITH a as (' + this.get('layer_sql') + ') SELECT ';
   	_.each(this.get('fields'),function(field) {
   		var name = field.name;

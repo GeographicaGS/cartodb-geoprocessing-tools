@@ -1,3 +1,4 @@
+'use strict';
 
 App.LayerManager = function(opts){
   _.extend(this, Backbone.Events);
@@ -50,7 +51,8 @@ App.LayerManager.prototype._addWork = function(w){
 
 App.LayerManager.prototype.removeLayer = function(layer){
   //TODO: Use Job API
-  var sql = new cartodb.SQL({ user: this.userModel.get('account') });
+  var username = this.userModel.get('account');
+  var sql = App.Utils.getCartoDBSQLInstance(username);
   var api_key = this.userModel.get('api_key');
 
   // Note cache: false
@@ -101,11 +103,9 @@ App.LayerManager.prototype._processWorkResponse = function(work,res) {
     this.trigger('layerFailed',work);
     this._cleanWork(work);
   }
-  else{
-    console.log(res.state + ' ' + work.options.layer_name);
-  }
-
-
+  // else{
+  //   console.log(res.state + ' ' + work.options.layer_name);
+  // }
 
   if (res.warnings){
     console.log('Here the warning: ' + res.warning);

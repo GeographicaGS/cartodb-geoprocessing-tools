@@ -1,3 +1,5 @@
+'use strict';
+
 App.Model.Tool.Buffer = App.Model.Wizard.CartoCSS.extend({
   defaults: {
     'input': null,

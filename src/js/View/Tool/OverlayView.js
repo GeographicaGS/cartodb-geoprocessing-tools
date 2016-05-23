@@ -218,7 +218,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
   },
 
   _getInfoWindowTemplate: function(){
-    return '"<div class="cartodb-popup v2"><a href="#close" class="cartodb-popup-close-button close">x</a> <div class="cartodb-popup-content-wrapper"> <div class="cartodb-popup-content"> {{#content.fields}} {{#title}}<h4>{{title}}</h4>{{/title}} {{#value}} <p {{#type}}class="{{ type }}"{{/type}}>{{{ value }}}</p> {{/value}} {{^value}} <p class="empty">null</p> {{/value}} {{/content.fields}} </div> </div> <div class="cartodb-popup-tip-container"></div> </div>"';
+    return '<div class="cartodb-popup v2"><a href="#close" class="cartodb-popup-close-button close">x</a> <div class="cartodb-popup-content-wrapper"> <div class="cartodb-popup-content"> {{#content.fields}} {{#title}}<h4>{{title}}</h4>{{/title}} {{#value}} <p {{#type}}class="{{ type }}"{{/type}}>{{{ value }}}</p> {{/value}} {{^value}} <p class="empty">null</p> {{/value}} {{/content.fields}} </div> </div> <div class="cartodb-popup-tip-container"></div> </div>';
   },
 
   _fields2alias: function(sqlFields){
@@ -341,8 +341,8 @@ App.View.Tool.OverlayIntersection = App.View.Tool.Overlay.extend({
 
     var q = ["SELECT {{{fields2}}}, ",
         " CASE WHEN st_geometrytype(the_geom)='ST_GeometryCollection' then ST_CollectionExtract(the_geom,{{geomtype_constant}})",
-        " ELSE the_geom_webmercator",
-        " END as the_geom_webmercator",
+        " ELSE the_geom",
+        " END as the_geom",
       "FROM (",
         "SELECT distinct {{{fields}}},",
           "st_multi(st_intersection(a.the_geom,b.the_geom)) as the_geom",
@@ -615,40 +615,6 @@ App.View.Tool.OverlayErase = App.View.Tool.Overlay.extend({
       });
 
     }
-
-    // this.model.set('geometrytype',App.Utils.getPostgisMultiType(inputlayer.geometrytype));
-
-    // var q = [
-    //   " WITH a as ({{{input_query}}}), pre_b as ({{{overlay_query}}}),",
-    //     "b as (select st_union(the_geom_webmercator) as the_geom_webmercator from pre_b),",
-    //     "i as (",
-    //       "SELECT distinct {{fields}},ST_Multi(ST_Difference(a.the_geom_webmercator,b.the_geom_webmercator)) as the_geom_webmercator",
-    //       " FROM a,b ",
-    //       " WHERE st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)",
-    //     "),",
-    //     "ni as (",
-    //       "SELECT distinct {{fields}},ST_Multi(a.the_geom_webmercator) as the_geom_webmercator",
-    //       " FROM a,b ",
-    //       " WHERE not st_intersects(a.the_geom_webmercator,b.the_geom_webmercator)",
-    //     "),",
-    //     "r as ( select * from i union all select * from ni)",
-    //     "select {{cartodb_id}},{{fields2}},",
-    //       " CASE WHEN st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' then ST_CollectionExtract(the_geom_webmercator,{{collection_extract}})",
-    //       " ELSE the_geom_webmercator",
-    //       " END as the_geom_webmercator",
-    //     "FROM r ",
-    //     "WHERE not ST_IsEmpty(the_geom_webmercator) AND (st_geometrytype(the_geom_webmercator)='ST_GeometryCollection' OR",
-    //       "st_geometrytype(the_geom_webmercator) ='" +  this.model.get('geometrytype') + "')"];
-
-    // q = Mustache.render(q.join(' '),{
-    //     cartodb_id: this.getCartoDBID(),
-    //     input_query: inputlayer.options.sql,
-    //     overlay_query: overlaylayer.options.sql,
-    //     fields: queryFields,
-    //     fields2: this.fieldsRemoveTablePrefix(queryFields),
-    //     collection_extract: App.Utils.getConstantGeometryType(this.model.get('geometrytype'))
-    //   });
-
 
     this.model.set({
       'sql' : q

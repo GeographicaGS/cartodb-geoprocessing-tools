@@ -1,3 +1,5 @@
+'use strict';
+
 App.Utils = {
   getPostgisMultiType: function(type){
     // TODO: Complete it with all PostGIS types.
@@ -36,7 +38,7 @@ App.Utils = {
     }
     else if (sttype=='ST_MultiPoint' || sttype=='ST_Point'){
       return 'point';
-    }  
+    }
   },
 
   slugify:function(text){
@@ -46,5 +48,18 @@ App.Utils = {
       .replace(/\-\-+/g, '_')         // Replace multiple - with single _
       .replace(/^-+/, '')             // Trim - from start of text
       .replace(/-+$/, '');            // Trim - from end of text
+  },
+
+  getCartoDBSQLInstance: function(username){
+    if (App.Config.Data.ONPREMISE){
+      return new cartodb.SQL({ user: username,
+        sql_api_template: App.Config.cartodbjs_sql_api_url(username),
+        maps_api_template: App.Config.cartodbjs_maps_api_url(username),
+        no_cdn: true
+      });
+    }
+    else{
+      return new cartodb.SQL({ user: username});
+    }
   }
 }

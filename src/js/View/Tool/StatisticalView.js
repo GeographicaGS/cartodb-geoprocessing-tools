@@ -1,3 +1,5 @@
+'use strict';
+
 App.View.Tool.Statistical = Backbone.View.extend({
   _template: _.template( $('#tool-statistical_template').html() ),
   _template_field_options: _.template( $('#tool-statistical_field_options').html() ),

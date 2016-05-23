@@ -1,7 +1,7 @@
 s3_id: <%= ENV['S3_WEBSITE_ID'] %>
 s3_secret: <%= ENV['S3_WEBSITE_SECRET'] %>
-s3_bucket: sla.geographica.io
-cloudfront_distribution_id: E2GRP0BFT4WD1K
+s3_bucket: geoprocessing.geographica.gs
+cloudfront_distribution_id: E2FBRY535IDHY2
 
 site: public
 
@@ -25,12 +25,13 @@ cloudfront_distribution_config:
   aliases:
     quantity: 1
     items:
-      CNAME: sla.geographica.io
+      CNAME: geoprocessing.geographica.gs
 
 routing_rules:
   -   condition:
           http_error_code_returned_equals: 404
       redirect:
-          host_name: sla.geographica.io
+          host_name: geoprocessing.geographica.gs
+          # protocol: https
           replace_key_prefix_with: "#"
           http_redirect_code: 301

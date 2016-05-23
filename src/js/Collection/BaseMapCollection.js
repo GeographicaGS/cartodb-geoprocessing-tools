@@ -213,5 +213,5 @@ App.Collection.BaseMap = Backbone.Collection.extend({
   	var maps = this.get(id).get('maps');
   	return _.findWhere(maps,{'title':title});
   }
-  
+
 });

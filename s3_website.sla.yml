@@ -1,0 +1,37 @@
+s3_id: <%= ENV['S3_WEBSITE_ID'] %>
+s3_secret: <%= ENV['S3_WEBSITE_SECRET'] %>
+s3_bucket: sla.geographica.io
+cloudfront_distribution_id: E2GRP0BFT4WD1K
+
+site: public
+
+max_age: 300
+
+gzip:
+  - .html
+  - .css
+  - .md
+  - .js
+
+s3_endpoint: eu-west-1
+
+exclude_from_upload:
+  - .DS_Store
+  - .htaccess
+
+cloudfront_distribution_config:
+  default_cache_behavior:
+    min_TTL: <%= 60 * 60 * 24 %>
+  aliases:
+    quantity: 1
+    items:
+      CNAME: sla.geographica.io
+
+routing_rules:
+  -   condition:
+          http_error_code_returned_equals: 404
+      redirect:
+          host_name: sla.geographica.io
+          # protocol: https
+          replace_key_prefix_with: "#"
+          http_redirect_code: 301

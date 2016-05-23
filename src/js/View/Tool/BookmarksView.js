@@ -1,3 +1,5 @@
+'use strict';
+
 App.View.Tool.Bookmarks = Backbone.View.extend({
   _template: _.template( $('#tool-bookmark_template').html() ),
 

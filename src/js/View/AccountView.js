@@ -33,7 +33,6 @@ App.View.Account = Backbone.View.extend({
         this.$next.addClass('loading');
       }
 
-
       if (this._usernameTimeout)
         clearTimeout(this._usernameTimeout);
 
@@ -61,15 +60,17 @@ App.View.Account = Backbone.View.extend({
     this._usernameTimeout = setTimeout(function(){
       clearTimeout(_this._usernameTimeout);
       _this.model.set('api_key',$.trim($(e.target).val()));
-      _this.model.validateAPIKey(function(cb){
-        _this.model.set('autosave',cb ? 'enabled' : 'waiting');
-        _this.model.createConfigTable();
-        _this.model.save();
-        _this.$submit.removeClass('loading');
-        if(cb)
-          _this.$submit.addClass('ready');
-        else
-          _this.$submit.addClass('error');
+      _this.model.validateAPIKey(function(valid){
+        _this.model.set('autosave',valid ? 'enabled' : 'waiting');
+        if(valid){
+          _this.model.createConfigTable(function(){
+              _this.model.save();
+              _this.$submit.addClass('ready').removeClass('loading');
+          });
+        }
+        else{
+          _this.$submit.addClass('error').removeClass('loading');
+        }
       });
     },500);
 
