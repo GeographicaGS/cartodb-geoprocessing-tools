@@ -126,7 +126,6 @@ App.Model.UserLocalStorage = App.Model.User.extend({
     var username = this.get('account');
     var sql = App.Utils.getCartoDBSQLInstance(username);
 
-    // check if table exists
     var q = "BEGIN;CREATE VIEW {{name}} as select 1; drop view {{name}}; COMMIT;";
     var _this = this;
     sql.execute(q,{name: 'cdb_geoproctool_apikeytest'},{cache: true,api_key:this.get('api_key')})
@@ -151,7 +150,9 @@ App.Model.UserLocalStorage = App.Model.User.extend({
         if (st)
           _this.createConfigTable(function(){
             cb(_this);
-          })
+          });
+        else
+          cb(false);
       });
     }
     else{

@@ -5,6 +5,22 @@
   flex: 1 1 100%;
   background-color: @grey10;
 
+  & > .loading-ico {
+    padding: 20px;
+    margin-top: 25vh;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%);
+
+    path {
+      stroke: @blue_main;
+    }
+  }
+
+  & > .line_below {
+    flex: 0 0 auto;
+  }
+
   .wrapper {
     width: 90%;
     max-width: 570px;
@@ -26,14 +42,55 @@
         border-right: 1px solid @grey30;
         margin-right: 20px;
         color: @blue_light;
+        cursor: pointer;
 
         img {
           margin-right: 5px;
         }
       }
 
+      .search_input {
+        visibility: hidden;
+        opacity: .00001;
+        width: 200px;
+        max-width: 0;
+        overflow-x: hidden;
+        flex: 1 1 100%;
+
+        transition: visibility @transTimeSlowest linear, opacity @transTimeSlowest @transFuncDefault, max-width @transTimeDefault @transFuncDefault, margin-right @transTimeSlow @transFuncDefault;
+
+        input[type=text] {
+          width: 100%;
+          padding: 5px;
+          border: none;
+          background-color: transparent;
+          outline: none;
+        }
+
+        .clear_search {
+          display: flex;
+          padding: 2px;
+          border: 1px solid @grey60;
+          border-radius: 50%;
+          opacity: .00001;
+
+          transition: opacity @transTimeDefault @transFuncDefault;
+
+          img {
+            height: 16px;
+            width: 16px;
+          }
+        }
+      }
+
       h2 {
         flex: 1 1 100%;
+        visibility: visible;
+        max-width: 100%;
+        opacity: 1;
+        overflow-x: hidden;
+
+        transition: visibility @transTimeSlow linear, opacity @transTimeSlow @transFuncDefault @transTimeDefault, max-width @transTimeSlow @transFuncDefault;
       }
 
       ul.tools {
@@ -55,6 +112,27 @@
           img {
             height: 18px;
           }
+        }
+      }
+
+      .search_tool.active + .search_input {
+        visibility: visible;
+        opacity: 1;
+        max-width: 100%;
+        margin-right: 20px;
+
+        transition: visibility @transTimeSlow linear, opacity @transTimeSlow @transFuncDefault, max-width @transTimeSlow @transFuncDefault, margin-right @transTimeSlowest @transFuncDefault;
+
+        .clear_search {
+          opacity: 1;
+        }
+
+        & + h2 {
+          max-width: 0;
+          visibility: hidden;
+          opacity: .00001;
+
+          transition: visibility @transTimeDefault linear, opacity @transTimeDefault @transFuncDefault, max-width @transTimeDefault @transFuncDefault;
         }
       }
     }
@@ -110,7 +188,7 @@
               font-size: 14px;
               color:@blue_light;
               &.selected{
-                color:@grey50;   
+                color:@grey50;
               }
             }
           }

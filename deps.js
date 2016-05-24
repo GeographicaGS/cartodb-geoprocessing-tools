@@ -48,7 +48,7 @@ deps.JS = [
   srcJS + 'View/HeaderView.js',
   srcJS + 'View/FooterView.js',
   srcJS + 'View/GroupLayerView.js',
-  srcJS + 'View/LayerControlView.js',
+  //srcJS + 'View/LayerControlView.js',
   srcJS + 'View/MapToolbarView.js',
   srcJS + 'View/MapView.js',
   srcJS + 'View/ReportView.js',

@@ -33,15 +33,14 @@ App.View.GroupLayer = Backbone.View.extend({
     return this;
   },
 
-  togglePanel: function() {
-    this.$panel.toggleClass('show');
-    this.$togglePanelBtn.toggleClass('selected');
+  togglePanel: function(force) {
+    var force = force || null;
+    this.$panel.toggleClass('show', force);
+    this.$togglePanelBtn.toggleClass('selected', force);
   },
+
   openPanel: function(){
-    if (!this.$panel.hasClass('show')){
-      this.$panel.addClass('show');
-      this.$togglePanelBtn.addClass('selected');
-    }
+    this.togglePanel(true);
   }
 
 });
@@ -92,7 +91,7 @@ App.View.GroupLayerPanel = Backbone.View.extend({
     };
 
     var sortableOpts = {
-      cancel: '.sql, .cartocss, .wizard',
+      cancel: '.sql, .cartocss, .wizard, .shown,.error',
       items:'li',
       stop: function(event, ui) {
           _this._refreshLayerOrders();

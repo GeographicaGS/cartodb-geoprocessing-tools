@@ -18,6 +18,13 @@ header {
 				font-style: italic;
 			}
 		}
+
+    .author{
+      margin-left: 10px;
+      font-size: 0.7em;
+      font-weight: 300;
+      opacity: 0.7;
+    }
 	}
 
 	.logos {
@@ -43,6 +50,7 @@ header {
 			flex: 1 1 100%;
 			padding: 0 10px;
       cursor: pointer;
+      .noselect;
 
       img {
         vertical-align: middle;
@@ -85,8 +93,8 @@ header {
       position: absolute;
       top: 75px;
       right: 20px;
-      width: 320px;
-      padding: 18px 20px;
+      width: 153px;
+      padding: 18px 15px;
       border: 1px solid @grey20;
       border-radius: 2px;
       box-shadow: 0 -2px 8px 0 fade(@black, 10%);
@@ -94,9 +102,16 @@ header {
       color: @blue_light;
       .top_triangle(calc(~'100% - 100px'), 8px, 14px, @white, @grey20);
       z-index: 300;
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0px);
+
+      transition: visibility @transTimeDefault linear, opacity @transTimeDefault @transFuncDefault, transform @transTimeDefault @transFuncDefault;
 
       &:empty {
-        display: none;
+        visibility: hidden;
+        opacity: .00001;
+        transform: translateY(-10px);
       }
 
       .header {
@@ -133,6 +148,16 @@ header {
           content: "";
           display: block;
           clear: both;
+        }
+      }
+
+      a{
+        display: block;
+        &+a{
+          margin-top: 8px;
+        }
+        &#closeSession{
+          color: @red_main;
         }
       }
 

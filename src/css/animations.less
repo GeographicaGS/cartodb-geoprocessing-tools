@@ -19,3 +19,30 @@
     transform: rotateZ(270deg);;
   }
 }
+
+@keyframes toolHolderAppear {
+  0% {
+    transform: translateY(-10px);
+    opacity: .00001;
+    visibility: hidden;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@keyframes toolHolderDisappear {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    transform: translateY(-10px);
+    opacity: .00001;
+    visibility: hidden;
+  }
+}

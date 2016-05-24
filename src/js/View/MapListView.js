@@ -22,6 +22,9 @@ App.View.MapList = Backbone.View.extend({
 
   events: {
     'click .pagination a' : '_changePage',
+    'click .search_tool': '_activateSearch',
+    'keyup .search_input input[type=text]': '_searchMaps',
+    'click .clear_search': '_clearSearchMap',
   },
 
   onClose: function(){
@@ -38,6 +41,9 @@ App.View.MapList = Backbone.View.extend({
       this.$maplist = this.$('.maplist');
       this.$mapNumber = this.$('.toolbar h2 span');
       this.collection.fetch({reset: true});
+
+      this.$searchInput = this.$('.search_input input[type=text]');
+      this.$('.maplist ul').html(App.loading());
     }
     else{
       this.$el.html('User does not exist');
@@ -51,12 +57,12 @@ App.View.MapList = Backbone.View.extend({
     // Show a loading whereas check if the account exist
     this.$el.html(App.loading());
 
-    App.getUserModel().checkPermissions(this.model.get('account'), function(status){
-      if(!status){
-        App.resetUserModel();
-        App.router.navigate('login', {trigger: true});
-      }
-    });
+    // App.getUserModel().checkPermissions(this.model.get('account'), function(status){
+    //   if(!status){
+    //     App.resetUserModel();
+    //     App.router.navigate('login', {trigger: true});
+    //   }
+    // });
     this.model.checkAccount(this.model.get('account'),this._onAccountChecked);
 
     return this;
@@ -79,8 +85,35 @@ App.View.MapList = Backbone.View.extend({
   _changePage:function(e){
     e.preventDefault();
     this.collection.setCurrentPage(parseInt($(e.currentTarget).text()));
-    this.$('.maplist ul').html(App.loading())
+    this.$('.maplist ul').html(App.loading());
     this.collection.fetch({reset: true});
+  },
+
+  _activateSearch: function(e) {
+    e.preventDefault();
+    $(e.currentTarget).addClass('active');
+    var _this = this;
+    setTimeout(function() {
+      _this.$searchInput.focus();
+    }, 500);
+  },
+
+  _searchMaps: function(e) {
+    if(e.keyCode == 13){
+      this.collection.setCurrentQuery(this.$searchInput.val().trim());
+      this.$('.maplist ul').html(App.loading());
+      this.collection.fetch({reset: true});
+    }
+  },
+
+  _clearSearchMap: function(e) {
+    this.$('.search_tool').removeClass('active');
+    this.$searchInput.val('');
+    if(this.collection.getCurrentQuery() != ''){
+      this.collection.setCurrentQuery('');
+      this.$('.maplist ul').html(App.loading());
+      this.collection.fetch({reset: true});
+    }
   }
 
 });
