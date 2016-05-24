@@ -152,7 +152,8 @@ footer {
     position: absolute;
     left: 0;
     top: 0;
-    animation: rotate 1s linear forwards running infinite;
+    animation: rotate 1s linear forwards infinite;
+		animation-play-state: running;
 
     path{
       opacity: 0.00001;
@@ -160,7 +161,8 @@ footer {
       stroke-width: 20;
       stroke-dasharray: 629;
       stroke: @white;
-      animation: load 2s linear forwards running infinite;
+      animation: load 2s linear forwards infinite;
+			animation-play-state: running;
     }
   }
 }

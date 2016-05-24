@@ -16,10 +16,12 @@
   z-index: 1080;
   transform: translateY(-100vh);
   transition: left 0s linear @transTimeDefault, transform @transTimeDefault @transFuncDefault;
-  animation: toolHolderDisappear @transTimeDefault @transFuncDefault forwards running 1;
+  animation: toolHolderDisappear @transTimeDefault @transFuncDefault forwards 1;
+  animation-play-state: running;
 
   &.shown {
-    animation: toolHolderAppear @transTimeDefault @transFuncDefault forwards running 1;
+    animation: toolHolderAppear @transTimeDefault @transFuncDefault forwards 1;
+    animation-play-state: running;
     transition: left 0s linear, transform @transTimeDefault @transFuncDefault;
   }
 
