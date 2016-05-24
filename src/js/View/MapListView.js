@@ -92,7 +92,10 @@ App.View.MapList = Backbone.View.extend({
   _activateSearch: function(e) {
     e.preventDefault();
     $(e.currentTarget).addClass('active');
-    this.$searchInput.focus();
+    var _this = this;
+    setTimeout(function() {
+      _this.$searchInput.focus();
+    }, 500);
   },
 
   _searchMaps: function(e) {
