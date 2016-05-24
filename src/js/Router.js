@@ -20,7 +20,7 @@ App.Router = Backbone.Router.extend({
 
   _pageView: function() {
     var path = Backbone.history.getFragment();
-    console.log("/" + path);
+    //console.log("/" + path);
     ga('send', 'pageview', {page: "/" + path});
   },
 

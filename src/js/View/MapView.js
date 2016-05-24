@@ -55,7 +55,6 @@ App.View.Map = Backbone.View.extend({
       return;
     }
 
-
     // Add GID to cartoVizModel
     this._cartoVizModel.addLayerGID();
 
@@ -101,6 +100,13 @@ App.View.Map = Backbone.View.extend({
         console.debug('Added layer ' + cartolayer.gid);
         geolayers.push(cartolayer);
       }
+    }
+
+    // Fix sql. Transform select * from user.user.table to select * from user.table
+    for (var i in geolayers){
+      //console.log(geolayers[i].options.sql);
+      geolayers[i].options.sql = geolayers[i].options.sql.replace(/\b(\w+)\.\1/g,'$1');
+      //console.log(geolayers[i].options.sql);
     }
 
     this._geoVizModel.set('title',this._cartoVizModel.get('title'));
