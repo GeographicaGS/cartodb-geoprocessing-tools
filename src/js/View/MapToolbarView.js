@@ -30,6 +30,9 @@ App.View.MapToolbar = Backbone.View.extend({
 
     if(this.reportView)
       this.reportView.close();
+
+    if (this.groupLayer)
+      this.groupLayer.close();
   },
 
   _openTool: function(e){
@@ -112,6 +115,10 @@ App.View.MapToolbar = Backbone.View.extend({
   },
 
   _removeToolWidget: function(){
+
+    if (!this._tool)
+      return;
+
     var _this = this;
     this._tool.$el.parent().get(0).className = "toolholder";
     setTimeout(function () {

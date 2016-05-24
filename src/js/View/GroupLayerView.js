@@ -14,6 +14,16 @@ App.View.GroupLayer = Backbone.View.extend({
 
   onClose: function(){
     this.stopListening();
+
+    if (this._panelView)
+      this._panelView.close();
+
+    if (this._mapView)
+      this._mapView.close();
+
+    if (this._counterView)
+      this._counterView.close();
+
   },
 
   render: function(){
@@ -148,6 +158,9 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
 
   onClose: function(){
     this.stopListening();
+
+    if (this._subview)
+      this._subview.close();
   },
 
   _sublayerUpdateCartoCSS: function(l){
@@ -443,6 +456,7 @@ App.View.GroupLayerMap = Backbone.View.extend({
 
   onClose: function(){
     this.stopListening();
+    $('.cartodb-infowindow').remove();
   },
 
   _onLayerDone: function(layer){

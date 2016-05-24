@@ -9,7 +9,7 @@ App.View.Map = Backbone.View.extend({
     _.bindAll(this,'_onFetchVizModel','resizeMap','_onCreatedVIS','_render');
 
     this._user = App.getUserModel();
-    
+
     var m = new Backbone.Model({
       section: 'map',
       account : this.model.get('account'),
@@ -38,9 +38,23 @@ App.View.Map = Backbone.View.extend({
       this.header.remove();
     if (this.footer)
       this.footer.remove();
+
     if (this._baseMapView)
       this._baseMapView.close();
+
+    if (this.toolbar)
+      this.toolbar.close();
+
+    if (this.vis)
+      this.vis.remove();
+
+    if (this.map)
+      this.map.remove();
+
+
+
   },
+
 
   _onFetchVizModel: function(m){
     this._nfetches++;
@@ -129,6 +143,7 @@ App.View.Map = Backbone.View.extend({
   },
 
   _render: function(){
+
 
     this.toolbar = new App.View.MapToolbar({
       el: this.$('.toolbar'),
