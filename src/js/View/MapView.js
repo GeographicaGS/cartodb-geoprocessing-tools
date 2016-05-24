@@ -8,6 +8,8 @@ App.View.Map = Backbone.View.extend({
 
     _.bindAll(this,'_onFetchVizModel','resizeMap','_onCreatedVIS','_render');
 
+    this._user = App.getUserModel();
+    
     var m = new Backbone.Model({
       section: 'map',
       account : this.model.get('account'),
@@ -16,13 +18,16 @@ App.View.Map = Backbone.View.extend({
     this.header = new App.View.Header({model: m});
     this.footer = new App.View.Footer();
 
-    this._user = App.getUserModel();
-    this._user.checkPermissions(this.model.get('account'), function(status){
-      if(!status){
-        App.resetUserModel();
-        App.router.navigate('login', {trigger: true});
-      }
-    });
+    // if (!App.Config.Data.DEBUG){
+    //   this._user.checkPermissions(this.model.get('account'), function(status){
+    //     if(!status){
+    //       //App.resetUserModel();
+    //       //alert('Cannot access to other users maps');
+    //       App.router.navigate('', {trigger: true});
+    //     }
+    //   });
+    // }
+
 
   },
 
@@ -115,7 +120,6 @@ App.View.Map = Backbone.View.extend({
     if (this._user.get('autosave') && this._user.get('account')==this._geoVizModel.get('account'))
       this._geoVizModel.save();
 
-
     this._geoVizModel.calculateSublayersGeometryTypes(this._render);
     this._geoVizModel.createLayerManager();
 
@@ -130,7 +134,8 @@ App.View.Map = Backbone.View.extend({
       el: this.$('.toolbar'),
       model: this._geoVizModel,
       map: this.map,
-      vis:this.vis
+      vis:this.vis,
+      readonly: this.model.get('account') != this._user.get('account')
     });
     this.toolbar.render();
     this.$map.addClass('wToolbar');

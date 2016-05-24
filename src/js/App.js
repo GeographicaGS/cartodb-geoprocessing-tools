@@ -190,9 +190,7 @@ App.ini = function(){
 
   this._userModel.fetch({
     'success' : function(a,b){
-
       _this._userModel.validateAndCreate(function(){
-
         Backbone.history.start({pushState: true});
       });
     }
@@ -225,9 +223,13 @@ App.resetUserModel = function(){
 
 App.onAjaxError = function(status){
   switch(status) {
-    case 401: this.resetUserModel();
-              this.router.navigate('login', {trigger: true});
-        break;
-    default: console.error('Error on AJAX request: ' + status);
+    case 401:
+      //this.resetUserModel();
+      //this.router.navigate('login', {trigger: true});
+      this.router.navigate('', {trigger: true});
+      console.log('EEE!');
+      break;
+    default:
+      console.error('Error on AJAX request: ' + status);
   }
 }

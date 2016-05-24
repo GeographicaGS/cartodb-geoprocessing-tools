@@ -57,12 +57,12 @@ App.View.MapList = Backbone.View.extend({
     // Show a loading whereas check if the account exist
     this.$el.html(App.loading());
 
-    App.getUserModel().checkPermissions(this.model.get('account'), function(status){
-      if(!status){
-        App.resetUserModel();
-        App.router.navigate('login', {trigger: true});
-      }
-    });
+    // App.getUserModel().checkPermissions(this.model.get('account'), function(status){
+    //   if(!status){
+    //     App.resetUserModel();
+    //     App.router.navigate('login', {trigger: true});
+    //   }
+    // });
     this.model.checkAccount(this.model.get('account'),this._onAccountChecked);
 
     return this;

@@ -15,8 +15,9 @@ App.View.Header = Backbone.View.extend({
     if (!this.model.get('title'))
       this.model.set('title','Untitled map');
 
+    this._userModel = App.getUserModel();
     this.userControl = new App.View.UserControl({
-      model: App.getUserModel(),
+      model: this._userModel,
       account: this.model.get('account')
     });
 
@@ -31,6 +32,7 @@ App.View.Header = Backbone.View.extend({
   },
 
   render: function(){
+
     this.$el.html(this._template({title: this.model.get('title'), account: this.model.get('account')}));
     this.$title = this.$('h1');
     this.userControl.setElement(this.$('.user'));
@@ -40,7 +42,11 @@ App.View.Header = Backbone.View.extend({
   },
 
   updateTitle: function(newTitle){
-    this.$title.html(newTitle);
-  },
+    var html = newTitle;
+    if (this.model.get('account')!= this._userModel.get('account'))
+      html += '<span class="author">@' + this.model.get('account') + '</span>';
+
+    this.$title.html(html);
+  }
 
 });

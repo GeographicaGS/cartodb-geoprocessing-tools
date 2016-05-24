@@ -12,6 +12,10 @@ App.View.MapToolbar = Backbone.View.extend({
     if(options.vis)
       this._vis = options.vis;
 
+    this._readonly = options.readonly;
+
+    this._userModel = App.getUserModel();
+
     this.listenTo(App.events,'tool:close',this._closeTool)
   },
 
@@ -128,7 +132,8 @@ App.View.MapToolbar = Backbone.View.extend({
   },
 
   render: function(){
-    this.$el.html(this._template());
+
+    this.$el.html(this._template({readonly: this._readonly}));
     // this.layersControl.setElement(this.$('.layers_control'));
     // this.layersControl.render();
 

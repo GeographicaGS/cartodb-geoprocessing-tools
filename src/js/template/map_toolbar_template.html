@@ -1,11 +1,13 @@
 <ul class="buttons">
   <li class="highlighted tooltip bottom" data-tool="bookmarks" data-title="Bookmarks"><img src="/img/SGV_tool-bookmark.svg" alt="Bookmarks" /></li>
-  <li class="tooltip bottom" data-tool="erase" data-title="Erase"><img src="/img/SGV_tool-erase.svg" alt="Erase" /></li>
-  <li class="tooltip bottom" data-tool="intersection" data-title="Intersect"><img src="/img/SGV_tool-intersect.svg" alt="Intersect" /></li>
-  <li class="tooltip bottom" data-tool="clip" data-title="Clip"><img src="/img/SGV_tool-clip.svg" alt="Clip" /></li>
-  <li class="tooltip bottom" data-tool="union" data-title="Union"><img src="/img/SGV_tool-union.svg" alt="Union" /></li>
-  <li class="separator"></li>
-  <li class="tooltip bottom" data-title="Buffer" data-tool="buffer"><img src="/img/SGV_tool-buffer.svg" alt="Buffer" /></li>
+  <% if (!readonly) { %>
+    <li class="tooltip bottom" data-tool="erase" data-title="Erase"><img src="/img/SGV_tool-erase.svg" alt="Erase" /></li>
+    <li class="tooltip bottom" data-tool="intersection" data-title="Intersect"><img src="/img/SGV_tool-intersect.svg" alt="Intersect" /></li>
+    <li class="tooltip bottom" data-tool="clip" data-title="Clip"><img src="/img/SGV_tool-clip.svg" alt="Clip" /></li>
+    <li class="tooltip bottom" data-tool="union" data-title="Union"><img src="/img/SGV_tool-union.svg" alt="Union" /></li>
+    <li class="separator"></li>
+    <li class="tooltip bottom" data-title="Buffer" data-tool="buffer"><img src="/img/SGV_tool-buffer.svg" alt="Buffer" /></li>
+  <% } %>
  <li class="tooltip bottom" data-title="Statistical" data-tool="statistical" title="Stats"><img src="/img/SGV_tool-stat.svg" alt="Stats" /></li>
   <li class="separator"></li>
   <li class="tooltip bottom" data-title="Measure" data-tool="measure" type="polyline"><img src="/img/SGV_tool-measure.svg" alt="Measure" /></li>

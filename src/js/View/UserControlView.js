@@ -4,7 +4,7 @@ App.View.UserControl = Backbone.View.extend({
   _template: _.template( $('#usercontrol_template').html() ),
 
   events: {
-    'click .username' : '_toggleAutoSave'
+    'click .username' : '_clickUsername'
   },
 
   initialize: function(options) {
@@ -34,7 +34,12 @@ App.View.UserControl = Backbone.View.extend({
     return this;
   },
 
-  _toggleAutoSave: function(){
+  _clickUsername: function(){
+
+    if (!this.model.get('account')){
+      // No logged user
+      return App.router.navigate('login', {trigger: true});
+    }
 
     if (!this._autoSaveView){
       this._autoSaveView = new App.View.UserAutosave({
@@ -79,7 +84,6 @@ App.View.UserAutosave = Backbone.View.extend({
     if(autosave == 'waiting' || autosave == 'enabled'){
       this.$toggle.addClass('enabled');
     }
-
 
     this.$('input').val(api_key);
 
@@ -137,7 +141,7 @@ App.View.UserAutosave = Backbone.View.extend({
   },
 
   render: function(){
-    this.$el.html(this._template({account: this._account, api_key_url: App.Config.get_api_key_url(this._account)}));
+    this.$el.html(this._template({m: this.model.toJSON(), account: this._account, api_key_url: App.Config.get_api_key_url(this._account)}));
     this._render();
     return this;
   },
