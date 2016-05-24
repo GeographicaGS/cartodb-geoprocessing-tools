@@ -11,6 +11,11 @@ App.View.Account = Backbone.View.extend({
   events: {
     'keyup input[name="username"]' : '_onTypedUsername',
     'keyup input[name="apikey"]' : '_onTypedApiKey',
+    //'paste input[name="apikey"]' : '_onTypedApiKey',
+    'mouseup input[name="apikey"]' : '_onTypedApiKey',
+    //'change input[name="apikey"]' : '_onTypedApiKey',
+    'input input[name="apikey"]' : '_onTypedApiKey',
+
     'click input[type="submit"]' : '_onClickGo',
     'click .goNext': '_onClickNext',
     'click .goPrev': '_onClickPrev',
@@ -48,10 +53,14 @@ App.View.Account = Backbone.View.extend({
 
     this.$submit.removeClass('error').removeClass('ready');
     this.$apikey.removeClass('error');
-    if(this.$apikey.val() != ''){
+
+    var apikey = this.$apikey.val().trim();
+    if (!apikey)
+      return;
+
+    if(apikey != ''){
       this.$submit.addClass('loading');
     }
-
 
     if (this._usernameTimeout)
       clearTimeout(this._usernameTimeout);
@@ -59,7 +68,7 @@ App.View.Account = Backbone.View.extend({
     var _this = this;
     this._usernameTimeout = setTimeout(function(){
       clearTimeout(_this._usernameTimeout);
-      _this.model.set('api_key',$.trim($(e.target).val()));
+      _this.model.set('api_key',apikey);
       _this.model.validateAPIKey(function(valid){
         _this.model.set('autosave',valid ? 'enabled' : 'waiting');
         if(valid){
