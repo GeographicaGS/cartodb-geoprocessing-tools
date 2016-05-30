@@ -201,7 +201,9 @@ App.Model.GeoViz = App.Model.Viz.extend({
       return cb(l.geometrytype,l);
 
     var q = "WITH q as ({{{sql}}})"
-        + "select st_geometrytype(the_geom_webmercator) as geometrytype from q group by geometrytype";
+        + "select st_geometrytype(the_geom_webmercator) as geometrytype from q "
+        + "where the_geom_webmercator is not null AND not ST_IsEmpty(the_geom_webmercator)"
+        + "group by geometrytype";
 
     var username = this.get('account');
     var sql = App.Utils.getCartoDBSQLInstance(username);
