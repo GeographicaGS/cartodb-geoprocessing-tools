@@ -412,6 +412,7 @@ App.View.GroupLayerPanelLayerSQL = Backbone.View.extend({
   className: 'sql',
 
   initialize: function(options) {
+    this._geoVizModel = options.geoVizModel;
     _.bindAll(this,'_showClipTooltip');
   },
 
@@ -433,7 +434,7 @@ App.View.GroupLayerPanelLayerSQL = Backbone.View.extend({
 
   render: function(){
 
-    this.$el.html(this._template(this.model.toJSON()));
+    this.$el.html(this._template({m: this.model.toJSON(),account: this._geoVizModel.get('account')}));
 
     this._clipboard = new Clipboard('.button.copy');
     this._clipboard.on('success', this._showClipTooltip);
@@ -502,22 +503,6 @@ App.View.GroupLayerMap = Backbone.View.extend({
         console.log("some error occurred: " + err);
       });
 
-    // var url = 'https://concur.cartodb.solutions/user/geographica/api/v2/viz/214a4ff2-1dd4-11e6-95ee-7e90b97ff5c6/viz.json';
-    //
-    // //var url = 'http://documentation.cartodb.com/api/v2/viz/2b13c956-e7c1-11e2-806b-5404a6a683d5/viz.json';
-    //
-    //   cartodb.createLayer(this._map, url,{
-    //       sql_api_template: "https://concur.cartodb.solutions/user/{user}",
-    //       maps_api_template: "https://concur.cartodb.solutions/user/{user}",
-    //       no_cdn: true
-    //     })
-    //     .addTo(this._map)
-    //     .on('done',this._onLayerDone)
-    //     .on('error', function(err) {
-    //       console.log("some error occurred: " + err);
-    //     });
-    //
-    // return this;
   }
 
 });

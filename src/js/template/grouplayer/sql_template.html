@@ -1,4 +1,12 @@
-<pre id="copy_<%= gid %>"><%= options.sql %></pre>
+<pre id="copy_<%= m.gid %>">
+  <%= m.geolayer && m.geolayer.proc_sql ?  m.geolayer.proc_sql : m.options.sql %>
+</pre>
 <div class="actions">
-  <a class="button copy" data-title="Copied" data-clipboard-target="#copy_<%= gid %>" href="#">Copy query</a>
+  <a class="button copy" data-title="Copied" data-clipboard-target="#copy_<%= m.gid %>" href="#">Copy query</a>
+  <% if (m.geolayer && m.geolayer.proc_sql) {
+    var arr = m.options.sql.split(' '),
+      dataset = arr[arr.length-1];
+    %>
+    <a class="button" href="<%= App.Config.dataset_url(account,dataset) %>" target="_blank">See dataset</a>
+  <% } %>
 </div>
