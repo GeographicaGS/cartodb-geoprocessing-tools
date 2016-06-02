@@ -1,7 +1,7 @@
 www:
   image: geographica/nginx4dev:js
   ports:
-    - "80:80"
+    - "8080:80"
   volumes:
     - ./public:/usr/share/nginx/html
     - .:/usr/share/nginx/html/src

@@ -29,6 +29,12 @@ App.Config.import_api_url = function(user){
   }
 }
 
+App.Config.dataset_url = function(user,dataset){
+
+  return App.Config.Parser('DATASET_URL',{'user': user}) + '/' + dataset;
+
+}
+
 App.Config.get_api_key_url = function(user){
   return App.Config.Parser('GET_API_KEY_URL',{'user': user});
 }

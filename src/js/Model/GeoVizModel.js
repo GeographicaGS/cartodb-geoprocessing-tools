@@ -341,7 +341,8 @@ App.Model.GeoViz = App.Model.Viz.extend({
     layerdef.gid = this.getUUID();
     layerdef.geolayer = {
       status: App.Cons.LAYER_WAITING,
-      time : new Date()
+      time : new Date(),
+      proc_sql : layerdef.options.sql
     };
     this._layerManager.createLayer(layerdef);
     layers.push(layerdef);
