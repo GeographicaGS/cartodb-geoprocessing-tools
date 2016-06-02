@@ -32,9 +32,17 @@
     <a href="#" class="forceremove">Ok</a>
   </div>
   <div class="subviewholder">
-    <p class="title"><%= m.geolayer.error.title %></p>
-    <p class="explanation"><%= m.geolayer.error.what_about %></p>
-    <pre><%= m.geolayer.error.sql %></pre>
+    <%if(m && m.geolayer && m.geolayer.error){%>
+      <%if(m.geolayer.error.title){%>
+        <p class="title"><%= m.geolayer.error.title %></p>
+      <%}%>
+      <%if(m.geolayer.error.what_about){%>
+        <p class="explanation"><%= m.geolayer.error.what_about %></p>
+      <%}%>
+      <%if(m.geolayer.error.sql){%>
+        <pre><%= m.geolayer.error.sql %></pre>
+      <%}%>
+    <%}%>
   </div>
 
 <% } %>
