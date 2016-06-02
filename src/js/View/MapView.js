@@ -171,7 +171,7 @@ App.View.Map = Backbone.View.extend({
     this.$map.css('width','100%').css('height', this.$el.parent().height() + "px"); // TODO: parameterize or calculate hardcoded toolbar height value (64px)
 
     var url = 'https://alasarr.cartodb.com/api/v2/viz/d1e1bf50-1675-11e6-a016-0e3ff518bd15/viz.json';
-    cartodb.createVis('map', url,{ https: true})
+    cartodb.createVis('map', url,{ https: true,scrollwheel:true})
       .done(this._onCreatedVIS);
 
     return this;
