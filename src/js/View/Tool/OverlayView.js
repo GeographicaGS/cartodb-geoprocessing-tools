@@ -223,7 +223,7 @@ App.View.Tool.Overlay = Backbone.View.extend({
 
   _fields2alias: function(sqlFields){
     var fields = [];
-    var re = new RegExp("(?!\\w+\\s[as])(?!as)([A-Za-z])\\w+","g");
+    var re = new RegExp("(?!\\w+\\s[as])(?!as)(_*[A-Za-z])\\w+","g");
     var result = re.exec(sqlFields);
     while(result !== null) {
       fields.push(result[0]);
