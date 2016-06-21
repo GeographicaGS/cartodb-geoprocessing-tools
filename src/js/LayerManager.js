@@ -18,7 +18,7 @@ App.LayerManager.prototype.createLayer = function(layerdef){
     url: this._url,
     data: {
       sql: layerdef.options.sql,
-      table_name: layerdef.options.layer_name,
+      table_name: layerdef.options.layer_name.toLowerCase(),
       privacy: 'public',
       api_key: this.userModel.get('api_key')
     },
