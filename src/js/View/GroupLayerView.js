@@ -250,7 +250,7 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
     e.preventDefault();
     if (!this.model.get('geolayer')) return;
 
-    if(confirm('Are you sure to remove this layer?\nRemember: It will be removed in both SLA and CartoDB editors.')){
+    if(confirm('Are you sure to remove this layer (CartoDB dataset will be deleted)?')){
       this._remove(e);
     }
   },
