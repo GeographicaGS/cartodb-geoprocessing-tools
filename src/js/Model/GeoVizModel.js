@@ -197,9 +197,6 @@ App.Model.GeoViz = App.Model.Viz.extend({
     if (!l)
       return cb(null);
 
-    if (l.geolayer && l.geometrytype)
-      return cb(l.geometrytype,l);
-
     var q = "WITH q as ({{{sql}}})"
         + "select st_geometrytype(the_geom_webmercator) as geometrytype from q "
         + "where the_geom_webmercator is not null AND not ST_IsEmpty(the_geom_webmercator)"
@@ -236,6 +233,14 @@ App.Model.GeoViz = App.Model.Viz.extend({
       this.getSublayerGeometryType(ids[i],function(geometrytype,l,err){
         counter++;
         l.geometrytype = geometrytype;
+
+        if(err){
+          l.geolayer.status = App.Cons.LAYER_ERROR;
+          l.geolayer.error = {
+            what_about: err[0]
+          };
+        }
+
         if (counter==ids.length)
           cb();
       });
