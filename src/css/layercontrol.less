@@ -384,7 +384,7 @@
         }
 
         &.disabled {
-          .ctrls {
+          .ctrls:not(.error) {
             span {
               color: @grey35;
             }
@@ -394,10 +394,10 @@
                 opacity: .00001;
               }
             }
-          }
 
-          .subviewholder {
-            display: none;
+            &:not(.error) + .subviewholder {
+              display: none;
+            }
           }
         }
 
@@ -413,22 +413,21 @@
         &:hover {
           background-color: @grey05;
 
-          .ctrls {
-            .remove {
-              opacity: 1;
+          .ctrls .remove:not(.disabled) {
+            opacity: 1;
+          }
 
-              &.disabled {
-                opacity: .00001;
-              }
+          &:not(.disabled){
+            .ctrls.disabled {
+                  opacity: .00001;
             }
-
             .subviewcontrol {
               display: block;
             }
           }
         }
 
-        &.selected {
+        &.selected:not(.disabled) {
           .ctrls {
             .remove:not(.disabled) {
               opacity: 1;

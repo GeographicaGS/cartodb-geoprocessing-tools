@@ -250,7 +250,7 @@ App.View.GroupLayerPanelLayer = Backbone.View.extend({
     e.preventDefault();
     if (!this.model.get('geolayer')) return;
 
-    if(confirm('Are you sure?')){
+    if(confirm('Are you sure to remove this layer?')){
       this._remove(e);
     }
   },
