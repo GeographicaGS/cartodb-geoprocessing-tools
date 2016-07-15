@@ -3,65 +3,6 @@
 App.Collection.BaseMap = Backbone.Collection.extend({
 
   initialize: function(options) {
-  	this.add({
-  		'id':'Here',
-  		'maps':[
-  			{
-  				'thumb':'https://1.maps.nlp.nokia.com/maptile/2.1/maptile/newest/normal.day/6/30/24/256/png8?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url':'https://4.maps.nlp.nokia.com/maptile/2.1/maptile/newest/normal.day/{z}/{x}/{y}/256/png8?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url_label':'',
-  				'title':'Nokia Day'
-  			},
-  			{
-  				'thumb':'https://1.maps.nlp.nokia.com/maptile/2.1/maptile/newest/normal.day.grey/6/30/24/256/png8?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url':'https://1.maps.nlp.nokia.com/maptile/2.1/maptile/newest/normal.day.grey/{z}/{x}/{y}/256/png8?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url_label':'',
-  				'title':'Nokia Day Grey'
-  			},
-  			{
-  				'thumb':'https://1.maps.nlp.nokia.com/maptile/2.1/maptile/newest/normal.night/6/30/24/256/png8?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url':'https://4.maps.nlp.nokia.com/maptile/2.1/maptile/newest/normal.night/{z}/{x}/{y}/256/png8?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url_label':'',
-  				'title':'Nokia Night'
-  			},
-  			{
-  				'thumb':'https://1.maps.nlp.nokia.com/maptile/2.1/maptile/newest/normal.day.transit/6/30/24/256/png8?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url':'https://2.maps.nlp.nokia.com/maptile/2.1/maptile/newest/normal.day.transit/{z}/{x}/{y}/256/png8?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url_label':'',
-  				'title':'Nokia Day Transit'
-  			},
-  			{
-  				'thumb':'https://1.maps.nlp.nokia.com/maptile/2.1/maptile/newest/carnav.day.grey/6/30/24/256/png8?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url':'https://1.maps.nlp.nokia.com/maptile/2.1/maptile/newest/carnav.day.grey/{z}/{x}/{y}/256/png8?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url_label':'',
-  				'title':'Nokia Carnav Day Grey'
-  			},
-  			{
-  				'thumb':'https://1.maps.nlp.nokia.com/maptile/2.1/maptile/newest/terrain.day/6/30/24/256/png8?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url':'https://2.maps.nlp.nokia.com/maptile/2.1/maptile/newest/terrain.day/{z}/{x}/{y}/256/png8?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url_label':'',
-  				'title':'Nokia Terrain Day'
-  			},
-  			{
-  				'thumb':'https://1.maps.nlp.nokia.com/maptile/2.1/maptile/newest/hybrid.day/6/30/24/256/png8?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url':'https://1.maps.nlp.nokia.com/maptile/2.1/maptile/newest/hybrid.day/{z}/{x}/{y}/256/png8?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url_label':'',
-  				'title':'Nokia Hybrid Day'
-  			},
-  			{
-  				'thumb':'https://1.maps.nlp.nokia.com/maptile/2.1/maptile/newest/satellite.day/6/30/24/256/jpg?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url':'https://4.maps.nlp.nokia.com/maptile/2.1/maptile/newest/satellite.day/{z}/{x}/{y}/256/jpg?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url_label':'',
-  				'title':'Nokia Satellite Day'
-  			},
-  			{
-  				'thumb':'https://1.maps.nlp.nokia.com/maptile/2.1/maptile/newest/reduced.day/6/30/24/256/png8?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url':'https://1.maps.nlp.nokia.com/maptile/2.1/maptile/newest/reduced.day/{z}/{x}/{y}/256/png8?lg=eng&token=A7tBPacePg9Mj_zghvKt9Q&app_id=KuYppsdXZznpffJsKT24',
-  				'url_label':'',
-  				'title':'Nokia Reduced Day'
-  			}
-  		]
-  	});
 
   	this.add({
   		'id':'Stamen',
@@ -210,6 +151,10 @@ App.Collection.BaseMap = Backbone.Collection.extend({
   },
 
   findMap:function(id,title){
+    var el = this.get(id);
+    if (!el)
+      return _.findWhere(this.get('CartoDB').get('maps'),{'title':'Positron'}); 
+
   	var maps = this.get(id).get('maps');
   	return _.findWhere(maps,{'title':title});
   }
