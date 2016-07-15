@@ -172,6 +172,7 @@ App.View.Tool.Buffer = Backbone.View.extend({
 
     if (this.model.get('disolve')){
       newLayer.infowindow = null;
+      newLayer.options.interactivity = '';
     }
 
     newLayer.geometrytype = 'ST_MultiPolygon';
