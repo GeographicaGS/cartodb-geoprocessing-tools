@@ -90,32 +90,43 @@ App.Model.UserLocalStorage = App.Model.User.extend({
 
     var username = this.get('account');
     var sql = App.Utils.getCartoDBSQLInstance(username);
-    var q = "select count(*) as n from CDB_UserTables() as name where name='{{tablename}}'";
-    // check if table exists
-    sql.execute(q,{tablename: App.Config.Data.CFG_TABLE_NAME},{cache: true})
-      .done(function(data) {
-        if (data && data.rows.length && data.rows[0].n){
-          if (cb)
-            cb(false);
-          // Table already exits
-          return;
-        }
+    // var q = "select count(*) as n from CDB_UserTables() as name where name='{{tablename}}'";
+    // // check if table exists
+    // sql.execute(q,{tablename: App.Config.Data.CFG_TABLE_NAME},{cache: true})
+    //   .done(function(data) {
+    //     if (data && data.rows.length && data.rows[0].n){
+    //       if (cb)
+    //         cb(false);
+    //       // Table already exits
+    //       return;
+    //     }
+    //
+    //     // Let's create the table
+    //     var q = 'CREATE TABLE {{tablename}} (id_viz text, viz json, PRIMARY KEY(id_viz)); GRANT SELECT ON {{tablename}} TO publicuser;';
+    //     sql.execute(q,{tablename: App.Config.Data.CFG_TABLE_NAME},{api_key: api_key,cache: true})
+    //       .done(function(data) {
+    //         if (cb)
+    //           cb(true);
+    //       })
+    //       .error(function(errors) {
+    //         console.error('Cannot create config table at CartoDB. ' + errors);
+    //       });
+    //
+    //   })
+    //   .error(function(errors) {
+    //     console.error('Cannot check if config table exists. ' + errors);
+    //   });
 
-        // Let's create the table
-        var q = 'CREATE TABLE {{tablename}} (id_viz text, viz json, PRIMARY KEY(id_viz)); GRANT SELECT ON {{tablename}} TO publicuser;';
-        sql.execute(q,{tablename: App.Config.Data.CFG_TABLE_NAME},{api_key: api_key,cache: true})
-          .done(function(data) {
-            if (cb)
-              cb(true);
-          })
-          .error(function(errors) {
-            console.error('Cannot create config table at CartoDB. ' + errors);
-          });
+    var q = 'CREATE TABLE IF NOT EXISTS {{tablename}} (id_viz text, viz json, PRIMARY KEY(id_viz)); GRANT SELECT ON {{tablename}} TO publicuser;';
+    sql.execute(q,{tablename: App.Config.Data.CFG_TABLE_NAME},{api_key: api_key,cache: false})
+    .done(function(data) {
+      if (cb)
+        cb(true);
+    })
+    .error(function(errors) {
+      console.error('Cannot create config table at CartoDB. ' + errors);
+    });
 
-      })
-      .error(function(errors) {
-        console.error('Cannot check if config table exists. ' + errors);
-      });
   },
 
   validateAPIKey: function(cb){
