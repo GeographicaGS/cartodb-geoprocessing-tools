@@ -3,7 +3,7 @@
 var App = App || {};
 
 App.Config.Data = {
-  'BASE_URL' :'https://edugis.smartgeo.sg/user/{{user}}',
+  'BASE_URL' :'https://oneemap.sg/user/{{user}}',
   'SQL_API_URL': '/api/v2/sql',
   'VIZ_API_URL' : '/api/v2/viz/{{viz}}/viz.json',
   'IMPORT_API_URL': '/api/v1/imports',
